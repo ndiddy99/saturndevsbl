@@ -28,20 +28,20 @@ void drawSprite(SPRITE_INFO *info) {
 	
 	else {
 		//offset of top left sprite corner from the origin
-		xOffset = -(MTH_IntToFixed(info->xSize >> 1));
-		yOffset = -(MTH_IntToFixed(info->ySize >> 1));
+		xOffset = -(MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale));
+		yOffset = -(MTH_Mul(MTH_IntToFixed(info->ySize >> 1), info->scale));
 		sin = MTH_Sin(info->angle);
 		cos = MTH_Cos(info->angle);
 		//formula from
 		//https://gamedev.stackexchange.com/questions/86755/
 		for (i = 0; i < 4; i++) {
-			if (i == 1) xOffset = MTH_IntToFixed(info->xSize >> 1); //upper right
-			if (i == 2) yOffset = MTH_IntToFixed(info->ySize >> 1); //lower right
-			if (i == 3) xOffset = -(MTH_IntToFixed(info->xSize >> 1)); //lower left
+			if (i == 1) xOffset = MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale); //upper right
+			if (i == 2) yOffset = MTH_Mul(MTH_IntToFixed(info->ySize >> 1), info->scale); //lower right
+			if (i == 3) xOffset = -(MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale)); //lower left
 			xy[i].x = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, cos) - 
-				MTH_Mul(yOffset, sin) + info->xPos) + (info->xSize >> 1);
+				MTH_Mul(yOffset, sin) + info->xPos + MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale));
 			xy[i].y = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, sin) +
-				MTH_Mul(yOffset, cos) + info->yPos) + (info->ySize >> 1);
+				MTH_Mul(yOffset, cos) + info->yPos + MTH_Mul(MTH_IntToFixed(info->ySize >> 1), info->scale));
 		}
 		SPR_2DistSpr(0, 0, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb distorted sprite
 	}

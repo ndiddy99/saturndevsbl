@@ -123,8 +123,16 @@ int main()
 		if((PadData1 & PAD_S)) 	SCL_SetMosaic(SCL_NBG0, 0, 0);
 		if((PadData1 & PAD_LB))	SCL_SetMosaic(SCL_NBG0, 2, 2);
 		if((PadData1 & PAD_RB))	SCL_SetMosaic(SCL_NBG0, 4, 4);
-		if((PadData1 & PAD_X)) 	sprite.angle += MTH_FIXED(1);
-		if((PadData1 & PAD_Y)) 	sprite.angle -= MTH_FIXED(1);
+		if((PadData1 & PAD_X)) {
+			sprite.angle += MTH_FIXED(1);
+			if (sprite.angle > MTH_FIXED(180))
+				sprite.angle -= MTH_FIXED(360);
+		}
+		if((PadData1 & PAD_Y)) {
+			sprite.angle -= MTH_FIXED(1);
+			if (sprite.angle < MTH_FIXED(-180))
+				sprite.angle += MTH_FIXED(360);
+		}
 		if((PadData1 & PAD_Z)) 	SCL_SetMosaic(SCL_NBG0,10,10);
 		if((PadData1 & PAD_A)) 	sprite.scale += MTH_FIXED(0.05);
 		if((PadData1 & PAD_B)) 	sprite.scale -= MTH_FIXED(0.05);
