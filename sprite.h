@@ -4,10 +4,14 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 
+#define MIRROR_HORIZ (1 << 4)
+#define MIRROR_VERT (1 << 5)
+
 typedef struct SpriteInfo {
 	Uint16 charNum;
 	Fixed32 xPos;
 	Fixed32 yPos;
+	Uint16 mirror;
 	Uint16 xSize;
 	Uint16 ySize;
 	Fixed32 scale;

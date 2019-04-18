@@ -93,6 +93,7 @@ int main()
 	sprite.charNum = 0;
 	sprite.xPos = MTH_FIXED(20);
 	sprite.yPos = MTH_FIXED(20);
+	sprite.mirror = 0;
 	sprite.xSize = 16;
 	sprite.ySize = 16;
 	sprite.scale = MTH_FIXED(1);
@@ -108,6 +109,8 @@ int main()
 	while(1) {
 		PadData1EW = PadData1E;
 		PadData1E = 0;
+		sprite.mirror = 0;
+		
 		if(PadData1 & PAD_U){
 			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
 			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
@@ -120,23 +123,20 @@ int main()
 		}
 		if (PadData1 & PAD_L) sprite.xPos -= MTH_FIXED(1);
 		if (PadData1 & PAD_R) sprite.xPos += MTH_FIXED(1);
-		if((PadData1 & PAD_S)) 	SCL_SetMosaic(SCL_NBG0, 0, 0);
-		if((PadData1 & PAD_LB))	SCL_SetMosaic(SCL_NBG0, 2, 2);
-		if((PadData1 & PAD_RB))	SCL_SetMosaic(SCL_NBG0, 4, 4);
 		if((PadData1 & PAD_X)) {
-			sprite.angle += MTH_FIXED(1);
+			sprite.angle += MTH_FIXED(3);
 			if (sprite.angle > MTH_FIXED(180))
 				sprite.angle -= MTH_FIXED(360);
 		}
 		if((PadData1 & PAD_Y)) {
-			sprite.angle -= MTH_FIXED(1);
+			sprite.angle -= MTH_FIXED(3);
 			if (sprite.angle < MTH_FIXED(-180))
 				sprite.angle += MTH_FIXED(360);
 		}
-		if((PadData1 & PAD_Z)) 	SCL_SetMosaic(SCL_NBG0,10,10);
+		if (PadData1 & PAD_Z)	sprite.mirror |= MIRROR_VERT; 
 		if((PadData1 & PAD_A)) 	sprite.scale += MTH_FIXED(0.05);
 		if((PadData1 & PAD_B)) 	sprite.scale -= MTH_FIXED(0.05);
-		if((PadData1 & PAD_C)) 	SCL_SetMosaic(SCL_NBG0,16,16);
+		if (PadData1 & PAD_C)	sprite.mirror |= MIRROR_HORIZ;
 		
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			drawSprite(&sprite);
