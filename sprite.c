@@ -10,7 +10,7 @@ void drawSprite(SPRITE_INFO *info) {
 	Fixed32 xOffset, yOffset, sin, cos, scaledX, scaledY;
 	int i;
 	
-	if (info->scale == MTH_IntToFixed(1) && info->angle == 0) {
+	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
 		SPR_2NormSpr(0, info->mirror, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb normal sprite
