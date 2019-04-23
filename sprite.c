@@ -3,6 +3,7 @@
 #define _SPR2_
 #include <sega_spr.h>
 
+#include "graphicrefs.h"
 #include "sprite.h"
 
 void drawSprite(SPRITE_INFO *info) {
@@ -47,4 +48,15 @@ void drawSprite(SPRITE_INFO *info) {
 		}
 		SPR_2DistSpr(0, info->mirror, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb distorted sprite
 	}
+}
+
+void makeSprite(int spriteNum, SPRITE_INFO *ptr) {
+	ptr->charNum = spriteNum;
+	ptr->xPos = MTH_FIXED(0);
+	ptr->yPos = MTH_FIXED(0);
+	ptr->mirror = 0;
+	ptr->xSize = dimensions[spriteNum << 1];
+	ptr->ySize = dimensions[(spriteNum << 1) + 1];
+	ptr->scale = MTH_FIXED(1);
+	ptr->angle = 0;
 }

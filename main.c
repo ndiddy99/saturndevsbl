@@ -11,7 +11,7 @@
 #include	"graphic\cosmo2u.cha"
 #include	"graphic\cosmo2u.col"
 #include	"graphic\cosmo2u.map"
-#include	"graphic\face.c"
+#include	"graphicrefs.h"
 
 /*----------------------------
 SCROLL NBG0 Cycle Table
@@ -39,9 +39,10 @@ int main()
 {
 	SclConfig	scfg;
 	SclRgb		start,end;
-	Uint16  	BackCol,i,PadData1EW;
+	Uint16  	BackCol,PadData1EW;
 	Uint8   	*VramWorkP;
 	SPRITE_INFO sprite;
+	int i, count;
 
 	SCL_Vdp2Init();
 	SPR_2Initial(&work2D);
@@ -88,16 +89,23 @@ int main()
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
-	SPR_2SetChar(0, COLOR_5, 0, 64, 51, (char *)&bunny);
 	
-	sprite.charNum = 0;
-	sprite.xPos = MTH_FIXED(20);
-	sprite.yPos = MTH_FIXED(20);
-	sprite.mirror = 0;
-	sprite.xSize = 64;
-	sprite.ySize = 51;
-	sprite.scale = MTH_FIXED(1);
-	sprite.angle = 0;
+	count = 0;
+	for (i = 0; i < 4; i += 2) {
+		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
+		count++;
+	}
+	
+	// sprite.charNum = 1;
+	// sprite.xPos = MTH_FIXED(20);
+	// sprite.yPos = MTH_FIXED(20);
+	// sprite.mirror = 0;
+	// sprite.xSize = 64;
+	// sprite.ySize = 51;
+	// sprite.scale = MTH_FIXED(1);
+	// sprite.angle = 0;
+	
+	makeSprite(0, &sprite);
 
 	SCL_Open(SCL_NBG0);
 		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position

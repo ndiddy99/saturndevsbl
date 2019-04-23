@@ -42,18 +42,26 @@ var
   //Saturn image format:
   //0123456789ABCDEF
   //BBBBBGGGGGRRRRR1
-  i, j, k, count: Integer;
+  i, j, k, count, dimCount: Integer;
   r, g, b: Word;
+  dimensions: array of Word;
   outFile: TextFile;
   varName: String;
+  varNames: array of String;
 begin
   AssignFile(outFile, 'out.c');
   ReWrite(outFile);
+  SetLength(dimensions, Length(input) * 2);
+  SetLength(varNames, Length(input));
+  dimCount := 0;
   for i := 0 to (Length(input) - 1) do
   begin
     img := TBitmap.Create;
     img.LoadFromFile(input[i]);
     SetLength(saturnImg, img.Height, img.Width);
+    dimensions[dimCount] := img.Width;
+    dimensions[dimCount + 1] := img.Height;
+    dimCount := dimCount + 2;
 
     for j := 0 to (img.Height - 1) do
     begin
@@ -65,11 +73,11 @@ begin
         r := line[k] div 8; //8 bpp to 5 bpp
         g := line[k + 1] div 8;
         b := line[k + 2] div 8;
-        WriteLn('r in: ', line[k], ' out: ', r);
-        WriteLn('g in: ', line[k + 1], ' out: ', g);
-        WriteLn('b in: ', line[k + 2], ' out: ', b);
+        //WriteLn('r in: ', line[k], ' out: ', r);
+        //WriteLn('g in: ', line[k + 1], ' out: ', g);
+        //WriteLn('b in: ', line[k + 2], ' out: ', b);
         saturnImg[j][count] := ($8000 or b or (g shl 5) or (r shl 10));
-        WriteLn('out: ', saturnImg[i][count]);
+        //WriteLn('out: ', saturnImg[i][count]);
         k := k + 3;
         count := count + 1;
       end;
@@ -77,12 +85,26 @@ begin
     if outType = 0 then
     begin
       varName := copy(input[i], 0, pos('.', input[i]) - 1);
+      varNames[i] := varName;
       outputC(outFile, varName, saturnImg);
     end;
   //  else
   //    outputBin(saturnImg);
     img.Destroy;
   end;
+  if outType = 0 then
+  begin
+    Write(outFile, 'const Uint16 dimensions[] = {');
+    for i := 0 to (Length(dimensions) - 1) do
+        Write(outFile, dimensions[i], ',');
+    WriteLn(outFile, '};');
+    WriteLn(outFile, '#define NUM_TILES ', Length(varNames));
+    WriteLn(outFile, 'const Uint16 *tiles[] = {');
+    for i := 0 to (Length(varNames) - 1) do
+        WriteLn(outFile, '    ', varNames[i], ',');
+    WriteLn(outFile, '};');
+  end;
+  CloseFile(outFile);
 end;
 
 begin
