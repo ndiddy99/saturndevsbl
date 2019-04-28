@@ -50,10 +50,10 @@ void drawSprite(SPRITE_INFO *info) {
 	}
 }
 
-void makeSprite(int spriteNum, SPRITE_INFO *ptr) {
+void makeSprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->charNum = spriteNum;
-	ptr->xPos = MTH_FIXED(0);
-	ptr->yPos = MTH_FIXED(0);
+	ptr->xPos = x;
+	ptr->yPos = y;
 	ptr->mirror = 0;
 	ptr->xSize = dimensions[spriteNum << 1];
 	ptr->ySize = dimensions[(spriteNum << 1) + 1];

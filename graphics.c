@@ -1,3 +1,3 @@
-#include <sega_xpt.h>
+typedef unsigned short Uint16; 
 
 #include "graphic/out.c"

@@ -22,6 +22,6 @@ typedef struct SpriteInfo {
 //on required features
 //needs command to be opened before calling
 void drawSprite(SPRITE_INFO *info);
-void makeSprite(int spriteNum, SPRITE_INFO *ptr);
+void makeSprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
 
 #endif

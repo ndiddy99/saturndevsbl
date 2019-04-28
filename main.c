@@ -95,17 +95,7 @@ int main()
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
-	
-	// sprite.charNum = 1;
-	// sprite.xPos = MTH_FIXED(20);
-	// sprite.yPos = MTH_FIXED(20);
-	// sprite.mirror = 0;
-	// sprite.xSize = 64;
-	// sprite.ySize = 51;
-	// sprite.scale = MTH_FIXED(1);
-	// sprite.angle = 0;
-	
-	makeSprite(0, &sprite);
+	makeSprite(1, FIXED(50), FIXED(20), &sprite);
 
 	SCL_Open(SCL_NBG0);
 		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position
