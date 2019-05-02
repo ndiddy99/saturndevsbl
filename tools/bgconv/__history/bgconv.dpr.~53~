@@ -4,8 +4,7 @@ uses
 
 var
   i,
-  outType, //c file (0) or binary (1)
-  fileCount:
+  outType: //c file (0) or binary (1)
   Integer;
   filename: String;
 procedure printHelp;
@@ -17,20 +16,29 @@ end;
 
 procedure outputC(var cFile: TextFile; varName: String; tiles: array of Uint8; palette: array of Uint32);
 var
-  i: Integer;
+  count, i: Integer;
 begin
   WriteLn(cFile, 'const Uint32 ', varName, '_pal[] = {');
+  count := 1;
+
   for i := 0 to Length(palette) - 1 do
   begin
     Write(cFile, palette[i], ',');
   end;
   WriteLn(cFile, '};');
-  WriteLn(cFile, 'const Uint16 ', varName, '_chr[] = {');
-  for i := 0 to Length(tiles) do
+  WriteLn(cFile, 'const Uint8 ', varName, '_chr[] = {');
+  WriteLn(cFile, '    //0');
+  Write(cFile, '    ');
+  for i := 0 to Length(tiles) - 1 do
   begin
-    Write(cFile, tiles[i], ',');
-    if (i <> 0) and (i mod 8 = 0) then
-      Write(cFile, #13#10);
+    Write(cFile, '', tiles[i], ',');
+    if (i + 1) mod 64 = 0 then
+    begin
+      Write(cFile, #13#10#13#10, '    //', count, #13#10, '    ');
+      Inc(count);
+    end
+    else if (i + 1) mod 8 = 0 then
+      Write(cFile, #13#10, '    ');
   end;
   WriteLn(cFile, '};');
 end;
@@ -72,48 +80,46 @@ begin
   begin
     while j < img.Height - 1 do
     begin
-      for k := i to i + 8 do //top left
+      for k := i to (i + 8) - 1 do //top left
       begin
         line := pByteArray(img.ScanLine[k]);
-        for l := j to j + 8 do
+        for l := j to (j + 8) - 1 do
         begin
           saturnTiles[count] := line[l];
           Inc(count);
         end;
       end;
 
-      for k := i to i + 8 do //top right
+      for k := i to (i + 8) - 1 do //top right
       begin
         line := pByteArray(img.ScanLine[k]);
-        for l := j + 8 to j + 16 do
+        for l := j + 8 to (j + 16) - 1 do
         begin
           saturnTiles[count] := line[l];
           Inc(count);
         end;
       end;
 
-      for k := i + 8 to i + 16 do //bottom left
+      for k := i + 8 to (i + 16) - 1 do //bottom left
       begin
         line := pByteArray(img.ScanLine[k]);
-        for l := j to j + 8 do
+        for l := j to (j + 8) - 1 do
         begin
           saturnTiles[count] := line[l];
           Inc(count);
         end;
       end;
-      j := j + 8;
 
-      for k := i to i + 8 do //bottom right
+      for k := i + 8 to (i + 16) - 1 do //bottom right
       begin
         line := pByteArray(img.ScanLine[k]);
-        for l := j to j + 8 do
+        for l := j + 8 to (j + 16) - 1 do
         begin
           saturnTiles[count] := line[l];
           Inc(count);
         end;
       end;
-      j := j + 8; //position: top pixel + 16
-      i := i - 8;
+      j := j + 16; //position: top pixel + 16
     end;
     i := i + 16; //inc y pos
   end;

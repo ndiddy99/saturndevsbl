@@ -4,8 +4,7 @@ uses
 
 var
   i,
-  outType, //c file (0) or binary (1)
-  fileCount:
+  outType: //c file (0) or binary (1)
   Integer;
   filename: String;
 procedure printHelp;
@@ -17,20 +16,31 @@ end;
 
 procedure outputC(var cFile: TextFile; varName: String; tiles: array of Uint8; palette: array of Uint32);
 var
-  i: Integer;
+  count, i: Integer;
 begin
   WriteLn(cFile, 'const Uint32 ', varName, '_pal[] = {');
+  count := 1;
+
   for i := 0 to Length(palette) - 1 do
   begin
     Write(cFile, palette[i], ',');
   end;
   WriteLn(cFile, '};');
   WriteLn(cFile, 'const Uint8 ', varName, '_chr[] = {');
-  for i := 0 to Length(tiles) do
+  WriteLn(cFile, '    //0');
+  Write(cFile, '    ');
+  for i := 0 to Length(tiles) - 1 do
   begin
-    Write(cFile, tiles[i], ',');
-    if (i + 1) mod 8 = 0 then
-      Write(cFile, #13#10);
+    Write(cFile, '', tiles[i], ',');
+    if ((i + 1) mod 256 = 0) and (i <> Length(tiles) - 1) then
+    begin
+      Write(cFile, #13#10#13#10, '    //', count, #13#10, '    ');
+      Inc(count);
+    end
+    else if (i + 1) mod 64 = 0 then
+      Write(cFile, #13#10#13#10, '    ')
+    else if (i + 1) mod 8 = 0 then
+      Write(cFile, #13#10, '    ');
   end;
   WriteLn(cFile, '};');
 end;

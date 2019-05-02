@@ -17,20 +17,29 @@ end;
 
 procedure outputC(var cFile: TextFile; varName: String; tiles: array of Uint8; palette: array of Uint32);
 var
-  i: Integer;
+  count, i: Integer;
 begin
   WriteLn(cFile, 'const Uint32 ', varName, '_pal[] = {');
+  count := 1;
+
   for i := 0 to Length(palette) - 1 do
   begin
     Write(cFile, palette[i], ',');
   end;
   WriteLn(cFile, '};');
-  WriteLn(cFile, 'const Uint16 ', varName, '_chr[] = {');
+  WriteLn(cFile, 'const Uint8 ', varName, '_chr[] = {');
+  WriteLn(cFile, '    //0');
+  Write(cFile, '    ');
   for i := 0 to Length(tiles) do
   begin
-    Write(cFile, tiles[i], ',');
-    if i mod 8 = 0 then
-      Write(cFile, #13#10);
+    Write(cFile, '', tiles[i], ',');
+    if (i + 1) mod 64 = 0 then
+    begin
+      WriteLn(cFile, #13#10#13#10, '    //', count);
+      Inc(count);
+    end
+    else if (i + 1) mod 8 = 0 then
+      Write(cFile, #13#10, '    ');
   end;
   WriteLn(cFile, '};');
 end;
