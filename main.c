@@ -6,11 +6,9 @@
 #include	<sega_mth.h>
 
 #include	"v_blank\v_blank.h"
+#include	"graphic\cosmo2u.map"
 #include	"sprite.h"
 
-#include	"graphic\cosmo2u.cha"
-#include	"graphic\cosmo2u.col"
-#include	"graphic\cosmo2u.map"
 #include	"graphicrefs.h"
 
 /*----------------------------
@@ -59,27 +57,29 @@ int main()
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B1; //scroll character pattern to VRAM B1
-	memcpy(VramWorkP, cosmo2u_char, sizeof(cosmo2u_char));
+	memcpy(VramWorkP, test_chr, 768);
 
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //setup scroll pattern name table
-	for(i=0;i<28;i++) {
-		memcpy(VramWorkP, &cosmo2u_map[i*40],40*2);
-		VramWorkP += 64*2;
-	}
+	memcpy(VramWorkP, cosmo2u_map, 40 * 28);
+	
+	// for(i=0;i<28;i++) { 
+		// memcpy(VramWorkP, &cosmo2u_map[i*20],20*2);
+		// VramWorkP += 32;
+	// }
 
 	SCL_AllocColRam(SCL_NBG0,256,OFF); //set up palette data
-	SCL_SetColRam(SCL_NBG0,0,sizeof(cosmo2u_col),(void *)cosmo2u_col);
+	SCL_SetColRam(SCL_NBG0,0,256,(void *)test_pal);
 
 	//scroll initial configuration
 	SCL_InitConfigTb(&scfg);
 		scfg.dispenbl      = ON;
-		scfg.charsize      = SCL_CHAR_SIZE_1X1;
+		scfg.charsize      = SCL_CHAR_SIZE_2X2;
 		scfg.pnamesize     = SCL_PN1WORD;
-		scfg.flip          = SCL_PN_12BIT;
-		scfg.platesize     = SCL_PL_SIZE_2X2;
+		scfg.flip          = SCL_PN_10BIT;
+		scfg.platesize     = SCL_PL_SIZE_1X1;
 		scfg.coltype       = SCL_COL_TYPE_256;
 		scfg.datatype      = SCL_CELL;
-		scfg.patnamecontrl = 0x000c;// VRAM B1 offset
+		scfg.patnamecontrl = 0x000c; //vram B1 offset
 		for(i=0;i<4;i++)   scfg.plate_addr[i] = SCL_VDP2_VRAM_B0;
 	SCL_SetConfig(SCL_NBG0, &scfg);
 
