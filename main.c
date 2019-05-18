@@ -95,7 +95,7 @@ int main()
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
-	makeSprite(1, FIXED(50), FIXED(20), &sprite);
+	makeSprite(0, FIXED(50), FIXED(20), &sprite);
 
 	SCL_Open(SCL_NBG0);
 		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position
