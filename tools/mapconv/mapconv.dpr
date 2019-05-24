@@ -6,7 +6,29 @@ program MapConv;
 
 uses
   System.SysUtils, ActiveX, XMLIntf, XMLDoc;
-
+type WordMatrix = array of array of Uint16;
+procedure outputC(name: String; map: WordMatrix);
+var
+  i, j: Integer;
+  outFile: TextFile;
+begin
+  AssignFile(outFile, 'out.c');
+  ReWrite(outFile);
+  WriteLn(outFile, 'const Uint16 ', name, '[][] = {');
+  for i := 0 to Length(map) - 1 do
+  begin
+    for j := 0 to Length(map[0]) - 1 do
+    begin
+      if j = 0 then
+        Write(outFile, '  ', map[i][j], ', ')
+      else
+        Write(outFile, map[i][j], ', ');
+    end;
+    Write(outFile, #13#10);
+  end;
+  WriteLn(outFile, '};');
+  CloseFile(outFile);
+end;
 procedure handleMap(input: String);
 var
   tiledFile: IXMLDocument;
@@ -14,7 +36,7 @@ var
   val, currElement: String;
   width, height, i, j, count, strIndex: Integer;
   map: array of array of Uint32;
-  saturnMap: array of array of Uint16;
+  saturnMap: WordMatrix;
 begin
   width := 0;
   height := 0;
@@ -62,7 +84,7 @@ begin
       currElement := StringReplace(currElement, ' ', '', [rfReplaceAll]);
 //      Writeln(currElement);
       map[i][j] := StrToUint(currElement);
-      Writeln('map row ', i, ' col ', j, ' val ', map[i][j]);
+//      Writeln('map row ', i, ' col ', j, ' val ', map[i][j]);
       Inc(j);
       if j = width then
       begin
@@ -82,7 +104,7 @@ begin
             saturnMap[i][j] := saturnMap[i][j] or $800;
         end;
     end;
-
+    outputC('tiles', saturnMap);
 
   end
 
