@@ -4,3 +4,5 @@ typedef unsigned long Uint32;
 
 #include "graphic/sprite.c"
 #include "graphic/bg.c"
+
+#include "graphic/map.c"

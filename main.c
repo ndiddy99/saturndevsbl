@@ -8,22 +8,9 @@
 #include	"v_blank\v_blank.h"
 #include	"graphic\cosmo2u.map"
 #include	"sprite.h"
+#include	"scroll.h"
 
 #include	"graphicrefs.h"
-
-/*----------------------------
-SCROLL NBG0 Cycle Table
-Pattern Name Table location:B0
-Character location: B1
-Color Mode: C256
-Zoom Mode: 1
-----------------------------*/
-Uint16	CycleTb[]={
-	0xffff,0xffff,
-	0xffff,0xffff,
-	0x0f44,0xffff,
-	0xffff,0xffff
-};
 
 #define CommandMax    300
 #define GourTblMax    300
@@ -35,16 +22,12 @@ SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyM
 
 int main()
 {
-	SclConfig	scfg;
-	SclRgb		start,end;
-	Uint16  	BackCol,PadData1EW;
-	Uint8   	*VramWorkP;
+	Uint16  	PadData1EW;
 	SPRITE_INFO sprite;
-	int i, count;
-
-	SCL_Vdp2Init();
+	int count, i;
+	
+	init_scroll(test_chr, cosmo2u_map, test_pal);
 	SPR_2Initial(&work2D);
-	SCL_SetColRamMode(SCL_CRM24_1024);
 	
 	SetVblank(); //setup vblank routine
 	set_imask(0);
@@ -52,39 +35,6 @@ int main()
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
 	SCL_DisplayFrame();
-
-	BackCol = 0x0000; //set the background color to black
-	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
-
-	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B1; //scroll character pattern to VRAM B1
-	memcpy(VramWorkP, test_chr, 768);
-
-	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //setup scroll pattern name table
-	memcpy(VramWorkP, cosmo2u_map, 40 * 28);
-	
-	// for(i=0;i<28;i++) { 
-		// memcpy(VramWorkP, &cosmo2u_map[i*20],20*2);
-		// VramWorkP += 32;
-	// }
-
-	SCL_AllocColRam(SCL_NBG0,256,OFF); //set up palette data
-	SCL_SetColRam(SCL_NBG0,0,256,(void *)test_pal);
-
-	//scroll initial configuration
-	SCL_InitConfigTb(&scfg);
-		scfg.dispenbl      = ON;
-		scfg.charsize      = SCL_CHAR_SIZE_2X2;
-		scfg.pnamesize     = SCL_PN1WORD;
-		scfg.flip          = SCL_PN_10BIT;
-		scfg.platesize     = SCL_PL_SIZE_1X1;
-		scfg.coltype       = SCL_COL_TYPE_256;
-		scfg.datatype      = SCL_CELL;
-		scfg.patnamecontrl = 0x000c; //vram B1 offset
-		for(i=0;i<4;i++)   scfg.plate_addr[i] = SCL_VDP2_VRAM_B0;
-	SCL_SetConfig(SCL_NBG0, &scfg);
-
-	//setup vram access pattern
-	SCL_SetCycleTable(CycleTb);
 
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);
@@ -96,14 +46,6 @@ int main()
 		count++;
 	}
 	makeSprite(0, FIXED(50), FIXED(20), &sprite);
-
-	SCL_Open(SCL_NBG0);
-		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position
-		SCL_Scale(FIXED(1.0), FIXED(1.0));
-	SCL_Close();
-
-	start.red = start.green = start.blue = 0;
-	end.red = end.green = end.blue = - 255;
 	while(1) {
 		PadData1EW = PadData1E;
 		PadData1E = 0;
