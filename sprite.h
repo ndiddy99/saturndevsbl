@@ -21,7 +21,7 @@ typedef struct SpriteInfo {
 //automatically picks the simplest SBL function for drawing the sprite depending
 //on required features
 //needs command to be opened before calling
-void drawSprite(SPRITE_INFO *info);
-void makeSprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+void draw_sprite(SPRITE_INFO *info);
+void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
 
 #endif

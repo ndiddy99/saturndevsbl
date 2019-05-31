@@ -5,7 +5,7 @@
 #include	<sega_scl.h> 
 #include	<sega_mth.h>
 
-#include	"v_blank\v_blank.h"
+#include	"vblank.h"
 #include	"graphic\cosmo2u.map"
 #include	"sprite.h"
 #include	"scroll.h"
@@ -22,11 +22,12 @@ SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyM
 
 int main()
 {
-	Uint16  	PadData1EW;
+	Uint16 PadData1EW;
 	SPRITE_INFO sprite;
 	int count, i;
+	Fixed32 scrollX = FIXED(0), scrollY = FIXED(0);
 	
-	init_scroll(test_chr, cosmo2u_map, test_pal);
+	init_scroll(test_chr, map, test_pal);
 	SPR_2Initial(&work2D);
 	
 	SetVblank(); //setup vblank routine
@@ -45,24 +46,35 @@ int main()
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
-	makeSprite(0, FIXED(50), FIXED(20), &sprite);
+	make_sprite(0, FIXED(50), FIXED(20), &sprite);
 	while(1) {
 		PadData1EW = PadData1E;
 		PadData1E = 0;
 		sprite.mirror = 0;
+		scrollX = 0;
+		scrollY = 0;
 		
 		if(PadData1 & PAD_U){
 			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
 			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
-			sprite.yPos -= MTH_FIXED(1);
+			// sprite.yPos -= MTH_FIXED(1);
+			scrollY = FIXED(-4);
 		}
 		if(PadData1 & PAD_D){
 			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,end.red,end.green,end.blue);
 			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&end,&start);
-			sprite.yPos += MTH_FIXED(1);
+			// sprite.yPos += MTH_FIXED(1);
+			scrollY = FIXED(4);
 		}
-		if (PadData1 & PAD_L) sprite.xPos -= MTH_FIXED(1);
-		if (PadData1 & PAD_R) sprite.xPos += MTH_FIXED(1);
+		if (PadData1 & PAD_L) {
+			// sprite.xPos -= MTH_FIXED(1);
+			scrollX = FIXED(-4);
+		}
+		if (PadData1 & PAD_R) {
+			// sprite.xPos += MTH_FIXED(1);
+			scrollX = FIXED(4);
+		}
+		set_scroll(SCL_NBG0, scrollX, scrollY);
 		if((PadData1 & PAD_X)) {
 			sprite.angle += MTH_FIXED(3);
 			if (sprite.angle > MTH_FIXED(180))
@@ -79,7 +91,7 @@ int main()
 		if (PadData1 & PAD_C)	sprite.mirror |= MIRROR_HORIZ;
 		
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
-			drawSprite(&sprite);
+			draw_sprite(&sprite);
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();

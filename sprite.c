@@ -6,7 +6,7 @@
 #include "graphicrefs.h"
 #include "sprite.h"
 
-void drawSprite(SPRITE_INFO *info) {
+void draw_sprite(SPRITE_INFO *info) {
 	XyInt xy[4];
 	Fixed32 xOffset, yOffset, sin, cos, scaledX, scaledY;
 	int i;
@@ -50,7 +50,7 @@ void drawSprite(SPRITE_INFO *info) {
 	}
 }
 
-void makeSprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
+void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->charNum = spriteNum;
 	ptr->xPos = x;
 	ptr->yPos = y;

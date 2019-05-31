@@ -23,7 +23,7 @@ begin
 
   for i := 0 to Length(palette) - 1 do
   begin
-    Write(cFile, palette[i], ',');
+    Write(cFile, palette[i], 'u,');
   end;
   WriteLn(cFile, '};');
   WriteLn(cFile, 'const Uint8 ', varName, '_chr[] = {');
@@ -74,6 +74,7 @@ begin
 //    WriteLn('r: ', imgPal.palPalEntry[i].peRed, 'g: ', imgPal.palPalEntry[i].peGreen,
 //      'b: ', imgPal.palPalEntry[i].peBlue);
     saturnPal[i] := r or (g shl 8) or (b shl 16);
+//    saturnPal[i] := (b shl 8) or (g shl 16) or (r shl 24);
   end;
   i := 0;
   j := 0;

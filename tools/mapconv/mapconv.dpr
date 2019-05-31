@@ -14,17 +14,17 @@ var
 begin
   AssignFile(outFile, 'out.c');
   ReWrite(outFile);
-  WriteLn(outFile, 'const Uint16 ', name, '[', Length(map), '][', Length(map[0]), '] = {');
+  WriteLn(outFile, 'const Uint16 ', name, '[] = {');
   for i := 0 to Length(map) - 1 do
   begin
     for j := 0 to Length(map[0]) - 1 do
     begin
       if j = 0 then
-        Write(outFile, '  {', map[i][j], ',')
+        Write(outFile, '  ', map[i][j], ',')
       else
         Write(outFile, map[i][j], ',');
     end;
-    Write(outFile, '},', #13#10);
+    Write(outFile, #13#10);
   end;
   WriteLn(outFile, '};');
   CloseFile(outFile);
@@ -97,7 +97,9 @@ begin
     begin
       for j := 0 to width - 1 do
         begin
-          saturnMap[i][j] := (map[i][j] and $3ff) - 1; //tiled stores maps 1 indexed for some reason
+        //tiled stores maps 1 indexed for some reason
+        //multiply by 2 because maps are stored with 8x8 tile indexes even when they're 16*16
+          saturnMap[i][j] := ((map[i][j] and $3ff) - 1) * 2;
           if (map[i][j] and $80000000) = $80000000 then  //is tile horizontally flipped?
             saturnMap[i][j] := saturnMap[i][j] or $400;
           if (map[i][j] and $40000000) = $40000000 then //is vertically flipped?
