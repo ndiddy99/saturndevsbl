@@ -26,9 +26,10 @@ int main()
 	SPRITE_INFO sprite;
 	int count, i;
 	Fixed32 scrollX = FIXED(0), scrollY = FIXED(0);
-	
-	init_scroll(test_chr, map, test_pal);
+
+	SCL_Vdp2Init();
 	SPR_2Initial(&work2D);
+	SCL_SetColRamMode(SCL_CRM24_1024);
 	
 	SetVblank(); //setup vblank routine
 	set_imask(0);
@@ -36,6 +37,9 @@ int main()
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
 	SCL_DisplayFrame();
+	
+	init_scroll(test_chr, map, test_pal);
+	
 
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);

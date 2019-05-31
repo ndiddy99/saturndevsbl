@@ -31,15 +31,13 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palett
 	Uint16 *TilemapVram;
 	SclConfig	scfg;
 	SclVramConfig vram_cfg;
-	
-	SCL_Vdp2Init();
-	
-	SCL_SetColRamMode(SCL_CRM24_1024);
-	SCL_AllocColRam(SCL_NBG0,256,OFF); //set up palette data
-	SCL_SetColRam(SCL_NBG0,0,256,(void *)palette);
-	BackCol = 0x0000; //set the background color to black
-	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 
+	SCL_SetColRamMode(SCL_CRM24_1024);
+		SCL_AllocColRam(SCL_NBG0,256,OFF); //set up palette data
+		SCL_SetColRam(SCL_NBG0,0,256,(void *)palette);
+		BackCol = 0x0000; //set the background color to black
+	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
+	
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B1; //scroll character pattern to VRAM B1
 	memcpy(VramWorkP, tiles, 768);
 	
