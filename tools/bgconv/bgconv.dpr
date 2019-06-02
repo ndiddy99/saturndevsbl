@@ -79,10 +79,12 @@ begin
   i := 0;
   j := 0;
   count := 0;
+  WriteLn('height: ', img.Height);
   while i < img.Height - 1 do
   begin
-    while j < img.Height - 1 do
+    while j < img.Width - 1 do
     begin
+      Writeln('i: ', i, 'j: ', j);
       for k := i to (i + 8) - 1 do //top left
       begin
         line := pByteArray(img.ScanLine[k]);
@@ -125,6 +127,7 @@ begin
       j := j + 16; //position: top pixel + 16
     end;
     i := i + 16; //inc y pos
+    j := 0;
   end;
 
 

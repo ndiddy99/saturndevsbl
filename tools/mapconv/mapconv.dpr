@@ -106,7 +106,7 @@ begin
             saturnMap[i][j] := saturnMap[i][j] or $800;
         end;
     end;
-    outputC('tiles', saturnMap);
+    outputC('map', saturnMap);
 
   end
 

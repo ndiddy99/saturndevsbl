@@ -6,7 +6,6 @@
 #include	<sega_mth.h>
 
 #include	"vblank.h"
-#include	"graphic\cosmo2u.map"
 #include	"sprite.h"
 #include	"scroll.h"
 
