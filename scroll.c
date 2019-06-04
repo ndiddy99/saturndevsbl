@@ -39,7 +39,7 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palett
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B1; //scroll character pattern to VRAM B1
-	memcpy(VramWorkP, tiles, 256 * 11);
+	memcpy(VramWorkP, tiles, 256 * 40);
 	
 	TilemapVram = (Uint16 *)SCL_VDP2_VRAM_B0;
 	count = 0;

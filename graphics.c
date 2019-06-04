@@ -3,6 +3,6 @@ typedef unsigned short Uint16;
 typedef unsigned long Uint32;
 
 #include "graphic/sprite.c"
-#include "graphic/bg.c"
+#include "graphic/wood.c"
 
-#include "graphic/map.c"
+#include "graphic/map1.c"

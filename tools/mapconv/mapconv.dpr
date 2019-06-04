@@ -33,8 +33,8 @@ procedure handleMap(input: String);
 var
   tiledFile: IXMLDocument;
   element: IXMLNode;
-  val, currElement: String;
-  width, height, i, j, count, strIndex: Integer;
+  val, currElement, varname: String;
+  width, height, i, j, count, strIndex, backslashPos, strLength: Integer;
   map: array of array of Uint32;
   saturnMap: WordMatrix;
 begin
@@ -106,7 +106,11 @@ begin
             saturnMap[i][j] := saturnMap[i][j] or $800;
         end;
     end;
-    outputC('map', saturnMap);
+
+    backslashPos := input.LastIndexOf('\');
+    strLength := input.LastIndexOf('.') - backslashPos - 1;
+    varName := input.Substring(backslashPos, strLength);
+    outputC(varName, saturnMap);
 
   end
 

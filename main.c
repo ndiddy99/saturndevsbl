@@ -37,7 +37,7 @@ int main()
 	SCL_DisplayFrame();
 	SCL_DisplayFrame();
 	
-	init_scroll(test_chr, map, test_pal);
+	init_scroll(wood_chr, map1, wood_pal);
 	
 
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities

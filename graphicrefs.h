@@ -6,11 +6,11 @@ extern Uint16 dimensions[];
 extern Uint16 *tiles[];
 
 //bg.c
-extern Uint32 test_pal[];
-extern Uint8 test_chr[];
+extern Uint32 wood_pal[];
+extern Uint8 wood_chr[];
 
 //map.c
-extern Uint16 map[];
+extern Uint16 map1[];
 
 #define TEST_PAL_SIZE 256
 #define TEST_CHR_SIZE (64 * 64)
