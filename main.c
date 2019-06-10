@@ -8,6 +8,7 @@
 #include	"vblank.h"
 #include	"sprite.h"
 #include	"scroll.h"
+#include    "player.h"
 
 #include	"graphicrefs.h"
 
@@ -45,7 +46,7 @@ int main()
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	
 	count = 0;
-	for (i = 0; i < 4; i += 2) {
+	for (i = 0; i < 6 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
@@ -56,18 +57,21 @@ int main()
 		sprite.mirror = 0;
 		scrollX = 0;
 		scrollY = 0;
+		sprite.state = STATE_STILL;
 		
 		if(PadData1 & PAD_U){
 			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
 			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
 			// sprite.yPos -= MTH_FIXED(1);
 			scrollY = FIXED(-4);
+			sprite.state = STATE_UP;
 		}
 		if(PadData1 & PAD_D){
 			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,end.red,end.green,end.blue);
 			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&end,&start);
 			// sprite.yPos += MTH_FIXED(1);
 			scrollY = FIXED(4);
+			sprite.state = STATE_DOWN;
 		}
 		if (PadData1 & PAD_L) {
 			// sprite.xPos -= MTH_FIXED(1);
@@ -92,6 +96,7 @@ int main()
 		if((PadData1 & PAD_A)) 	sprite.scale += MTH_FIXED(0.05);
 		if((PadData1 & PAD_B)) 	sprite.scale -= MTH_FIXED(0.05);
 		if (PadData1 & PAD_C)	sprite.mirror |= MIRROR_HORIZ;
+		handle_player(&sprite);
 		
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			draw_sprite(&sprite);

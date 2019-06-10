@@ -59,4 +59,5 @@ void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->ySize = dimensions[(spriteNum << 1) + 1];
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
+	ptr->animTimer = 0;
 }

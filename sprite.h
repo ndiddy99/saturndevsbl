@@ -7,6 +7,12 @@
 #define MIRROR_HORIZ (1 << 4)
 #define MIRROR_VERT (1 << 5)
 
+#define STATE_STILL 0
+#define STATE_DOWN 1
+#define STATE_UP 2
+#define STATE_LEFT 3
+#define STATE_RIGHT 4
+
 typedef struct SpriteInfo {
 	Uint16 charNum;
 	Fixed32 xPos;
@@ -16,6 +22,8 @@ typedef struct SpriteInfo {
 	Uint16 ySize;
 	Fixed32 scale;
 	Fixed32 angle;
+	Uint16 animTimer;
+	Uint16 state;
 } SPRITE_INFO;
 
 //automatically picks the simplest SBL function for drawing the sprite depending
