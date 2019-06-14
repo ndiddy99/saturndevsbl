@@ -60,5 +60,5 @@ void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
-	ptr->state = STATE_DOWN_RELEASED;
+	ptr->state = STATE_NULL;
 }

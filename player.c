@@ -15,13 +15,12 @@ int anim_cursor = 0;
 SPRITE_INFO player;
 
 void player_init() {
-	make_sprite(0, MTH_FIXED(20), MTH_FIXED(20), &player);
+	make_sprite(0, MTH_FIXED(144), MTH_FIXED(96), &player);
 }
 
 void handle_player_input() {
-	player.mirror = 0;
-	Fixed32 scrollX = 0;
-	Fixed32 scrollY = 0;
+	Fixed32 scrollDX = 0;
+	Fixed32 scrollDY = 0;
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
 	//if d-pad was pressed this frame, reset animation
@@ -34,68 +33,52 @@ void handle_player_input() {
 		// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
 		// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
 		// player.yPos -= MTH_FIXED(1);
-		scrollY = MTH_FIXED(-2);
+		scrollDY = MTH_FIXED(-2);
 	}
 	if(PadData1 & PAD_D){
 		// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,end.red,end.green,end.blue);
 		// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&end,&start);
 		// player.yPos += MTH_FIXED(1);
-		scrollY = MTH_FIXED(2);
+		scrollDY = MTH_FIXED(2);
 	}
 	if (PadData1 & PAD_L) {
 		// player.xPos -= MTH_FIXED(1);
-		scrollX = MTH_FIXED(-2);
+		scrollDX = MTH_FIXED(-2);
 	}
 	if (PadData1 & PAD_R) {
 		// player.xPos += MTH_FIXED(1);
-		scrollX = MTH_FIXED(2);
+		scrollDX = MTH_FIXED(2);
 	}
 	handle_player(&player);
-	set_scroll(SCL_NBG0, scrollX, scrollY);
+	set_scroll(SCL_NBG0, scrollDX, scrollDY);
 }
 
 void handle_player(SPRITE_INFO *player) {
-	if (player->state >= STATE_UP_RELEASED) {
-		switch (player->state) {
-			case STATE_UP_RELEASED:
-				player->charNum = 3;
-			break;
-			case STATE_DOWN_RELEASED:
-				player->charNum = 0;
-			break;
-			case STATE_LEFT_RELEASED:
-				player->charNum = 6;
-				player->mirror = MIRROR_HORIZ;
-			break;
-			case STATE_RIGHT_RELEASED:
-				player->charNum = 6;
-			break;
-		}
+	if (player->animTimer > 0) player->animTimer--;
+	
+	if (player->state == STATE_LEFT) {
+		player->mirror = MIRROR_HORIZ;
 	}
-	else {
-		if (player->animTimer > 0) player->animTimer--;
-		
-		if (player->state == STATE_LEFT) {
-			player->mirror = MIRROR_HORIZ;
+	else if (player->state != STATE_NULL) {
+		player->mirror = 0;
+	}
+	
+	if (player->animTimer == 0) {
+		player->animTimer = 10;
+		switch (player->state) {
+			case STATE_UP:
+				player->charNum = player_up[anim_cursor];
+			break;
+			case STATE_DOWN:
+				player->charNum = player_down[anim_cursor];
+			break;
+			case STATE_LEFT:
+				player->charNum = player_side[anim_cursor];
+			break;
+			case STATE_RIGHT:
+				player->charNum = player_side[anim_cursor];
+			break;
 		}
-		
-		if (player->animTimer == 0) {
-			player->animTimer = 10;
-			switch (player->state) {
-				case STATE_UP:
-					player->charNum = player_up[anim_cursor];
-				break;
-				case STATE_DOWN:
-					player->charNum = player_down[anim_cursor];
-				break;
-				case STATE_LEFT:
-					player->charNum = player_side[anim_cursor];
-				break;
-				case STATE_RIGHT:
-					player->charNum = player_side[anim_cursor];
-				break;
-			}
-			anim_cursor == 3 ? anim_cursor = 0 : anim_cursor++;
-		}
+		anim_cursor == 3 ? anim_cursor = 0 : anim_cursor++;
 	}
 }

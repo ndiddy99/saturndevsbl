@@ -12,10 +12,6 @@
 #define STATE_DOWN 2
 #define STATE_LEFT 3
 #define STATE_RIGHT 4
-#define STATE_UP_RELEASED 5
-#define STATE_DOWN_RELEASED 6
-#define STATE_LEFT_RELEASED 7
-#define STATE_RIGHT_RELEASED 8
 
 typedef struct SpriteInfo {
 	Uint16 charNum;
