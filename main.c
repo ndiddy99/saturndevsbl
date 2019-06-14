@@ -20,12 +20,8 @@
 SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
 
 
-int main()
-{
-	Uint16 PadData1EW;
-	SPRITE_INFO sprite;
+int main() {
 	int count, i;
-	Fixed32 scrollX = FIXED(0), scrollY = FIXED(0);
 
 	SCL_Vdp2Init();
 	SPR_2Initial(&work2D);
@@ -39,67 +35,21 @@ int main()
 	SCL_DisplayFrame();
 	
 	init_scroll(wood_chr, map1, wood_pal);
-	
+	player_init();
 
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	
 	count = 0;
-	for (i = 0; i < 6 * 2; i += 2) {
+	for (i = 0; i < 9 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
-	make_sprite(0, FIXED(50), FIXED(20), &sprite);
 	while(1) {
-		PadData1EW = PadData1E;
-		PadData1E = 0;
-		sprite.mirror = 0;
-		scrollX = 0;
-		scrollY = 0;
-		sprite.state = STATE_STILL;
-		
-		if(PadData1 & PAD_U){
-			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
-			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
-			// sprite.yPos -= MTH_FIXED(1);
-			scrollY = FIXED(-4);
-			sprite.state = STATE_UP;
-		}
-		if(PadData1 & PAD_D){
-			// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,end.red,end.green,end.blue);
-			// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&end,&start);
-			// sprite.yPos += MTH_FIXED(1);
-			scrollY = FIXED(4);
-			sprite.state = STATE_DOWN;
-		}
-		if (PadData1 & PAD_L) {
-			// sprite.xPos -= MTH_FIXED(1);
-			scrollX = FIXED(-4);
-		}
-		if (PadData1 & PAD_R) {
-			// sprite.xPos += MTH_FIXED(1);
-			scrollX = FIXED(4);
-		}
-		set_scroll(SCL_NBG0, scrollX, scrollY);
-		if((PadData1 & PAD_X)) {
-			sprite.angle += MTH_FIXED(3);
-			if (sprite.angle > MTH_FIXED(180))
-				sprite.angle -= MTH_FIXED(360);
-		}
-		if((PadData1 & PAD_Y)) {
-			sprite.angle -= MTH_FIXED(3);
-			if (sprite.angle < MTH_FIXED(-180))
-				sprite.angle += MTH_FIXED(360);
-		}
-		if (PadData1 & PAD_Z)	sprite.mirror |= MIRROR_VERT; 
-		if((PadData1 & PAD_A)) 	sprite.scale += MTH_FIXED(0.05);
-		if((PadData1 & PAD_B)) 	sprite.scale -= MTH_FIXED(0.05);
-		if (PadData1 & PAD_C)	sprite.mirror |= MIRROR_HORIZ;
-		handle_player(&sprite);
-		
+		handle_player_input();
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
-			draw_sprite(&sprite);
+			draw_sprite(&player);
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();
