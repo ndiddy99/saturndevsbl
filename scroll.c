@@ -9,6 +9,7 @@ static Fixed32 scroll_y = 0;
 Sint32 map_tile_x = 0;
 Sint32 map_tile_y = 0;
 Uint32 copy_mode = 0;
+Uint16 *maps[3];
 
 /*----------------------------
 SCROLL NBG0 Cycle Table
@@ -76,6 +77,8 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palett
 		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position
 		SCL_Scale(FIXED(1.0), FIXED(1.0));
 	SCL_Close();
+	
+	maps[0] = (Uint16 *)tilemap;
 }
 
 void set_scroll(Uint32 num, Fixed32 x, Fixed32 y) {
@@ -110,11 +113,12 @@ void set_scroll(Uint32 num, Fixed32 x, Fixed32 y) {
 }
 
 //gets the value at the given coordinates for a square map
-Uint16 get_map_val(const Uint16 *map, int x, int y, int size) {
-	if (x >= size || y >= size) {
+Uint16 get_map_val(int map, int x, int y) {
+	Uint16 *map_ptr = maps[map];
+	if (x >= 64 || y >= 64) {
 		return 0;
 	}
 	else {
-		return map[y * size + x];
+		return map_ptr[y * 64 + x];
 	}
 }

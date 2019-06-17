@@ -6,6 +6,8 @@
 #include "graphicrefs.h"
 #include "sprite.h"
 
+int num_sprites = 0;
+
 void draw_sprite(SPRITE_INFO *info) {
 	XyInt xy[4];
 	Fixed32 xOffset, yOffset, sin, cos, scaledX, scaledY;
@@ -61,4 +63,20 @@ void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->angle = 0;
 	ptr->animTimer = 0;
 	ptr->state = STATE_NULL;
+}
+
+SPRITE_INFO *next_sprite() {
+	int i;
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		if (sprites[i].state == STATE_NODISP) {
+			num_sprites++;
+			return &sprites[i];
+		}
+	}
+	return NULL;
+}
+
+void delete_sprite(int index) {
+	sprites[index].state = STATE_NODISP;
+	num_sprites--;
 }

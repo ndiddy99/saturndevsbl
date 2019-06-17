@@ -5,7 +5,7 @@
 extern SPRITE_INFO player;
 
 void player_init();
-void handle_player(SPRITE_INFO *player);
-void handle_player_input(void);
+void player_animate(SPRITE_INFO *player);
+void player_input(void);
 
 #endif

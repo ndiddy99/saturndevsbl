@@ -7,11 +7,14 @@
 #define MIRROR_HORIZ (1 << 4)
 #define MIRROR_VERT (1 << 5)
 
-#define STATE_NULL 0
-#define STATE_UP 1
-#define STATE_DOWN 2
-#define STATE_LEFT 3
-#define STATE_RIGHT 4
+enum state {
+	STATE_NODISP = 0,
+	STATE_NULL,
+	STATE_UP,
+	STATE_DOWN,
+	STATE_LEFT,
+	STATE_RIGHT
+};
 
 typedef struct SpriteInfo {
 	Uint16 charNum;
@@ -26,10 +29,17 @@ typedef struct SpriteInfo {
 	Uint16 state;
 } SPRITE_INFO;
 
+#define SPRITE_LIST_SIZE 200
+SPRITE_INFO sprites[SPRITE_LIST_SIZE];
+extern int num_sprites;
+
 //automatically picks the simplest SBL function for drawing the sprite depending
 //on required features
 //needs command to be opened before calling
 void draw_sprite(SPRITE_INFO *info);
 void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+SPRITE_INFO *next_sprite();
+void delete_sprite(int index);
+
 
 #endif

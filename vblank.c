@@ -18,7 +18,6 @@
 #include 	<sega_int.h>
 #include	"per_x.h"
 #include	"scroll.h"
-#include	"graphicrefs.h"
 
 volatile trigger_t	PadData1  = 0x0000;
 volatile trigger_t	PadData1E = 0x0000;
@@ -47,25 +46,25 @@ void UsrVblankIn(void) {
 	if (copy_mode & COPY_MODE_RCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
 			vram_ptr[(((i + map_tile_y) % 32) * 32) + ((map_tile_x + SCREEN_TILES_X) % 32)] = 
-				get_map_val(map1, map_tile_x + SCREEN_TILES_X, map_tile_y + i, 64);
+				get_map_val(0, map_tile_x + SCREEN_TILES_X, map_tile_y + i);
 		}
 	}
 	if (copy_mode & COPY_MODE_LCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
 			vram_ptr[(((i + map_tile_y) % 32) * 32) + ((map_tile_x - 1) % 32)] = 
-				get_map_val(map1, map_tile_x - 1, map_tile_y + i, 64);
+				get_map_val(0, map_tile_x - 1, map_tile_y + i);
 		}		
 	}
 	if (copy_mode & COPY_MODE_BROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
 			vram_ptr[(((map_tile_y + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tile_x) % 32)] =
-				get_map_val(map1, map_tile_x + i, map_tile_y + SCREEN_TILES_Y, 64);
+				get_map_val(0, map_tile_x + i, map_tile_y + SCREEN_TILES_Y);
 		}
 	}
 	if (copy_mode & COPY_MODE_TROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
 			vram_ptr[(((map_tile_y - 1) % 32) * 32) + ((i + map_tile_x) % 32)] =
-				get_map_val(map1, map_tile_x + i, map_tile_y - 1, 64);
+				get_map_val(0, map_tile_x + i, map_tile_y - 1);
 		}
 	}
 	

@@ -9,6 +9,7 @@
 #include	"sprite.h"
 #include	"scroll.h"
 #include    "player.h"
+#include    "print.h"
 
 #include	"graphicrefs.h"
 
@@ -36,20 +37,24 @@ int main() {
 	
 	init_scroll(wood_chr, map1, wood_pal);
 	player_init();
+	print_init();
 
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	
 	count = 0;
-	for (i = 0; i < 9 * 2; i += 2) {
+	for (i = 0; i < 19 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
+	
+	print_num(42069, 5, 6);
 	while(1) {
-		handle_player_input();
+		player_input();
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			draw_sprite(&player);
+			print_display();
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();

@@ -18,7 +18,7 @@ void player_init() {
 	make_sprite(0, MTH_FIXED(144), MTH_FIXED(96), &player);
 }
 
-void handle_player_input() {
+void player_input() {
 	Fixed32 scrollDX = 0;
 	Fixed32 scrollDY = 0;
 	Uint16 PadData1EW = PadData1E;
@@ -49,11 +49,11 @@ void handle_player_input() {
 		// player.xPos += MTH_FIXED(1);
 		scrollDX = MTH_FIXED(2);
 	}
-	handle_player(&player);
+	player_animate(&player);
 	set_scroll(SCL_NBG0, scrollDX, scrollDY);
 }
 
-void handle_player(SPRITE_INFO *player) {
+void player_animate(SPRITE_INFO *player) {
 	if (player->animTimer > 0) player->animTimer--;
 	
 	if (player->state == STATE_LEFT) {
