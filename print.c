@@ -43,10 +43,9 @@ static int num_digits(Uint32 num) {
 }
 
 void print_num(Uint32 num, int row, int col) {
-	int digits = num_digits(num);
-	int right_col = col + digits; //rightmost column
+	int right_col = col + 9; //rightmost column
 	int i;
-	for (i = 0; i < digits; i++) {
+	for (i = 0; i < 9; i++) {
 		text[row][right_col--] = num % 10;
 		num /= 10;
 	}
@@ -58,9 +57,9 @@ void print_display() {
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
 			if (text[i][j] != 65535) {
-				make_sprite(text[i][j] + 9,
-					MTH_IntToFixed(j * FONT_X),
-					MTH_IntToFixed(i * FONT_Y),
+				make_sprite(text[i][j],
+					MTH_IntToFixed(j << 3), // * FONT_X
+					MTH_IntToFixed(i << 4), // * FONT_Y
 					&text_spr);
 				draw_sprite(&text_spr);
 			}

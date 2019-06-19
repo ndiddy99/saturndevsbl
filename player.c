@@ -2,20 +2,22 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "player.h"
+#include "print.h"
 #include "scroll.h"
 #include "vblank.h"
 
 const Uint16 states[] = {STATE_NULL, STATE_UP, STATE_DOWN, STATE_NULL,
 	STATE_LEFT, STATE_UP, STATE_DOWN, STATE_LEFT, STATE_RIGHT, STATE_UP,
 	STATE_DOWN, STATE_RIGHT, STATE_NULL, STATE_UP, STATE_DOWN, STATE_NULL};
-const Uint16 player_down[] = {1, 0, 2, 0}; //frames for when the player's walking down
-const Uint16 player_up[] = {4, 3, 5, 3};
-const Uint16 player_side[] = {7, 6, 8, 6};
+const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's walking down
+const Uint16 player_up[] = {14, 13, 15, 13};
+const Uint16 player_side[] = {17, 16, 18, 16};
 int anim_cursor = 0;
 SPRITE_INFO player;
 
 void player_init() {
 	make_sprite(0, MTH_FIXED(144), MTH_FIXED(96), &player);
+	player.charNum = 10;
 }
 
 void player_input() {
@@ -30,27 +32,23 @@ void player_input() {
 	player.state = states[(PadData1 >> 12)];
 	
 	if(PadData1 & PAD_U){
-		// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,start.red,start.green,start.blue);
-		// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&start,&end);
-		// player.yPos -= MTH_FIXED(1);
 		scrollDY = MTH_FIXED(-2);
 	}
 	if(PadData1 & PAD_D){
-		// SCL_SetColOffset(SCL_OFFSET_A,SCL_NBG0,end.red,end.green,end.blue);
-		// SCL_SetAutoColOffset(SCL_OFFSET_A,1,10,&end,&start);
-		// player.yPos += MTH_FIXED(1);
 		scrollDY = MTH_FIXED(2);
 	}
 	if (PadData1 & PAD_L) {
-		// player.xPos -= MTH_FIXED(1);
 		scrollDX = MTH_FIXED(-2);
+		
 	}
 	if (PadData1 & PAD_R) {
-		// player.xPos += MTH_FIXED(1);
 		scrollDX = MTH_FIXED(2);
 	}
 	player_animate(&player);
-	set_scroll(SCL_NBG0, scrollDX, scrollDY);
+	move_scroll(0, scrollDX, scrollDY);
+	print_num(scrolls_x[0] >> 16, 0, 0);
+	print_num(scrolls_y[0] >> 16, 1, 0);
+	print_num(player.charNum, 2, 0);
 }
 
 void player_animate(SPRITE_INFO *player) {

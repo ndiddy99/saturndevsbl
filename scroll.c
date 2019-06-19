@@ -4,8 +4,8 @@
 #include <sega_scl.h>
 #include "scroll.h"
 
-static Fixed32 scroll_x = 0;
-static Fixed32 scroll_y = 0;
+Fixed32 scrolls_x[] = {0, 0, 0, 0};
+Fixed32 scrolls_y[] = {0, 0, 0, 0};
 Sint32 map_tile_x = 0;
 Sint32 map_tile_y = 0;
 Uint32 copy_mode = 0;
@@ -74,23 +74,25 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palett
 	SCL_SetCycleTable(CycleTb);
 	
 	SCL_Open(SCL_NBG0);
-		SCL_MoveTo(FIXED(0), FIXED(0),0); //home position
+		SCL_MoveTo(FIXED(48), FIXED(10),0); //home position
 		SCL_Scale(FIXED(1.0), FIXED(1.0));
 	SCL_Close();
 	
 	maps[0] = (Uint16 *)tilemap;
 }
 
-void set_scroll(Uint32 num, Fixed32 x, Fixed32 y) {
+void move_scroll(int num, Fixed32 x, Fixed32 y) {
 	Sint32 curr_tile_x, curr_tile_y;
-	scroll_x += x;
-	scroll_y += y;
-	if (scroll_x < 0) scroll_x = 0;
-	if (scroll_x > FIXED((64 - SCREEN_TILES_X) * 16)) scroll_x = FIXED((64 - SCREEN_TILES_X) * 16);
-	if (scroll_y < 0) scroll_y = 0;
-	if (scroll_y > FIXED((64 - SCREEN_TILES_Y) * 16)) scroll_y = FIXED((64 - SCREEN_TILES_Y) * 16);
-	curr_tile_x = MTH_FixedToInt(scroll_x) >> 4; //tile size is 16x16
-	curr_tile_y = MTH_FixedToInt(scroll_y) >> 4;
+	Fixed32 *scroll_x = &scrolls_x[num];
+	Fixed32 *scroll_y = &scrolls_y[num];
+	*scroll_x += x;
+	*scroll_y += y;
+	if (*scroll_x < 0) *scroll_x = 0;
+	if (*scroll_x > FIXED((64 - SCREEN_TILES_X) * 16)) *scroll_x = FIXED((64 - SCREEN_TILES_X) * 16);
+	if (*scroll_y < 0) *scroll_y = 0;
+	if (*scroll_y > FIXED((64 - SCREEN_TILES_Y) * 16)) *scroll_y = FIXED((64 - SCREEN_TILES_Y) * 16);
+	curr_tile_x = MTH_FixedToInt(*scroll_x) >> 4; //tile size is 16x16
+	curr_tile_y = MTH_FixedToInt(*scroll_y) >> 4;
 	copy_mode = 0;
 	if (curr_tile_x - map_tile_x > 0) { //if x value increasing
 		copy_mode |= COPY_MODE_RCOL;
@@ -107,8 +109,12 @@ void set_scroll(Uint32 num, Fixed32 x, Fixed32 y) {
 	map_tile_x = curr_tile_x;
 	map_tile_y = curr_tile_y;
 	
-	SCL_Open(num);
-		SCL_MoveTo(scroll_x, scroll_y, 0);
+	//Scroll bitmasks are:
+	//NBG0 - (1 << 2)
+	//NBG1 - (1 << 3)
+	//etc
+	SCL_Open(1 << (num + 2));
+		SCL_MoveTo(*scroll_x, *scroll_y, 0);
 	SCL_Close();
 }
 
