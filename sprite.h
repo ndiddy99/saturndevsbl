@@ -17,7 +17,7 @@ enum state {
 };
 
 typedef struct SpriteInfo {
-	Uint16 charNum;
+	Uint16 char_num;
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Uint16 mirror;

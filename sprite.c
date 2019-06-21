@@ -16,7 +16,7 @@ void draw_sprite(SPRITE_INFO *info) {
 	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
-		SPR_2NormSpr(0, info->mirror, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb normal sprite
+		SPR_2NormSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb normal sprite
 	}
 	
 	else if (info->angle == 0){
@@ -26,7 +26,7 @@ void draw_sprite(SPRITE_INFO *info) {
 		//bottom right corner of the sprite
 		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(MTH_IntToFixed(info->xSize), info->scale) + info->xPos));
 		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(MTH_IntToFixed(info->ySize), info->scale) + info->yPos));
-		SPR_2ScaleSpr(0, info->mirror, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb scaled sprite
+		SPR_2ScaleSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb scaled sprite
 	}
 	
 	else {
@@ -48,12 +48,12 @@ void draw_sprite(SPRITE_INFO *info) {
 			xy[i].y = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, sin) +
 				MTH_Mul(yOffset, cos) + scaledY);
 		}
-		SPR_2DistSpr(0, info->mirror, COLOR_5, 0, info->charNum, xy, NO_GOUR); //rgb distorted sprite
+		SPR_2DistSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb distorted sprite
 	}
 }
 
 void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
-	ptr->charNum = spriteNum;
+	ptr->char_num = spriteNum;
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;

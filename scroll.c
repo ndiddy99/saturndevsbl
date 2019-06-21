@@ -72,7 +72,7 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palett
 
 	//setup vram access pattern
 	SCL_SetCycleTable(CycleTb);
-	
+	 
 	SCL_Open(SCL_NBG0);
 		SCL_MoveTo(FIXED(48), FIXED(10),0); //home position
 		SCL_Scale(FIXED(1.0), FIXED(1.0));
@@ -115,6 +115,15 @@ void move_scroll(int num, Fixed32 x, Fixed32 y) {
 	//etc
 	SCL_Open(1 << (num + 2));
 		SCL_MoveTo(*scroll_x, *scroll_y, 0);
+	SCL_Close();
+}
+
+//moves scroll absolutely to coordinates with no bounds checking
+void set_scroll(int num, Fixed32 x, Fixed32 y) {
+	scrolls_x[num] = x; 
+	scrolls_y[num] = y; 
+	SCL_Open(1 << (num + 2));
+		SCL_MoveTo(x, y, 0);
 	SCL_Close();
 }
 

@@ -1,0 +1,7 @@
+{
+    "files.autoGuessEncoding": true,
+    "files.encoding": "shiftjis",
+    "files.associations": {
+        "SPR_2C.C": "cpp"
+    }
+}

@@ -20,12 +20,11 @@ extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];
 
 void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palette);
-void move_scroll(int num, Fixed32 x, Fixed32 y); //translate scroll by x,y amounts
+//translate scroll by x,y amounts
+void move_scroll(int num, Fixed32 x, Fixed32 y);
+//moves scroll absolutely to coordinates with no bounds checking
+void set_scroll(int num, Fixed32 x, Fixed32 y);
 //gets the value at the given coordinates for a square map
 Uint16 get_map_val(int map, int x, int y);
-/*
-1. Copy one screen of tilemap into vram
-2. If scroll pos passes a tile boundary, copy a row/col into vram
-*/
 
 #endif
