@@ -4,14 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build + Mednafen",
+            "label": "Build",
             "type": "shell",
             "command": "C:/saturn/sblproj/build.bat",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
+            "group": "build",
             "problemMatcher": "$gcc"
+        },
+        {
+            "label": "Run",
+            "type": "shell",
+            "command": "C:/saturn/sblproj/run.bat",
+            "group": "build",
+            "problemMatcher": []
         },
         {
             "label": "Clean",
