@@ -118,13 +118,9 @@ void move_scroll(int num, Fixed32 x, Fixed32 y) {
 	SCL_Close();
 }
 
-//moves scroll absolutely to coordinates with no bounds checking
+//moves scroll absolutely to coordinates
 void set_scroll(int num, Fixed32 x, Fixed32 y) {
-	scrolls_x[num] = x; 
-	scrolls_y[num] = y; 
-	SCL_Open(1 << (num + 2));
-		SCL_MoveTo(x, y, 0);
-	SCL_Close();
+	move_scroll(num, x - scrolls_x[num], y - scrolls_y[num]);
 }
 
 //gets the value at the given coordinates for a square map

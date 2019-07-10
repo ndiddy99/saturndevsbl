@@ -7,13 +7,16 @@
 #include "vblank.h"
 
 #define PLAYER_SPEED (MTH_FIXED(2))
-#define DIAGONAL_MULTIPLIER (MTH_FIXED(0.7071)) //square root of 1/2, normalizes diagonal speed
+//square root of 1/2, normalizes diagonal speed
+#define DIAGONAL_MULTIPLIER (MTH_FIXED(0.7071))
 #define PLAYER_SPRITE_X (MTH_FIXED(144))
 #define PLAYER_SPRITE_Y (MTH_FIXED(96))
-#define PLAYER_TOP (MTH_FIXED(3))
+#define PLAYER_TOP (MTH_FIXED(0))
 #define PLAYER_SIDE (MTH_FIXED(15))
 #define PLAYER_BOTTOM (MTH_FIXED(31))
 #define PLAYER_WIDTH (MTH_FIXED(31))
+
+#define WALKABLE(TILE) (TILE <= 24 && floor_tiles[TILE])
 
 //maps to the D-Pad bitmap provided by the Saturn hardware
 //what state the character should be set to given the d-pad's input
@@ -40,10 +43,16 @@ const Uint16 states[] = {
 const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's walking down
 const Uint16 player_up[] = {14, 13, 15, 13};
 const Uint16 player_side[] = {17, 16, 18, 16};
+//if a tile is walkable or not
+const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
 int anim_cursor = 0;
 SPRITE_INFO player;
 
 static inline Uint16 get_tile(Fixed32 x, Fixed32 y);
+static void collision_detect_up(Fixed32 *x, Fixed32 *y);
+static void collision_detect_down(Fixed32 *x, Fixed32 *y);
+static void collision_detect_left(Fixed32 *x, Fixed32 *y);
+static void collision_detect_right(Fixed32 *x, Fixed32 *y);
 
 void player_init() {
 	make_sprite(0, PLAYER_SPRITE_X, PLAYER_SPRITE_Y, &player);
@@ -51,14 +60,115 @@ void player_init() {
 	set_scroll(0, MTH_FIXED(48), MTH_FIXED(16));
 }
 
-//gets tile number for given sprite coordinates
+//gets tile number for given coordinates
 static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
 	return get_map_val(0, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4);
 }
 
+static void collision_detect_up(Fixed32 *x, Fixed32 *y) {
+	int walkable_ul = WALKABLE(get_tile(*x, *y));
+	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
+	if (!walkable_ul && !walkable_ur) {
+		*y &= 0xffff0000; //take off the decimal point
+		while (!walkable_ul && !walkable_ur) {
+			*y += MTH_FIXED(1);
+			walkable_ul = WALKABLE(get_tile(*x, *y));
+			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));			
+		}
+	}
+	// else if (!walkable_ul) {
+	// 	*x &= 0xffff0000;
+	// 	while (!walkable_ul) {
+	// 		*x += MTH_FIXED(1);
+	// 	}
+	// }
+	// else if (!walkable_ur) {
+	// 	*x &= 0xffff0000;
+	// 	while (!walkable_ur) {
+	// 		*x -= MTH_FIXED(1);
+	// 	}
+	// }
+}
+
+static void collision_detect_down(Fixed32 *x, Fixed32 *y) {
+	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
+	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
+	if (!walkable_ll && !walkable_lr) {
+		*y &= 0xffff0000; //take off the decimal point
+		while (!walkable_ll && !walkable_lr) {
+			*y -= MTH_FIXED(1);
+			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
+			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
+		}
+	}
+	// else if (!walkable_ll) {
+	// 	*x &= 0xffff0000;
+	// 	while (!walkable_ll) {
+	// 		*x += MTH_FIXED(1);
+	// 	}
+	// }
+	// else if (!walkable_lr) {
+	// 	*x &= 0xffff0000;
+	// 	while (!walkable_lr) {
+	// 		*x -= MTH_FIXED(1);
+	// 	}
+	// }
+}
+
+static void collision_detect_left(Fixed32 *x, Fixed32 *y) {
+	int walkable_ul = WALKABLE(get_tile(*x, *y));
+	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
+	if (!walkable_ul && !walkable_ll) {
+		*x &= 0xffff0000; //take off the decimal point
+		while (!walkable_ul && !walkable_ll) {
+			*x += MTH_FIXED(1);
+			walkable_ul = WALKABLE(get_tile(*x, *y));
+			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));			
+		}
+	}
+	// else if (!walkable_ul) {
+	// 	*y &= 0xffff0000;
+	// 	while (!walkable_ul) {
+	// 		*y += MTH_FIXED(1);
+	// 	}
+	// }
+	// else if (!walkable_ll) {
+	// 	*y &= 0xffff0000;
+	// 	while (!walkable_ll) {
+	// 		*y  -= MTH_FIXED(1);
+	// 	}
+	// }
+}
+
+static void collision_detect_right(Fixed32 *x, Fixed32 *y) {
+	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
+	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
+	if (!walkable_ur && !walkable_lr) {
+		*x &= 0xffff0000; //take off the decimal point
+		while (!walkable_ur && !walkable_lr) {
+			*x -= MTH_FIXED(1);
+			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
+			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
+		}
+	}
+	// else if (!walkable_ur) {
+	// 	*y &= 0xffff0000;
+	// 	while (!walkable_ur) {
+	// 		*y += MTH_FIXED(1);
+	// 	}
+	// }
+	// else if (!walkable_lr) {
+	// 	*y &= 0xffff0000;
+	// 	while (!walkable_lr) {
+	// 		*y -= MTH_FIXED(1);
+	// 	}
+	// }
+}
+
 void player_input() {
-	Fixed32 scrollDX = 0;
-	Fixed32 scrollDY = 0;
+	Fixed32 player_x = scrolls_x[0] + PLAYER_SPRITE_X;
+	Fixed32 player_y = scrolls_y[0] + PLAYER_SPRITE_Y;
+
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
 	//if state changed, reset animation
@@ -66,168 +176,49 @@ void player_input() {
 		player.state = states[PadData1 >> 12];
 		player.animTimer = 0;
 	}
-	Uint16 curr_tile;
 	switch (player.state) {
 		case STATE_UP:
-			scrollDX = 0;
-			scrollDY = -PLAYER_SPEED;
-			//check top left corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + scrollDY + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//check top right corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + scrollDY + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}			
+			player_y -= PLAYER_SPEED;
+			collision_detect_up(&player_x, &player_y);
 		break;
 		case STATE_DOWN:
-			scrollDX = 0;
-			scrollDY = PLAYER_SPEED;
-			//check bottom left corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + scrollDY + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//check bottom right corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + scrollDY + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
+			player_y += PLAYER_SPEED;
+			collision_detect_down(&player_x, &player_y);		
 		break;
 		case STATE_LEFT:
-			scrollDX = -PLAYER_SPEED;
-			scrollDY = 0;
-			//check top left corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//check bottom left corner
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
+			player_x -= PLAYER_SPEED;
+			collision_detect_left(&player_x, &player_y);
 		break;
 		case STATE_RIGHT:
-			scrollDX = PLAYER_SPEED;
-			scrollDY = 0;
-			//top right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//bottom right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
+			player_x += PLAYER_SPEED;
+			collision_detect_right(&player_x, &player_y);
 		break;
-		//for diagonals, first check x axis, then check y axis
-		case STATE_UPLEFT:
-			scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//bottom left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}		
-			scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//top right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-		break;
-		case STATE_UPRIGHT:
-			scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//bottom right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//top right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-		break;
-		case STATE_DOWNLEFT:
-			scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//bottom left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}	
-			scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//bottom left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//bottom right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-		break;
-		case STATE_DOWNRIGHT:
-			scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//top right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_TOP);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			//bottom right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X + PLAYER_WIDTH + scrollDX, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDX = 0;
-			}
-			scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			//bottom left
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-			//bottom right
-			curr_tile = get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y + PLAYER_BOTTOM + scrollDY);
-			if (curr_tile != 2 && curr_tile != 4 && curr_tile != 22 && curr_tile != 24) {
-				scrollDY = 0;
-			}
-		break;
+		// //for diagonals, first check x axis, then check y axis
+		// case STATE_UPLEFT:
+		// 	scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// 	scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// break;
+		// case STATE_UPRIGHT:
+		// 	scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// 	scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// break;
+		// case STATE_DOWNLEFT:
+		// 	scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// 	scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// break;
+		// case STATE_DOWNRIGHT:
+		// 	scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// 	scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+		// break;
 	}
 
-	move_scroll(0, scrollDX, scrollDY);
+	
+
+	set_scroll(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
 	player_animate(&player);
 	print_num(scrolls_x[0] >> 16, 0, 0);
 	print_num(scrolls_y[0] >> 16, 1, 0);
-	print_num(get_tile(scrolls_x[0] + PLAYER_SPRITE_X, scrolls_y[0] + PLAYER_SPRITE_Y), 2, 0);
+	print_num(get_tile(player_x, player_y), 2, 0);
 }
 
 void player_animate(SPRITE_INFO *player) {
