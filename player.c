@@ -7,8 +7,8 @@
 #include "vblank.h"
 
 #define PLAYER_SPEED (MTH_FIXED(2))
-//square root of 1/2, normalizes diagonal speed
-#define DIAGONAL_MULTIPLIER (MTH_FIXED(0.7071))
+//normalize diagonal speed
+#define DIAGONAL_MULTIPLIER (MTH_FIXED(0.8))
 #define PLAYER_SPRITE_X (MTH_FIXED(144))
 #define PLAYER_SPRITE_Y (MTH_FIXED(96))
 #define PLAYER_TOP (MTH_FIXED(0))
@@ -44,19 +44,19 @@ const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's wa
 const Uint16 player_up[] = {14, 13, 15, 13};
 const Uint16 player_side[] = {17, 16, 18, 16};
 //if a tile is walkable or not
-const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
+const int floor_tiles[] = {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
 int anim_cursor = 0;
 SPRITE_INFO player;
 
 static inline Uint16 get_tile(Fixed32 x, Fixed32 y);
-static void collision_detect_up(Fixed32 *x, Fixed32 *y);
-static void collision_detect_down(Fixed32 *x, Fixed32 *y);
-static void collision_detect_left(Fixed32 *x, Fixed32 *y);
-static void collision_detect_right(Fixed32 *x, Fixed32 *y);
-// static void collision_detect_up_left(Fixed32 *x, Fixed32 *y);
-// static void collision_detect_up_right(Fixed32 *x, Fixed32 *y);
-// static void collision_detect_down_left(Fixed32 *x, Fixed32 *y);
-// static void collision_detect_down_right(Fixed32 *x, Fixed32 *y);
+static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust);
+static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust);
+static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust);
+static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust);
+static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y);
+static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y);
+static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y);
+static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y);
 
 void player_init() {
 	make_sprite(0, PLAYER_SPRITE_X, PLAYER_SPRITE_Y, &player);
@@ -69,7 +69,7 @@ static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
 	return get_map_val(0, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4);
 }
 
-static void collision_detect_up(Fixed32 *x, Fixed32 *y) {
+static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ul = WALKABLE(get_tile(*x, *y));
 	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
 	if (!walkable_ul && !walkable_ur) {
@@ -80,15 +80,15 @@ static void collision_detect_up(Fixed32 *x, Fixed32 *y) {
 			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));			
 		}
 	}
-	else if (!walkable_ul) {
+	else if (adjust && !walkable_ul) {
 		*x += PLAYER_SPEED;
 	}
-	else if (!walkable_ur) {
+	else if (adjust && !walkable_ur) {
 		*x -= PLAYER_SPEED;
 	}
 }
 
-static void collision_detect_down(Fixed32 *x, Fixed32 *y) {
+static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
 	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
 	if (!walkable_ll && !walkable_lr) {
@@ -99,15 +99,15 @@ static void collision_detect_down(Fixed32 *x, Fixed32 *y) {
 			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
 		}
 	}
-	else if (!walkable_ll) {
+	else if (adjust && !walkable_ll) {
 		*x += PLAYER_SPEED;
 	}
-	else if (!walkable_lr) {
+	else if (adjust && !walkable_lr) {
 		*x -= PLAYER_SPEED;
 	}
 }
 
-static void collision_detect_left(Fixed32 *x, Fixed32 *y) {
+static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ul = WALKABLE(get_tile(*x, *y));
 	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
 	if (!walkable_ul && !walkable_ll) {
@@ -118,15 +118,15 @@ static void collision_detect_left(Fixed32 *x, Fixed32 *y) {
 			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));			
 		}
 	}
-	else if (!walkable_ul) {
+	else if (adjust && !walkable_ul) {
 		*y += PLAYER_SPEED;
 	}
-	else if (!walkable_ll) {
+	else if (adjust && !walkable_ll) {
 		*y -= PLAYER_SPEED;
 	}
 }
 
-static void collision_detect_right(Fixed32 *x, Fixed32 *y) {
+static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
 	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
 	if (!walkable_ur && !walkable_lr) {
@@ -137,13 +137,34 @@ static void collision_detect_right(Fixed32 *x, Fixed32 *y) {
 			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
 		}
 	}
-	else if (!walkable_ur) {
+	else if (adjust && !walkable_ur) {
 		*y += PLAYER_SPEED;
 	}
-	else if (!walkable_lr) {
+	else if (adjust && !walkable_lr) {
 		*y -= PLAYER_SPEED;
 	}
 }
+
+static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y) {
+	collision_detect_up(x, y, 0);
+	collision_detect_left(x, y, 0);
+}
+
+static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y) {
+	collision_detect_up(x, y, 0);
+	collision_detect_right(x, y, 0);
+}
+
+static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y) {
+	collision_detect_down(x, y, 0);
+	collision_detect_left(x, y, 0);
+}
+
+static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y) {
+	collision_detect_down(x, y, 0);
+	collision_detect_right(x, y, 0);
+}
+
 
 void player_input() {
 	Fixed32 player_x = scrolls_x[0] + PLAYER_SPRITE_X;
@@ -159,37 +180,41 @@ void player_input() {
 	switch (player.state) {
 		case STATE_UP:
 			player_y -= PLAYER_SPEED;
-			collision_detect_up(&player_x, &player_y);
+			collision_detect_up(&player_x, &player_y, 1);
 		break;
 		case STATE_DOWN:
 			player_y += PLAYER_SPEED;
-			collision_detect_down(&player_x, &player_y);		
+			collision_detect_down(&player_x, &player_y, 1);		
 		break;
 		case STATE_LEFT:
 			player_x -= PLAYER_SPEED;
-			collision_detect_left(&player_x, &player_y);
+			collision_detect_left(&player_x, &player_y, 1);
 		break;
 		case STATE_RIGHT:
 			player_x += PLAYER_SPEED;
-			collision_detect_right(&player_x, &player_y);
+			collision_detect_right(&player_x, &player_y, 1);
 		break;
-		// //for diagonals, first check x axis, then check y axis
-		// case STATE_UPLEFT:
-		// 	scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// 	scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// break;
-		// case STATE_UPRIGHT:
-		// 	scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// 	scrollDY = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// break;
-		// case STATE_DOWNLEFT:
-		// 	scrollDX = MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// 	scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// break;
-		// case STATE_DOWNRIGHT:
-		// 	scrollDX = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// 	scrollDY = MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-		// break;
+		//for diagonals, first check x axis, then check y axis
+		case STATE_UPLEFT:
+			player_x += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player_y += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_up_left(&player_x, &player_y);
+		break;
+		case STATE_UPRIGHT:
+			player_x += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player_y += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_up_right(&player_x, &player_y);
+		break;
+		case STATE_DOWNLEFT:
+			player_x += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player_y += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_down_left(&player_x, &player_y);
+		break;
+		case STATE_DOWNRIGHT:
+			player_x += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player_y += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_down_right(&player_x, &player_y);
+		break;
 	}
 
 	
