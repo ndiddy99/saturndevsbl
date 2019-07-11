@@ -53,6 +53,10 @@ static void collision_detect_up(Fixed32 *x, Fixed32 *y);
 static void collision_detect_down(Fixed32 *x, Fixed32 *y);
 static void collision_detect_left(Fixed32 *x, Fixed32 *y);
 static void collision_detect_right(Fixed32 *x, Fixed32 *y);
+// static void collision_detect_up_left(Fixed32 *x, Fixed32 *y);
+// static void collision_detect_up_right(Fixed32 *x, Fixed32 *y);
+// static void collision_detect_down_left(Fixed32 *x, Fixed32 *y);
+// static void collision_detect_down_right(Fixed32 *x, Fixed32 *y);
 
 void player_init() {
 	make_sprite(0, PLAYER_SPRITE_X, PLAYER_SPRITE_Y, &player);
@@ -76,18 +80,12 @@ static void collision_detect_up(Fixed32 *x, Fixed32 *y) {
 			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));			
 		}
 	}
-	// else if (!walkable_ul) {
-	// 	*x &= 0xffff0000;
-	// 	while (!walkable_ul) {
-	// 		*x += MTH_FIXED(1);
-	// 	}
-	// }
-	// else if (!walkable_ur) {
-	// 	*x &= 0xffff0000;
-	// 	while (!walkable_ur) {
-	// 		*x -= MTH_FIXED(1);
-	// 	}
-	// }
+	else if (!walkable_ul) {
+		*x += PLAYER_SPEED;
+	}
+	else if (!walkable_ur) {
+		*x -= PLAYER_SPEED;
+	}
 }
 
 static void collision_detect_down(Fixed32 *x, Fixed32 *y) {
@@ -101,18 +99,12 @@ static void collision_detect_down(Fixed32 *x, Fixed32 *y) {
 			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
 		}
 	}
-	// else if (!walkable_ll) {
-	// 	*x &= 0xffff0000;
-	// 	while (!walkable_ll) {
-	// 		*x += MTH_FIXED(1);
-	// 	}
-	// }
-	// else if (!walkable_lr) {
-	// 	*x &= 0xffff0000;
-	// 	while (!walkable_lr) {
-	// 		*x -= MTH_FIXED(1);
-	// 	}
-	// }
+	else if (!walkable_ll) {
+		*x += PLAYER_SPEED;
+	}
+	else if (!walkable_lr) {
+		*x -= PLAYER_SPEED;
+	}
 }
 
 static void collision_detect_left(Fixed32 *x, Fixed32 *y) {
@@ -126,18 +118,12 @@ static void collision_detect_left(Fixed32 *x, Fixed32 *y) {
 			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));			
 		}
 	}
-	// else if (!walkable_ul) {
-	// 	*y &= 0xffff0000;
-	// 	while (!walkable_ul) {
-	// 		*y += MTH_FIXED(1);
-	// 	}
-	// }
-	// else if (!walkable_ll) {
-	// 	*y &= 0xffff0000;
-	// 	while (!walkable_ll) {
-	// 		*y  -= MTH_FIXED(1);
-	// 	}
-	// }
+	else if (!walkable_ul) {
+		*y += PLAYER_SPEED;
+	}
+	else if (!walkable_ll) {
+		*y -= PLAYER_SPEED;
+	}
 }
 
 static void collision_detect_right(Fixed32 *x, Fixed32 *y) {
@@ -151,18 +137,12 @@ static void collision_detect_right(Fixed32 *x, Fixed32 *y) {
 			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
 		}
 	}
-	// else if (!walkable_ur) {
-	// 	*y &= 0xffff0000;
-	// 	while (!walkable_ur) {
-	// 		*y += MTH_FIXED(1);
-	// 	}
-	// }
-	// else if (!walkable_lr) {
-	// 	*y &= 0xffff0000;
-	// 	while (!walkable_lr) {
-	// 		*y -= MTH_FIXED(1);
-	// 	}
-	// }
+	else if (!walkable_ur) {
+		*y += PLAYER_SPEED;
+	}
+	else if (!walkable_lr) {
+		*y -= PLAYER_SPEED;
+	}
 }
 
 void player_input() {
