@@ -44,7 +44,7 @@ const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's wa
 const Uint16 player_up[] = {14, 13, 15, 13};
 const Uint16 player_side[] = {17, 16, 18, 16};
 //if a tile is walkable or not
-const int floor_tiles[] = {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
+const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
 int anim_cursor = 0;
 SPRITE_INFO player;
 
@@ -73,7 +73,7 @@ static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ul = WALKABLE(get_tile(*x, *y));
 	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
 	if (!walkable_ul && !walkable_ur) {
-		*y &= 0xffff0000; //take off the decimal point
+		// *y &= 0xffff0000; //take off the decimal point
 		while (!walkable_ul && !walkable_ur) {
 			*y += MTH_FIXED(1);
 			walkable_ul = WALKABLE(get_tile(*x, *y));
@@ -82,9 +82,11 @@ static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust) {
 	}
 	else if (adjust && !walkable_ul) {
 		*x += PLAYER_SPEED;
+		collision_detect_right(x, y, 0);
 	}
 	else if (adjust && !walkable_ur) {
 		*x -= PLAYER_SPEED;
+		collision_detect_left(x, y, 0);
 	}
 }
 
@@ -92,7 +94,7 @@ static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
 	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
 	if (!walkable_ll && !walkable_lr) {
-		*y &= 0xffff0000; //take off the decimal point
+		// *y &= 0xffff0000; //take off the decimal point
 		while (!walkable_ll && !walkable_lr) {
 			*y -= MTH_FIXED(1);
 			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
@@ -101,9 +103,11 @@ static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust) {
 	}
 	else if (adjust && !walkable_ll) {
 		*x += PLAYER_SPEED;
+		collision_detect_right(x, y, 0);
 	}
 	else if (adjust && !walkable_lr) {
 		*x -= PLAYER_SPEED;
+		collision_detect_left(x, y, 0);
 	}
 }
 
@@ -111,7 +115,7 @@ static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ul = WALKABLE(get_tile(*x, *y));
 	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
 	if (!walkable_ul && !walkable_ll) {
-		*x &= 0xffff0000; //take off the decimal point
+		// *x &= 0xffff0000; //take off the decimal point
 		while (!walkable_ul && !walkable_ll) {
 			*x += MTH_FIXED(1);
 			walkable_ul = WALKABLE(get_tile(*x, *y));
@@ -120,9 +124,11 @@ static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust) {
 	}
 	else if (adjust && !walkable_ul) {
 		*y += PLAYER_SPEED;
+		collision_detect_down(x, y, 0);
 	}
 	else if (adjust && !walkable_ll) {
 		*y -= PLAYER_SPEED;
+		collision_detect_up(x, y, 0);
 	}
 }
 
@@ -130,7 +136,7 @@ static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust) {
 	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
 	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
 	if (!walkable_ur && !walkable_lr) {
-		*x &= 0xffff0000; //take off the decimal point
+		// *x &= 0xffff0000; //take off the decimal point
 		while (!walkable_ur && !walkable_lr) {
 			*x -= MTH_FIXED(1);
 			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
@@ -139,29 +145,31 @@ static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust) {
 	}
 	else if (adjust && !walkable_ur) {
 		*y += PLAYER_SPEED;
+		collision_detect_down(x, y, 0);
 	}
 	else if (adjust && !walkable_lr) {
 		*y -= PLAYER_SPEED;
+		collision_detect_up(x, y, 0);
 	}
 }
 
 static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 0);
+	collision_detect_up(x, y, 1);
 	collision_detect_left(x, y, 0);
 }
 
 static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 0);
+	collision_detect_up(x, y, 1);
 	collision_detect_right(x, y, 0);
 }
 
 static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 0);
+	collision_detect_down(x, y, 1);
 	collision_detect_left(x, y, 0);
 }
 
 static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 0);
+	collision_detect_down(x, y, 1);
 	collision_detect_right(x, y, 0);
 }
 
@@ -194,7 +202,6 @@ void player_input() {
 			player_x += PLAYER_SPEED;
 			collision_detect_right(&player_x, &player_y, 1);
 		break;
-		//for diagonals, first check x axis, then check y axis
 		case STATE_UPLEFT:
 			player_x += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
 			player_y += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
@@ -221,8 +228,8 @@ void player_input() {
 
 	set_scroll(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
 	player_animate(&player);
-	print_num(scrolls_x[0] >> 16, 0, 0);
-	print_num(scrolls_y[0] >> 16, 1, 0);
+	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
+	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
 	print_num(get_tile(player_x, player_y), 2, 0);
 }
 
