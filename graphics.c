@@ -6,3 +6,4 @@ typedef unsigned long Uint32;
 #include "graphic/wood.c"
 
 #include "graphic/map1.c"
+#include "graphic/map2.c"

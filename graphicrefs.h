@@ -9,8 +9,10 @@ extern Uint16 *tiles[];
 extern Uint32 wood_pal[];
 extern Uint8 wood_chr[];
 
-//map.c
+//map1.c
 extern Uint16 map1[];
+//map2.c
+extern Uint16 map2[];
 
 #define TEST_PAL_SIZE 256
 #define TEST_CHR_SIZE (64 * 64)

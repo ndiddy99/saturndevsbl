@@ -40,7 +40,7 @@ int main() {
 	}
 	SCL_DisplayFrame();
 	
-	init_scroll(wood_chr, map1, wood_pal);
+	init_scroll(wood_chr, map1, map2, wood_pal);
 	player_init();
 	print_init();
 

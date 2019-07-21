@@ -1,6 +1,8 @@
 del map1.c
 ..\tools\mapconv\Win32\Debug\mapconv.exe map1.tmx
 rename out.c map1.c
+..\tools\mapconv\Win32\Debug\mapconv.exe map2.tmx
+rename out.c map2.c
 del wood.c
 ..\tools\bgconv\Win32\Debug\bgconv.exe wood.bmp
 rename out.c wood.c

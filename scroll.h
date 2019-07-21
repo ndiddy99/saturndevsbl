@@ -19,7 +19,7 @@ extern Uint32 copy_mode; //what to copy to VRAM from the map
 extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];
 
-void init_scroll(const Uint8 *tiles, const Uint16 *tilemap, const Uint32 *palette);
+void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette);
 //translate scroll by x,y amounts
 void move_scroll(int num, Fixed32 x, Fixed32 y);
 //moves scroll absolutely to coordinates with no bounds checking
