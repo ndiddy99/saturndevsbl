@@ -8,7 +8,7 @@
 #define SCREEN_TILES_Y 14
 #define CELL_SIZE 32
 
-extern Sint32 map_tile_x, map_tile_y;
+extern Sint32 map_tiles_x[], map_tiles_y[];
 
 #define COPY_MODE_LCOL 1 
 #define COPY_MODE_RCOL 2 
@@ -18,7 +18,7 @@ extern Sint32 map_tile_x, map_tile_y;
 #define NBG0_MAP_ADDR (SCL_VDP2_VRAM_A0)
 #define NBG1_MAP_ADDR (SCL_VDP2_VRAM_A0 + 0x800)
 
-extern Uint32 copy_mode; //what to copy to VRAM from the map
+extern Uint32 copy_modes[]; //what to copy to VRAM from the map
 extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];
 

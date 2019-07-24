@@ -226,6 +226,9 @@ void player_input() {
 
 	
 	set_scroll(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
+	// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
+	// of converting the variable to a Fixed32, multiplying it, converting it back to an int
+	set_scroll(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
 	player_animate(&player);
 	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
 	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);

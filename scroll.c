@@ -6,10 +6,10 @@
 
 Fixed32 scrolls_x[] = {0, 0, 0, 0};
 Fixed32 scrolls_y[] = {0, 0, 0, 0};
-Sint32 map_tile_x = 0;
-Sint32 map_tile_y = 0;
-Uint32 copy_mode = 0;
-Uint16 *maps[3];
+Sint32 map_tiles_x[] = {0, 0, 0, 0};
+Sint32 map_tiles_y[] = {0, 0, 0, 0};
+Uint32 copy_modes[] = {0, 0, 0, 0};
+Uint16 *maps[4];
 
 /*
  * 0: NBG0 Pattern Name
@@ -113,7 +113,7 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	SCL_Close();
 	SCL_Open(SCL_NBG1);
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
-		SCL_Scale(FIXED(0.7), FIXED(0.7));
+		SCL_Scale(FIXED(0.75), FIXED(0.75));
 	SCL_Close();
 	
 	maps[0] = (Uint16 *)tilemap0;
@@ -123,38 +123,36 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 
 void move_scroll(int num, Fixed32 x, Fixed32 y) {
 	Sint32 curr_tile_x, curr_tile_y;
-	Fixed32 *scroll_x = &scrolls_x[num];
-	Fixed32 *scroll_y = &scrolls_y[num];
-	*scroll_x += x;
-	*scroll_y += y;
-	if (*scroll_x < 0) *scroll_x = 0;
-	if (*scroll_x > FIXED((64 - SCREEN_TILES_X) * 16)) *scroll_x = FIXED((64 - SCREEN_TILES_X) * 16);
-	if (*scroll_y < 0) *scroll_y = 0;
-	if (*scroll_y > FIXED((64 - SCREEN_TILES_Y) * 16)) *scroll_y = FIXED((64 - SCREEN_TILES_Y) * 16);
-	curr_tile_x = MTH_FixedToInt(*scroll_x) >> 4; //tile size is 16x16
-	curr_tile_y = MTH_FixedToInt(*scroll_y) >> 4;
-	copy_mode = 0;
-	if (curr_tile_x - map_tile_x > 0) { //if x value increasing
-		copy_mode |= COPY_MODE_RCOL;
+	scrolls_x[num] += x;
+	scrolls_y[num] += y;
+	if (scrolls_x[num] < 0) scrolls_x[num] = 0;
+	if (scrolls_x[num] > FIXED((64 - SCREEN_TILES_X) * 16)) scrolls_x[num] = FIXED((64 - SCREEN_TILES_X) * 16);
+	if (scrolls_y[num] < 0) scrolls_y[num] = 0;
+	if (scrolls_y[num] > FIXED((64 - SCREEN_TILES_Y) * 16)) scrolls_y[num] = FIXED((64 - SCREEN_TILES_Y) * 16);
+	curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
+	curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
+	copy_modes[num] = 0;
+	if (curr_tile_x - map_tiles_x[num] > 0) { //if x value increasing
+		copy_modes[num] |= COPY_MODE_RCOL;
 	}
-	else if (map_tile_x - curr_tile_x > 0) { //if x value decreasing
-		copy_mode |= COPY_MODE_LCOL;
+	else if (curr_tile_x - map_tiles_x[num] < 0) { //if x value decreasing
+		copy_modes[num] |= COPY_MODE_LCOL;
 	}
-	if (curr_tile_y - map_tile_y > 0) { //if y value increasing
-		copy_mode |= COPY_MODE_BROW;
+	if (curr_tile_y - map_tiles_y[num] > 0) { //if y value increasing
+		copy_modes[num] |= COPY_MODE_BROW;
 	}
-	else if (map_tile_y - curr_tile_y > 0) { //if y value decreasing
-		copy_mode |= COPY_MODE_TROW;
+	else if (curr_tile_y - map_tiles_y[num] < 0) { //if y value decreasing
+		copy_modes[num] |= COPY_MODE_TROW;
 	}
-	map_tile_x = curr_tile_x;
-	map_tile_y = curr_tile_y;
+	map_tiles_x[num] = curr_tile_x;
+	map_tiles_y[num] = curr_tile_y;
 	
 	//Scroll bitmasks are:
 	//NBG0 - (1 << 2)
 	//NBG1 - (1 << 3)
 	//etc
 	SCL_Open(1 << (num + 2));
-		SCL_MoveTo(*scroll_x, *scroll_y, 0);
+		SCL_MoveTo(scrolls_x[num], scrolls_y[num], 0);
 	SCL_Close();
 }
 
