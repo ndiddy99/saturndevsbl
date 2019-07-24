@@ -15,6 +15,9 @@ extern Sint32 map_tile_x, map_tile_y;
 #define COPY_MODE_TROW 4 
 #define COPY_MODE_BROW 8 
 
+#define NBG0_MAP_ADDR (SCL_VDP2_VRAM_A0)
+#define NBG1_MAP_ADDR (SCL_VDP2_VRAM_A0 + 0x800)
+
 extern Uint32 copy_mode; //what to copy to VRAM from the map
 extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];

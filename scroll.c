@@ -40,14 +40,11 @@ Uint16 *maps[3];
 // There's also numerous read restrictions, see SOA technical bulletin #8 for more information
 
 Uint16	CycleTb[]={
-	0x0f1f,0xffff,
-	0x4455,0xffff,
+	0x011f,0xffff,
+	0x4455,0xff55,
 	0xffff,0xffff,
 	0xffff,0xffff
 };
-
-#define NBG0_MAP_ADDR (SCL_VDP2_VRAM_A0)
-#define NBG1_MAP_ADDR (SCL_VDP2_VRAM_A0 + 0x800)
 
 void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette) {
 	int count, i, j;
@@ -116,7 +113,7 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	SCL_Close();
 	SCL_Open(SCL_NBG1);
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
-		SCL_Scale(FIXED(1), FIXED(1));
+		SCL_Scale(FIXED(0.7), FIXED(0.7));
 	SCL_Close();
 	
 	maps[0] = (Uint16 *)tilemap0;
@@ -172,7 +169,5 @@ Uint16 get_map_val(int map, int x, int y) {
 	if (x >= 64 || y >= 64) {
 		return 0;
 	}
-	else {
-		return map_ptr[y * 64 + x];
-	}
+	return map_ptr[y * 64 + x];
 }

@@ -1,6 +1,7 @@
 {
     "files.encoding": "shiftjis",
     "files.associations": {
-        "SPR_2C.C": "cpp"
+        "SPR_2C.C": "cpp",
+        "scroll.h": "c"
     }
 }

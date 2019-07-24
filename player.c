@@ -225,7 +225,6 @@ void player_input() {
 	}
 
 	
-
 	set_scroll(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
 	player_animate(&player);
 	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);

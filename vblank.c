@@ -18,6 +18,8 @@
 #include 	<sega_int.h>
 #include	"per_x.h"
 #include	"scroll.h"
+#include    "graphicrefs.h"
+#include "print.h"
 
 volatile trigger_t	PadData1  = 0x0000;
 volatile trigger_t	PadData1E = 0x0000;
@@ -40,7 +42,7 @@ void SetVblank(void) {
 
 
 void UsrVblankIn(void) {
-	Uint16 *vram_ptr = (Uint16 *)SCL_VDP2_VRAM_B0;
+	Uint16 *vram_ptr = (Uint16 *)NBG0_MAP_ADDR;
 	int i;
 	
 	if (copy_mode & COPY_MODE_RCOL) {
@@ -67,6 +69,7 @@ void UsrVblankIn(void) {
 				get_map_val(0, map_tile_x + i, map_tile_y - 1);
 		}
 	}
+
 	
 	SCL_VblankStart();
 }
