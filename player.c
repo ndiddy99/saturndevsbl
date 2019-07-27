@@ -154,23 +154,23 @@ static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust) {
 }
 
 static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 1);
-	collision_detect_left(x, y, 0);
+	collision_detect_up(x, y, 0);
+	collision_detect_left(x, y, 1);
 }
 
 static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 1);
-	collision_detect_right(x, y, 0);
+	collision_detect_up(x, y, 0);
+	collision_detect_right(x, y, 1);
 }
 
 static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 1);
-	collision_detect_left(x, y, 0);
+	collision_detect_down(x, y, 0);
+	collision_detect_left(x, y, 1);
 }
 
 static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 1);
-	collision_detect_right(x, y, 0);
+	collision_detect_down(x, y, 0);
+	collision_detect_right(x, y, 1);
 }
 
 

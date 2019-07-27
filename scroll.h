@@ -4,9 +4,10 @@
 #define TILE_SIZE 16
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 224
-#define SCREEN_TILES_X 20
-#define SCREEN_TILES_Y 14
-#define CELL_SIZE 32
+//maximum # tiles i'll show onscreen
+#define SCREEN_TILES_X 28
+#define SCREEN_TILES_Y 20
+#define BG_TILES 32
 
 extern Sint32 map_tiles_x[], map_tiles_y[];
 
@@ -29,5 +30,6 @@ void move_scroll(int num, Fixed32 x, Fixed32 y);
 void set_scroll(int num, Fixed32 x, Fixed32 y);
 //gets the value at the given coordinates for a square map
 Uint16 get_map_val(int map, int x, int y);
-
+//copies scroll to VRAM after position has been changed by move/set scroll
+void copy_scroll(int num);
 #endif

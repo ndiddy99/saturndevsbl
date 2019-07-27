@@ -10,6 +10,7 @@ Sint32 map_tiles_x[] = {0, 0, 0, 0};
 Sint32 map_tiles_y[] = {0, 0, 0, 0};
 Uint32 copy_modes[] = {0, 0, 0, 0};
 Uint16 *maps[4];
+Uint16 *vram[] = {NBG0_MAP_ADDR, NBG1_MAP_ADDR, NULL, NULL};
 
 /*
  * 0: NBG0 Pattern Name
@@ -168,4 +169,33 @@ Uint16 get_map_val(int map, int x, int y) {
 		return 0;
 	}
 	return map_ptr[y * 64 + x];
+}
+
+void copy_scroll(int num) {
+	int i;
+	Uint16 *vram_ptr = vram[num];
+	if (copy_modes[num] & COPY_MODE_RCOL) {
+		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
+			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32)] = 
+				get_map_val(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
+		}
+	}
+	if (copy_modes[num] & COPY_MODE_LCOL) {
+		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
+			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] - 1) % 32)] = 
+				get_map_val(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
+		}		
+	}
+	if (copy_modes[num] & COPY_MODE_BROW) {
+		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
+			vram_ptr[(((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
+				get_map_val(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
+		}
+	}
+	if (copy_modes[num] & COPY_MODE_TROW) {
+		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
+			vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
+				get_map_val(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
+		}
+	}
 }

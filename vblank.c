@@ -42,34 +42,8 @@ void SetVblank(void) {
 
 
 void UsrVblankIn(void) {
-	Uint16 *vram_ptr = (Uint16 *)NBG0_MAP_ADDR;
-	int i;
-	
-	if (copy_modes[0] & COPY_MODE_RCOL) {
-		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			vram_ptr[(((i + map_tiles_y[0]) % 32) * 32) + ((map_tiles_x[0] + SCREEN_TILES_X) % 32)] = 
-				get_map_val(0, map_tiles_x[0] + SCREEN_TILES_X, map_tiles_y[0] + i);
-		}
-	}
-	if (copy_modes[0] & COPY_MODE_LCOL) {
-		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			vram_ptr[(((i + map_tiles_y[0]) % 32) * 32) + ((map_tiles_x[0] - 1) % 32)] = 
-				get_map_val(0, map_tiles_x[0] - 1, map_tiles_y[0] + i);
-		}		
-	}
-	if (copy_modes[0] & COPY_MODE_BROW) {
-		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			vram_ptr[(((map_tiles_y[0] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[0]) % 32)] =
-				get_map_val(0, map_tiles_x[0] + i, map_tiles_y[0] + SCREEN_TILES_Y);
-		}
-	}
-	if (copy_modes[0] & COPY_MODE_TROW) {
-		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			vram_ptr[(((map_tiles_y[0] - 1) % 32) * 32) + ((i + map_tiles_x[0]) % 32)] =
-				get_map_val(0, map_tiles_x[0] + i, map_tiles_y[0] - 1);
-		}
-	}
-
+	copy_scroll(0);
+	copy_scroll(1);
 	
 	SCL_VblankStart();
 }
