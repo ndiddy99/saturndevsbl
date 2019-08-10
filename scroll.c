@@ -10,7 +10,7 @@ Sint32 map_tiles_x[] = {0, 0, 0, 0};
 Sint32 map_tiles_y[] = {0, 0, 0, 0};
 Uint32 copy_modes[] = {0, 0, 0, 0};
 Uint16 *maps[4];
-Uint16 *vram[] = {NBG0_MAP_ADDR, NBG1_MAP_ADDR, NULL, NULL};
+Uint16 *vram[] = {(Uint16 *)NBG0_MAP_ADDR, (Uint16 *)NBG1_MAP_ADDR, NULL, NULL};
 
 /*
  * 0: NBG0 Pattern Name
@@ -47,7 +47,7 @@ Uint16	CycleTb[]={
 	0xffff,0xffff
 };
 
-void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette) {
+void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette) {
 	int count, i, j;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
@@ -122,14 +122,10 @@ void init_scroll(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 
 }
 
-void move_scroll(int num, Fixed32 x, Fixed32 y) {
+void scroll_move(int num, Fixed32 x, Fixed32 y) {
 	Sint32 curr_tile_x, curr_tile_y;
 	scrolls_x[num] += x;
 	scrolls_y[num] += y;
-	if (scrolls_x[num] < 0) scrolls_x[num] = 0;
-	if (scrolls_x[num] > FIXED((64 - SCREEN_TILES_X) * 16)) scrolls_x[num] = FIXED((64 - SCREEN_TILES_X) * 16);
-	if (scrolls_y[num] < 0) scrolls_y[num] = 0;
-	if (scrolls_y[num] > FIXED((64 - SCREEN_TILES_Y) * 16)) scrolls_y[num] = FIXED((64 - SCREEN_TILES_Y) * 16);
 	curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
 	curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
 	copy_modes[num] = 0;
@@ -158,12 +154,18 @@ void move_scroll(int num, Fixed32 x, Fixed32 y) {
 }
 
 //moves scroll absolutely to coordinates
-void set_scroll(int num, Fixed32 x, Fixed32 y) {
-	move_scroll(num, x - scrolls_x[num], y - scrolls_y[num]);
+void scroll_set(int num, Fixed32 x, Fixed32 y) {
+	scroll_move(num, x - scrolls_x[num], y - scrolls_y[num]);
+}
+
+void scroll_scale(int num, Fixed32 scale) {
+	SCL_Open(1 << (num + 2));
+		SCL_Scale(scale, scale);
+	SCL_Close();
 }
 
 //gets the value at the given coordinates for a square map
-Uint16 get_map_val(int map, int x, int y) {
+Uint16 scroll_get(int map, int x, int y) {
 	Uint16 *map_ptr = maps[map];
 	if (x >= 64 || y >= 64) {
 		return 0;
@@ -171,31 +173,31 @@ Uint16 get_map_val(int map, int x, int y) {
 	return map_ptr[y * 64 + x];
 }
 
-void copy_scroll(int num) {
+void scroll_copy(int num) {
 	int i;
 	Uint16 *vram_ptr = vram[num];
 	if (copy_modes[num] & COPY_MODE_RCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
 			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32)] = 
-				get_map_val(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
+				scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
 		}
 	}
 	if (copy_modes[num] & COPY_MODE_LCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
 			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] - 1) % 32)] = 
-				get_map_val(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
+				scroll_get(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
 		}		
 	}
 	if (copy_modes[num] & COPY_MODE_BROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
 			vram_ptr[(((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
-				get_map_val(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
+				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
 		}
 	}
 	if (copy_modes[num] & COPY_MODE_TROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
 			vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
-				get_map_val(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
+				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
 		}
 	}
 }

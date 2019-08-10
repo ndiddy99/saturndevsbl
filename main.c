@@ -40,7 +40,7 @@ int main() {
 	}
 	SCL_DisplayFrame();
 	
-	init_scroll(wood_chr, map1, map2, wood_pal);
+	scroll_init(wood_chr, map1, map2, wood_pal);
 	player_init();
 	print_init();
 
@@ -51,7 +51,7 @@ int main() {
 	while(1) {
 		player_input();
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
-			draw_sprite(&player);
+			player_draw();
 			print_display();
 		SPR_2CloseCommand();
 		

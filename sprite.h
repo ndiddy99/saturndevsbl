@@ -20,13 +20,18 @@ enum state {
 	STATE_DOWNRIGHT
 };
 
+enum type {
+	TYPE_NORMAL = 0,
+	TYPE_PLAYER
+};
+
 typedef struct SpriteInfo {
 	Uint16 char_num;
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Uint16 mirror;
-	Uint16 xSize;
-	Uint16 ySize;
+	Fixed32 xSize;
+	Fixed32 ySize;
 	Fixed32 scale;
 	Fixed32 angle;
 	Uint16 animTimer;
@@ -40,10 +45,10 @@ extern int num_sprites;
 //automatically picks the simplest SBL function for drawing the sprite depending
 //on required features
 //needs command to be opened before calling
-void draw_sprite(SPRITE_INFO *info);
-void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
-SPRITE_INFO *next_sprite();
-void delete_sprite(int index);
+void sprite_draw(SPRITE_INFO *info);
+void sprite_make(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+SPRITE_INFO *sprite_next(void);
+void sprite_delete(int index);
 
 
 #endif

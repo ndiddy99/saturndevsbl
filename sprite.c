@@ -4,11 +4,12 @@
 #include <sega_spr.h>
 
 #include "graphicrefs.h"
+#include "scroll.h"
 #include "sprite.h"
 
 int num_sprites = 0;
 
-void draw_sprite(SPRITE_INFO *info) {
+void sprite_draw(SPRITE_INFO *info) {
 	XyInt xy[4];
 	Fixed32 xOffset, yOffset, sin, cos, scaledX, scaledY;
 	int i;
@@ -52,20 +53,20 @@ void draw_sprite(SPRITE_INFO *info) {
 	}
 }
 
-void make_sprite(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
+void sprite_make(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->char_num = spriteNum;
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;
-	ptr->xSize = dimensions[spriteNum << 1];
-	ptr->ySize = dimensions[(spriteNum << 1) + 1];
+	ptr->xSize = MTH_IntToFixed(dimensions[spriteNum << 1]);
+	ptr->ySize = MTH_IntToFixed(dimensions[(spriteNum << 1) + 1]);
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
 	ptr->state = STATE_NULL;
 }
 
-SPRITE_INFO *next_sprite() {
+SPRITE_INFO *sprite_next() {
 	int i;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (sprites[i].state == STATE_NODISP) {
@@ -76,7 +77,7 @@ SPRITE_INFO *next_sprite() {
 	return NULL;
 }
 
-void delete_sprite(int index) {
+void sprite_delete(int index) {
 	sprites[index].state = STATE_NODISP;
 	num_sprites--;
 }

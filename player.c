@@ -1,9 +1,11 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include "collision.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
+#include "sprite.h"
 #include "vblank.h"
 
 #define PLAYER_SPEED (MTH_FIXED(2))
@@ -15,8 +17,6 @@
 #define PLAYER_SIDE (MTH_FIXED(15))
 #define PLAYER_BOTTOM (MTH_FIXED(31))
 #define PLAYER_WIDTH (MTH_FIXED(31))
-
-#define WALKABLE(TILE) (TILE <= 24 && floor_tiles[TILE])
 
 //maps to the D-Pad bitmap provided by the Saturn hardware
 //what state the character should be set to given the d-pad's input
@@ -43,140 +43,16 @@ const Uint16 states[] = {
 const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's walking down
 const Uint16 player_up[] = {14, 13, 15, 13};
 const Uint16 player_side[] = {17, 16, 18, 16};
-//if a tile is walkable or not
-const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
 int anim_cursor = 0;
 SPRITE_INFO player;
-
-static inline Uint16 get_tile(Fixed32 x, Fixed32 y);
-static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust);
-static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust);
-static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust);
-static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust);
-static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y);
-static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y);
-static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y);
-static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y);
+Fixed32 scale_val = MTH_FIXED(1);
 
 void player_init() {
-	make_sprite(0, PLAYER_SPRITE_X, PLAYER_SPRITE_Y, &player);
-	player.char_num = 10;
-	set_scroll(0, MTH_FIXED(48), MTH_FIXED(16));
+	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	scroll_set(0, MTH_FIXED(48), MTH_FIXED(16));
 }
-
-//gets tile number for given coordinates
-static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
-	return get_map_val(0, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4);
-}
-
-static void collision_detect_up(Fixed32 *x, Fixed32 *y, int adjust) {
-	int walkable_ul = WALKABLE(get_tile(*x, *y));
-	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
-	if (!walkable_ul && !walkable_ur) {
-		// *y &= 0xffff0000; //take off the decimal point
-		while (!walkable_ul && !walkable_ur) {
-			*y += MTH_FIXED(1);
-			walkable_ul = WALKABLE(get_tile(*x, *y));
-			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));			
-		}
-	}
-	else if (adjust && !walkable_ul) {
-		*x += PLAYER_SPEED;
-		collision_detect_right(x, y, 0);
-	}
-	else if (adjust && !walkable_ur) {
-		*x -= PLAYER_SPEED;
-		collision_detect_left(x, y, 0);
-	}
-}
-
-static void collision_detect_down(Fixed32 *x, Fixed32 *y, int adjust) {
-	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
-	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
-	if (!walkable_ll && !walkable_lr) {
-		// *y &= 0xffff0000; //take off the decimal point
-		while (!walkable_ll && !walkable_lr) {
-			*y -= MTH_FIXED(1);
-			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
-			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
-		}
-	}
-	else if (adjust && !walkable_ll) {
-		*x += PLAYER_SPEED;
-		collision_detect_right(x, y, 0);
-	}
-	else if (adjust && !walkable_lr) {
-		*x -= PLAYER_SPEED;
-		collision_detect_left(x, y, 0);
-	}
-}
-
-static void collision_detect_left(Fixed32 *x, Fixed32 *y, int adjust) {
-	int walkable_ul = WALKABLE(get_tile(*x, *y));
-	int walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));
-	if (!walkable_ul && !walkable_ll) {
-		// *x &= 0xffff0000; //take off the decimal point
-		while (!walkable_ul && !walkable_ll) {
-			*x += MTH_FIXED(1);
-			walkable_ul = WALKABLE(get_tile(*x, *y));
-			walkable_ll = WALKABLE(get_tile(*x, *y + PLAYER_BOTTOM));			
-		}
-	}
-	else if (adjust && !walkable_ul) {
-		*y += PLAYER_SPEED;
-		collision_detect_down(x, y, 0);
-	}
-	else if (adjust && !walkable_ll) {
-		*y -= PLAYER_SPEED;
-		collision_detect_up(x, y, 0);
-	}
-}
-
-static void collision_detect_right(Fixed32 *x, Fixed32 *y, int adjust) {
-	int walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
-	int walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));
-	if (!walkable_ur && !walkable_lr) {
-		// *x &= 0xffff0000; //take off the decimal point
-		while (!walkable_ur && !walkable_lr) {
-			*x -= MTH_FIXED(1);
-			walkable_ur = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y));
-			walkable_lr = WALKABLE(get_tile(*x + PLAYER_WIDTH, *y + PLAYER_BOTTOM));			
-		}
-	}
-	else if (adjust && !walkable_ur) {
-		*y += PLAYER_SPEED;
-		collision_detect_down(x, y, 0);
-	}
-	else if (adjust && !walkable_lr) {
-		*y -= PLAYER_SPEED;
-		collision_detect_up(x, y, 0);
-	}
-}
-
-static inline void collision_detect_up_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 0);
-	collision_detect_left(x, y, 1);
-}
-
-static inline void collision_detect_up_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_up(x, y, 0);
-	collision_detect_right(x, y, 1);
-}
-
-static inline void collision_detect_down_left(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 0);
-	collision_detect_left(x, y, 1);
-}
-
-static inline void collision_detect_down_right(Fixed32 *x, Fixed32 *y) {
-	collision_detect_down(x, y, 0);
-	collision_detect_right(x, y, 1);
-}
-
 
 void player_input() {
-	Fixed32 player_x = scrolls_x[0] + PLAYER_SPRITE_X;
-	Fixed32 player_y = scrolls_y[0] + PLAYER_SPRITE_Y;
 
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
@@ -187,84 +63,102 @@ void player_input() {
 	}
 	switch (player.state) {
 		case STATE_UP:
-			player_y -= PLAYER_SPEED;
-			collision_detect_up(&player_x, &player_y, 1);
+			player.yPos -= PLAYER_SPEED;
+			collision_detect_up(&player, 1);
 		break;
 		case STATE_DOWN:
-			player_y += PLAYER_SPEED;
-			collision_detect_down(&player_x, &player_y, 1);		
+			player.yPos += PLAYER_SPEED;
+			collision_detect_down(&player, 1);
 		break;
 		case STATE_LEFT:
-			player_x -= PLAYER_SPEED;
-			collision_detect_left(&player_x, &player_y, 1);
+			player.xPos -= PLAYER_SPEED;
+			collision_detect_left(&player, 1);
 		break;
 		case STATE_RIGHT:
-			player_x += PLAYER_SPEED;
-			collision_detect_right(&player_x, &player_y, 1);
+			player.xPos += PLAYER_SPEED;
+			collision_detect_right(&player, 1);
 		break;
 		case STATE_UPLEFT:
-			player_x += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player_y += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_up_left(&player_x, &player_y);
+			player.xPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player.yPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_up_left(&player);
 		break;
 		case STATE_UPRIGHT:
-			player_x += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player_y += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_up_right(&player_x, &player_y);
+			player.xPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player.yPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_up_right(&player);
 		break;
 		case STATE_DOWNLEFT:
-			player_x += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player_y += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_down_left(&player_x, &player_y);
+			player.xPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player.yPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_down_left(&player);
 		break;
 		case STATE_DOWNRIGHT:
-			player_x += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player_y += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_down_right(&player_x, &player_y);
+			player.xPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			player.yPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
+			collision_detect_down_right(&player);
 		break;
 	}
+	if (PadData1 & PAD_A) {
+		scale_val += MTH_FIXED(0.05);
+	}
 
+	if (PadData1 & PAD_B) {
+		scale_val -= MTH_FIXED(0.05);
+	}
 	
-	set_scroll(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
-	// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
-	// of converting the variable to a Fixed32, multiplying it, converting it back to an int
-	set_scroll(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
-	player_animate(&player);
+
+	scroll_scale(1, scale_val);
+	player_animate();
 	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
 	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
-	print_num(get_tile(player_x, player_y), 2, 0);
 }
 
-void player_animate(SPRITE_INFO *player) {
-	if (player->animTimer > 0) player->animTimer--;
+void player_animate() {
+	if (player.animTimer > 0) player.animTimer--;
 	
-	if (player->state == STATE_LEFT) {
-		player->mirror = MIRROR_HORIZ;
+	if (player.state == STATE_LEFT) {
+		player.mirror = MIRROR_HORIZ;
 	}
-	else if (player->state != STATE_NULL) {
-		player->mirror = 0;
+	else if (player.state != STATE_NULL) {
+		player.mirror = 0;
 	}
 	
-	if (player->animTimer == 0) {
-		player->animTimer = 10;
-		switch (player->state) {
+	if (player.animTimer == 0) {
+		player.animTimer = 10;
+		switch (player.state) {
 			case STATE_UP:
 			case STATE_UPLEFT:
 			case STATE_UPRIGHT:
-				player->char_num = player_up[anim_cursor];
+				player.char_num = player_up[anim_cursor];
 			break;
 			case STATE_DOWN:
 			case STATE_DOWNLEFT:
 			case STATE_DOWNRIGHT:
-				player->char_num = player_down[anim_cursor];
+				player.char_num = player_down[anim_cursor];
 			break;
 			case STATE_LEFT:
-				player->char_num = player_side[anim_cursor];
+				player.char_num = player_side[anim_cursor];
 			break;
 			case STATE_RIGHT:
-				player->char_num = player_side[anim_cursor];
+				player.char_num = player_side[anim_cursor];
 			break;
 		}
 		anim_cursor == 3 ? anim_cursor = 0 : anim_cursor++;
 	}
+}
+//allows me to treat the player sprite like any other sprite while only moving the screen
+//around it
+void player_draw() {
+	Fixed32 player_x = player.xPos;
+	Fixed32 player_y = player.yPos;
+	player.xPos = PLAYER_SPRITE_X;
+	player.yPos = PLAYER_SPRITE_Y;
+	sprite_draw(&player);
+	scroll_set(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
+	// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
+	// of converting the variable to a Fixed32, multiplying it, converting it back to an int
+	scroll_set(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
+	player.xPos = player_x;
+	player.yPos = player_y;
 }

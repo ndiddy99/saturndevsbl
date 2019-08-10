@@ -18,8 +18,6 @@
 #include 	<sega_int.h>
 #include	"per_x.h"
 #include	"scroll.h"
-#include    "graphicrefs.h"
-#include "print.h"
 
 volatile trigger_t	PadData1  = 0x0000;
 volatile trigger_t	PadData1E = 0x0000;
@@ -42,8 +40,8 @@ void SetVblank(void) {
 
 
 void UsrVblankIn(void) {
-	copy_scroll(0);
-	copy_scroll(1);
+	scroll_copy(0);
+	scroll_copy(1);
 	
 	SCL_VblankStart();
 }

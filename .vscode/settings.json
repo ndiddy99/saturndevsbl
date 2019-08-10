@@ -2,6 +2,9 @@
     "files.encoding": "shiftjis",
     "files.associations": {
         "SPR_2C.C": "cpp",
-        "scroll.h": "c"
+        "scroll.h": "c",
+        "SCL_FUNC.C": "cpp",
+        "sprite.h": "c",
+        "graphicrefs.h": "c"
     }
 }

@@ -19,29 +19,6 @@ void print_init() {
 	}
 }
 
-static int num_digits(Uint32 num) {
-	if (num < 10)
-		return 1;
-	else if (num < 100)
-		return 2;
-	else if (num < 1000)
-		return 3;
-	else if (num < 10000)
-		return 4;
-	else if (num < 100000)
-		return 5;
-	else if (num < 1000000)
-		return 6;
-	else if (num < 10000000)
-		return 7;
-	else if (num < 100000000)
-		return 8;
-	else if (num < 1000000000)
-		return 9;
-	else
-		return 10;
-}
-
 void print_num(Uint32 num, int row, int col) {
 	int right_col = col + 9; //rightmost column
 	int i;
@@ -57,11 +34,11 @@ void print_display() {
 	for (i = 0; i < ROWS; i++) {
 		for (j = 0; j < COLS; j++) {
 			if (text[i][j] != 65535) {
-				make_sprite(text[i][j],
+				sprite_make(text[i][j],
 					MTH_IntToFixed(j << 3), // * FONT_X
 					MTH_IntToFixed(i << 4), // * FONT_Y
 					&text_spr);
-				draw_sprite(&text_spr);
+				sprite_draw(&text_spr);
 			}
 		}
 	}
