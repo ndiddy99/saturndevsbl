@@ -13,6 +13,8 @@ extern Uint8 wood_chr[];
 extern Uint16 map1[];
 //map2.c
 extern Uint16 map2[];
+//map3.c
+extern Uint16 map3[];
 
 #define TEST_PAL_SIZE 256
 #define TEST_CHR_SIZE (64 * 64)

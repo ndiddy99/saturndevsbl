@@ -45,7 +45,6 @@ const Uint16 player_up[] = {14, 13, 15, 13};
 const Uint16 player_side[] = {17, 16, 18, 16};
 int anim_cursor = 0;
 SPRITE_INFO player;
-Fixed32 scale_val = MTH_FIXED(1);
 
 void player_init() {
 	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
@@ -99,16 +98,7 @@ void player_input() {
 			collision_detect_down_right(&player);
 		break;
 	}
-	if (PadData1 & PAD_A) {
-		scale_val += MTH_FIXED(0.05);
-	}
 
-	if (PadData1 & PAD_B) {
-		scale_val -= MTH_FIXED(0.05);
-	}
-	
-
-	scroll_scale(1, scale_val);
 	player_animate();
 	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
 	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);

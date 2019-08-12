@@ -20,11 +20,6 @@ enum state {
 	STATE_DOWNRIGHT
 };
 
-enum type {
-	TYPE_NORMAL = 0,
-	TYPE_PLAYER
-};
-
 typedef struct SpriteInfo {
 	Uint16 char_num;
 	Fixed32 xPos;

@@ -47,8 +47,9 @@ int main() {
 	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,7);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
-	
+	transition_state = TSTATE_PRESETUP;
 	while(1) {
+		scroll_transition();
 		player_input();
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();

@@ -7,3 +7,4 @@ typedef unsigned long Uint32;
 
 #include "graphic/map1.c"
 #include "graphic/map2.c"
+#include "graphic/map3.c"

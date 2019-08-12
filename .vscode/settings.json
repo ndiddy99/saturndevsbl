@@ -5,6 +5,8 @@
         "scroll.h": "c",
         "SCL_FUNC.C": "cpp",
         "sprite.h": "c",
-        "graphicrefs.h": "c"
+        "graphicrefs.h": "c",
+        "SCL_VBLV.C": "cpp",
+        "SCL_FU03.C": "cpp"
     }
 }

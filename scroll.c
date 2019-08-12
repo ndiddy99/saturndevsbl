@@ -2,6 +2,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include "graphicrefs.h"
 #include "scroll.h"
 
 Fixed32 scrolls_x[] = {0, 0, 0, 0};
@@ -9,8 +10,12 @@ Fixed32 scrolls_y[] = {0, 0, 0, 0};
 Sint32 map_tiles_x[] = {0, 0, 0, 0};
 Sint32 map_tiles_y[] = {0, 0, 0, 0};
 Uint32 copy_modes[] = {0, 0, 0, 0};
-Uint16 *maps[4];
-Uint16 *vram[] = {(Uint16 *)NBG0_MAP_ADDR, (Uint16 *)NBG1_MAP_ADDR, NULL, NULL};
+Uint16 *maps[4]; //map locations in WRAM for the 4 backgrounds
+Uint16 *tilemaps[] = {map1, map2, map3}; //all the maps currently in WRAM
+int curr_map = 0; //which map the player is currently on
+Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, NULL, NULL}; //where in VRAM each tilemap is
+#define VRAM_PTR(bg) ((Uint16 *)vram[bg])
+int transition_state = TSTATE_NULL;
 
 /*
  * 0: NBG0 Pattern Name
@@ -47,12 +52,14 @@ Uint16	CycleTb[]={
 	0xffff,0xffff
 };
 
+SclConfig scfg0;
+SclConfig scfg1;
+
 void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette) {
 	int count, i, j;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
 	Uint16 *TilemapVram;
-	SclConfig	scfg;
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
@@ -67,7 +74,7 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	memcpy(VramWorkP, tiles, 256 * 40);
 
 	
-	TilemapVram = (Uint16 *)NBG0_MAP_ADDR;
+	TilemapVram = VRAM_PTR(0);
 	count = 0;
 	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
 		for (j = 0; j < 32; j++) {
@@ -76,7 +83,7 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 		}
 	}
 
-	TilemapVram = (Uint16 *)NBG1_MAP_ADDR;
+	TilemapVram = VRAM_PTR(1);
 	count = 0;
 	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
 		for (j = 0; j < 32; j++) {
@@ -85,19 +92,20 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 		}
 	}
 	//scroll initial configuration
-	SCL_InitConfigTb(&scfg);
-		scfg.dispenbl      = ON;
-		scfg.charsize      = SCL_CHAR_SIZE_2X2;
-		scfg.pnamesize     = SCL_PN1WORD;
-		scfg.flip          = SCL_PN_10BIT;
-		scfg.platesize     = SCL_PL_SIZE_1X1; //they meant "plane size"
-		scfg.coltype       = SCL_COL_TYPE_256;
-		scfg.datatype      = SCL_CELL;
-		scfg.patnamecontrl = 0x0004; //vram A1 offset
-		for(i=0;i<4;i++)   scfg.plate_addr[i] = NBG0_MAP_ADDR;
-	SCL_SetConfig(SCL_NBG0, &scfg);
-		for(i=0;i<4;i++)   scfg.plate_addr[i] = NBG1_MAP_ADDR;
-	SCL_SetConfig(SCL_NBG1, &scfg);
+	SCL_InitConfigTb(&scfg0);
+		scfg0.dispenbl      = ON;
+		scfg0.charsize      = SCL_CHAR_SIZE_2X2;
+		scfg0.pnamesize     = SCL_PN1WORD;
+		scfg0.flip          = SCL_PN_10BIT;
+		scfg0.platesize     = SCL_PL_SIZE_1X1; //they meant "plane size"
+		scfg0.coltype       = SCL_COL_TYPE_256;
+		scfg0.datatype      = SCL_CELL;
+		scfg0.patnamecontrl = 0x0004; //vram A1 offset
+	for(i=0;i<4;i++)   scfg0.plate_addr[i] = vram[0];
+	SCL_SetConfig(SCL_NBG0, &scfg0);
+	memcpy((void *)&scfg1, (void *)&scfg0, sizeof(SclConfig));
+	for(i=0;i<4;i++)   scfg1.plate_addr[i] = vram[1];
+	SCL_SetConfig(SCL_NBG1, &scfg1);
 	
 	//setup VRAM configuration
 	SCL_InitVramConfigTb(&vram_cfg);
@@ -175,7 +183,7 @@ Uint16 scroll_get(int map, int x, int y) {
 
 void scroll_copy(int num) {
 	int i;
-	Uint16 *vram_ptr = vram[num];
+	Uint16 *vram_ptr = VRAM_PTR(num);
 	if (copy_modes[num] & COPY_MODE_RCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
 			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32)] = 
@@ -199,5 +207,53 @@ void scroll_copy(int num) {
 			vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
 				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
 		}
+	}
+}
+
+void scroll_transition() {
+	static Fixed32 scale_val;
+	Uint16 *TilemapVram;
+	Uint16 *TilemapWram;
+	int count, i, j;
+	Uint32 temp;
+
+	switch (transition_state) {
+		case TSTATE_PRESETUP:
+			TilemapVram = VRAM_PTR(0);
+			curr_map++;
+			TilemapWram = tilemaps[curr_map + 1];
+			scfg0.dispenbl = OFF;
+			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
+			count = 0;
+			for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
+				for (j = 0; j < 32; j++) {
+					TilemapVram[count++] = TilemapWram[i * 64 + j]; //level is 64*64
+				}
+			}
+			scale_val = FIXED(0.75);
+			transition_state = TSTATE_ZOOM;
+		break;
+		case TSTATE_ZOOM:
+			scroll_scale(1, scale_val);
+			scale_val += FIXED(0.01);
+			if (scale_val >= FIXED(1)) {
+				scroll_scale(1, FIXED(1));
+				transition_state = TSTATE_POSTSETUP;
+			}
+		break;
+		case TSTATE_POSTSETUP:
+			temp = vram[0]; //swap VRAM addresses
+			vram[0] = vram[1];
+			vram[1] = temp;
+			for (i = 0; i < 4; i++) scfg0.plate_addr[i] = vram[0];
+			for (i = 0; i < 4; i++) scfg1.plate_addr[i] = vram[1];
+			scfg0.dispenbl = ON;
+			SCL_SetConfig(SCL_NBG0, &scfg0);
+			SCL_SetConfig(SCL_NBG1, &scfg1);
+			scroll_scale(1, FIXED(0.75));
+			maps[0] = tilemaps[curr_map];
+			maps[1] = tilemaps[curr_map + 1];
+			transition_state = TSTATE_NULL;
+		break;
 	}
 }
