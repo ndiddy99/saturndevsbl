@@ -2,6 +2,7 @@
 #define COLLISION_H
 #include "sprite.h"
 
+int over_air(SPRITE_INFO *sprite);
 //adjust should be 1 if we want to move the sprite up/down on corners
 void collision_detect_up(SPRITE_INFO *sprite, int adjust);
 void collision_detect_down(SPRITE_INFO *sprite, int adjust);

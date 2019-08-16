@@ -3,6 +3,7 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "graphicrefs.h"
+#include "player.h"
 #include "scroll.h"
 
 Fixed32 scrolls_x[] = {0, 0, 0, 0};
@@ -211,10 +212,11 @@ void scroll_copy(int num) {
 }
 
 void scroll_transition() {
-	static Fixed32 scale_val;
+	static Fixed32 scale_val, initial_x, initial_y;
+	static int count;
 	Uint16 *TilemapVram;
 	Uint16 *TilemapWram;
-	int count, i, j;
+	int i, j;
 	Uint32 temp;
 
 	switch (transition_state) {
@@ -231,10 +233,14 @@ void scroll_transition() {
 				}
 			}
 			scale_val = FIXED(0.75);
+			initial_x = scrolls_x[1];
+			initial_y = scrolls_y[1];
+			count = 0;
 			transition_state = TSTATE_ZOOM;
 		break;
 		case TSTATE_ZOOM:
 			scroll_scale(1, scale_val);
+			scroll_move(1, FIXED(1.33), FIXED(1.33));
 			scale_val += FIXED(0.01);
 			if (scale_val >= FIXED(1)) {
 				scroll_scale(1, FIXED(1));
@@ -253,6 +259,8 @@ void scroll_transition() {
 			scroll_scale(1, FIXED(0.75));
 			maps[0] = tilemaps[curr_map];
 			maps[1] = tilemaps[curr_map + 1];
+			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;
+			player.yPos = scrolls_y[1] + PLAYER_SPRITE_Y;
 			transition_state = TSTATE_NULL;
 		break;
 	}

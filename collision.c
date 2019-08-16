@@ -6,11 +6,18 @@
 #define PLAYER_SPEED (MTH_FIXED(2))
 #define WALKABLE(TILE) (TILE <= 24 && floor_tiles[TILE])
 //if a tile is walkable or not
-const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
+const int floor_tiles[] = {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
 
 //gets tile number for given coordinates
 static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
 	return scroll_get(0, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4);
+}
+
+int over_air(SPRITE_INFO *sprite) {
+	return (get_tile(sprite->xPos, sprite->yPos) == 0 &&
+			get_tile(sprite->xPos + sprite->xSize - 1, sprite->yPos) == 0 &&
+			get_tile(sprite->xPos, sprite->yPos + sprite->ySize - 1) == 0 &&
+			get_tile(sprite->xPos + sprite->xSize, sprite->yPos + sprite->ySize) == 0); 
 }
 
 void collision_detect_up(SPRITE_INFO *sprite, int adjust) {

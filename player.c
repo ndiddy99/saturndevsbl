@@ -11,8 +11,6 @@
 #define PLAYER_SPEED (MTH_FIXED(2))
 //normalize diagonal speed
 #define DIAGONAL_MULTIPLIER (MTH_FIXED(0.8))
-#define PLAYER_SPRITE_X (MTH_FIXED(144))
-#define PLAYER_SPRITE_Y (MTH_FIXED(96))
 #define PLAYER_TOP (MTH_FIXED(0))
 #define PLAYER_SIDE (MTH_FIXED(15))
 #define PLAYER_BOTTOM (MTH_FIXED(31))
@@ -52,6 +50,11 @@ void player_init() {
 }
 
 void player_input() {
+	//lock input if moving to new level
+	if (transition_state != TSTATE_NULL) {
+		scroll_transition();
+		return;
+	}
 
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
@@ -98,6 +101,9 @@ void player_input() {
 			collision_detect_down_right(&player);
 		break;
 	}
+	if (over_air(&player)) {
+		transition_state = TSTATE_PRESETUP;
+	}
 
 	player_animate();
 	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
@@ -142,13 +148,17 @@ void player_animate() {
 void player_draw() {
 	Fixed32 player_x = player.xPos;
 	Fixed32 player_y = player.yPos;
+
 	player.xPos = PLAYER_SPRITE_X;
 	player.yPos = PLAYER_SPRITE_Y;
 	sprite_draw(&player);
-	scroll_set(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
-	// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
-	// of converting the variable to a Fixed32, multiplying it, converting it back to an int
-	scroll_set(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
+	if (transition_state == TSTATE_NULL) { //if we're transitioning between levels, let that routine control the
+	                                       //scaling instead of this one
+		scroll_set(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
+		// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
+		// of converting the variable to a Fixed32, multiplying it, converting it back to an int
+		scroll_set(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
+	}
 	player.xPos = player_x;
 	player.yPos = player_y;
 }
