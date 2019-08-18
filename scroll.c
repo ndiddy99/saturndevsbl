@@ -48,7 +48,7 @@ int transition_state = TSTATE_NULL;
 
 Uint16	CycleTb[]={
 	0x011f,0xffff,
-	0x4455,0xff55,
+	0x5555,0xff44,
 	0xffff,0xffff,
 	0xffff,0xffff
 };
@@ -119,13 +119,13 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	 
 	SCL_Open(SCL_NBG0);
 		SCL_MoveTo(FIXED(48), FIXED(10),0); //home position
-		SCL_Scale(FIXED(1.0), FIXED(1.0));
 	SCL_Close();
 	SCL_Open(SCL_NBG1);
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
-		SCL_Scale(FIXED(0.75), FIXED(0.75));
 	SCL_Close();
-	
+	scroll_scale(0, FIXED(1));
+	scroll_scale(1, FIXED(0.75));
+
 	maps[0] = (Uint16 *)tilemap0;
 	maps[1] = (Uint16 *)tilemap1;
 
@@ -167,10 +167,28 @@ void scroll_set(int num, Fixed32 x, Fixed32 y) {
 	scroll_move(num, x - scrolls_x[num], y - scrolls_y[num]);
 }
 
+#define ZOOM_HALF_NBG0 (0x1)
+#define ZOOM_QUARTER_NBG0 (0x2)
+#define ZOOM_HALF_NBG1 (0x100)
+#define ZOOM_QUARTER_NBG1 (0x200)
+#define LOW_BYTE (0xFF)
+#define HIGH_BYTE (0xFF00)
+
 void scroll_scale(int num, Fixed32 scale) {
 	SCL_Open(1 << (num + 2));
 		SCL_Scale(scale, scale);
 	SCL_Close();
+	//reset the configuration byte for the given background
+	Scl_n_reg.zoomenbl &= (num == 0 ? HIGH_BYTE : LOW_BYTE);
+	if (scale >= FIXED(1)) {
+		return;
+	}
+	else if (scale < FIXED(1) && scale >= FIXED(0.5)) {
+		Scl_n_reg.zoomenbl |= (num == 0 ? ZOOM_HALF_NBG0 : ZOOM_HALF_NBG1);
+	}
+	else {
+		Scl_n_reg.zoomenbl |= (num == 0 ? ZOOM_QUARTER_NBG0 : ZOOM_QUARTER_NBG1);
+	}
 }
 
 //gets the value at the given coordinates for a square map
