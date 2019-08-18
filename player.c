@@ -155,8 +155,7 @@ void player_draw() {
 	if (transition_state == TSTATE_NULL) { //if we're transitioning between levels, let that routine control the
 	                                       //scaling instead of this one
 		scroll_set(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
-		// sorta like multiplying it by 3/4 but without doing the annoying saturn thing
-		// of converting the variable to a Fixed32, multiplying it, converting it back to an int
+		// multiplying it by 3/4
 		scroll_set(1, ((player_x - PLAYER_SPRITE_X) * 3) >> 2, ((player_y - PLAYER_SPRITE_Y) * 3) >> 2);
 	}
 	player.xPos = player_x;

@@ -44,7 +44,7 @@ int transition_state = TSTATE_NULL;
  Vertical scroll data 		1
  */
 
-// There's also numerous read restrictions, see SOA technical bulletin #8 for more information
+// There's also numerous read restrictions, see SOA technical bulletin #6 for more information
 
 Uint16	CycleTb[]={
 	0x011f,0xffff,
