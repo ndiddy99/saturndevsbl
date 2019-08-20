@@ -8,6 +8,7 @@
 #include "sprite.h"
 
 int num_sprites = 0;
+SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 
 void sprite_draw(SPRITE_INFO *info) {
 	XyInt xy[4];

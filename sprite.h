@@ -34,7 +34,7 @@ typedef struct SpriteInfo {
 } SPRITE_INFO;
 
 #define SPRITE_LIST_SIZE 200
-SPRITE_INFO sprites[SPRITE_LIST_SIZE];
+extern SPRITE_INFO sprites[];
 extern int num_sprites;
 
 //automatically picks the simplest SBL function for drawing the sprite depending

@@ -44,8 +44,9 @@ int main() {
 	player_init();
 	print_init();
 
-	SCL_SetPriority(SCL_NBG0,7); //set layer priorities
-	SCL_SetPriority(SCL_SPR,7);
+	SCL_SetPriority(SCL_NBG0, 7); //set layer priorities
+	SCL_SetPriority(SCL_NBG1, 6);
+	SCL_SetPriority(SCL_SPR, 7);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	while(1) {
 		player_input();

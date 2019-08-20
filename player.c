@@ -51,7 +51,7 @@ void player_init() {
 
 void player_input() {
 	//lock input if moving to new level
-	if (transition_state != TSTATE_NULL) {
+	if (scroll_transition_state != TSTATE_NULL) {
 		scroll_transition();
 		return;
 	}
@@ -102,12 +102,12 @@ void player_input() {
 		break;
 	}
 	if (over_air(&player)) {
-		transition_state = TSTATE_PRESETUP;
+		scroll_transition_state = TSTATE_PRESETUP;
 	}
 
 	player_animate();
-	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
-	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
+	print_num(player.xPos >> 16, 0, 0); print_num(player.xPos & 0xffff, 0, 10);
+	print_num(player.yPos >> 16, 1, 0); print_num(player.yPos & 0xffff, 1, 10);
 }
 
 void player_animate() {
@@ -152,7 +152,7 @@ void player_draw() {
 	player.xPos = PLAYER_SPRITE_X;
 	player.yPos = PLAYER_SPRITE_Y;
 	sprite_draw(&player);
-	if (transition_state == TSTATE_NULL) { //if we're transitioning between levels, let that routine control the
+	if (scroll_transition_state == TSTATE_NULL) { //if we're transitioning between levels, let that routine control the
 	                                       //scaling instead of this one
 		scroll_set(0, player_x - PLAYER_SPRITE_X, player_y - PLAYER_SPRITE_Y);
 		// multiplying it by 3/4

@@ -16,7 +16,7 @@ Uint16 *tilemaps[] = {map1, map2, map3}; //all the maps currently in WRAM
 int curr_map = 0; //which map the player is currently on
 Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, NULL, NULL}; //where in VRAM each tilemap is
 #define VRAM_PTR(bg) ((Uint16 *)vram[bg])
-int transition_state = TSTATE_NULL;
+int scroll_transition_state = TSTATE_NULL;
 
 /*
  * 0: NBG0 Pattern Name
@@ -137,7 +137,7 @@ void scroll_move(int num, Fixed32 x, Fixed32 y) {
 	scrolls_y[num] += y;
 	curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
 	curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
-	copy_modes[num] = 0;
+	// copy_modes[num] = 0;
 	if (curr_tile_x - map_tiles_x[num] > 0) { //if x value increasing
 		copy_modes[num] |= COPY_MODE_RCOL;
 	}
@@ -194,37 +194,47 @@ void scroll_scale(int num, Fixed32 scale) {
 //gets the value at the given coordinates for a square map
 Uint16 scroll_get(int map, int x, int y) {
 	Uint16 *map_ptr = maps[map];
-	if (x >= 64 || y >= 64) {
+	if (x >= 64 || x < 0 || y >= 64 || y < 0) {
 		return 0;
 	}
 	return map_ptr[y * 64 + x];
 }
 
 void scroll_copy(int num) {
-	int i;
+	int i, pos;
+	
 	Uint16 *vram_ptr = VRAM_PTR(num);
 	if (copy_modes[num] & COPY_MODE_RCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32)] = 
-				scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
+			pos = (((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32);
+			if (pos >= 0) {
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
+			}
 		}
 	}
 	if (copy_modes[num] & COPY_MODE_LCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			vram_ptr[(((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] - 1) % 32)] = 
-				scroll_get(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
+			pos = (((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] - 1) % 32);
+			if (pos >= 0) {
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
+			}
 		}		
 	}
 	if (copy_modes[num] & COPY_MODE_BROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			vram_ptr[(((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
-				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
+			pos = (((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
+			if (pos >= 0) {
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
+			}
 		}
 	}
 	if (copy_modes[num] & COPY_MODE_TROW) {
 		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
-				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
+			pos = (((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
+			if (pos >= 0) {
+				vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
+					scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
+			}
 		}
 	}
 }
@@ -237,13 +247,14 @@ void scroll_transition() {
 	int i, j;
 	Uint32 temp;
 
-	switch (transition_state) {
+	switch (scroll_transition_state) {
 		case TSTATE_PRESETUP:
 			TilemapVram = VRAM_PTR(0);
 			curr_map++;
 			TilemapWram = tilemaps[curr_map + 1];
 			scfg0.dispenbl = OFF;
 			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
+			SCL_DisplayFrame();
 			count = 0;
 			for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
 				for (j = 0; j < 32; j++) {
@@ -254,7 +265,7 @@ void scroll_transition() {
 			initial_x = scrolls_x[1];
 			initial_y = scrolls_y[1];
 			count = 0;
-			transition_state = TSTATE_ZOOM;
+			scroll_transition_state = TSTATE_ZOOM;
 		break;
 		case TSTATE_ZOOM:
 			scroll_scale(1, scale_val);
@@ -262,7 +273,7 @@ void scroll_transition() {
 			scale_val += FIXED(0.01);
 			if (scale_val >= FIXED(1)) {
 				scroll_scale(1, FIXED(1));
-				transition_state = TSTATE_POSTSETUP;
+				scroll_transition_state = TSTATE_POSTSETUP;
 			}
 		break;
 		case TSTATE_POSTSETUP:
@@ -272,6 +283,7 @@ void scroll_transition() {
 			for (i = 0; i < 4; i++) scfg0.plate_addr[i] = vram[0];
 			for (i = 0; i < 4; i++) scfg1.plate_addr[i] = vram[1];
 			scfg0.dispenbl = ON;
+			scfg1.dispenbl = ON;
 			SCL_SetConfig(SCL_NBG0, &scfg0);
 			SCL_SetConfig(SCL_NBG1, &scfg1);
 			scroll_scale(1, FIXED(0.75));
@@ -279,7 +291,7 @@ void scroll_transition() {
 			maps[1] = tilemaps[curr_map + 1];
 			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;
 			player.yPos = scrolls_y[1] + PLAYER_SPRITE_Y;
-			transition_state = TSTATE_NULL;
+			scroll_transition_state = TSTATE_NULL;
 		break;
 	}
 }

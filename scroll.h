@@ -26,7 +26,7 @@ enum transition_states {
     TSTATE_ZOOM,
     TSTATE_POSTSETUP
 };
-extern int transition_state;
+extern int scroll_transition_state;
 
 void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette);
 //translate scroll by x,y amounts
