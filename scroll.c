@@ -47,8 +47,8 @@ int scroll_transition_state = TSTATE_NULL;
 // There's also numerous read restrictions, see SOA technical bulletin #6 for more information
 
 Uint16	CycleTb[]={
-	0x011f,0xffff,
-	0x5555,0xff44,
+	0x0011,0xffff,
+	0x5555,0x4444,
 	0xffff,0xffff,
 	0xffff,0xffff
 };
@@ -125,7 +125,8 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	SCL_Close();
 	scroll_scale(0, FIXED(1));
 	scroll_scale(1, FIXED(0.75));
-
+	SCL_SetPriority(SCL_NBG0, 6);
+	SCL_SetPriority(SCL_NBG1, 5);
 	maps[0] = (Uint16 *)tilemap0;
 	maps[1] = (Uint16 *)tilemap1;
 
@@ -264,13 +265,19 @@ void scroll_transition() {
 			scale_val = FIXED(0.75);
 			initial_x = scrolls_x[1];
 			initial_y = scrolls_y[1];
-			count = 0;
+			count = 30;
+			scfg0.dispenbl = ON;
+			SCL_SetConfig(SCL_NBG0, &scfg0);
+			SCL_SetPriority(SCL_NBG0, 5);
+			SCL_SetPriority(SCL_NBG1, 6);
 			scroll_transition_state = TSTATE_ZOOM;
 		break;
 		case TSTATE_ZOOM:
+			scroll_scale(0, FIXED(0.75));
 			scroll_scale(1, scale_val);
 			scroll_move(1, FIXED(1.33), FIXED(1.33));
 			scale_val += FIXED(0.01);
+			SCL_SetColMixRate(SCL_NBG0, count--);
 			if (scale_val >= FIXED(1)) {
 				scroll_scale(1, FIXED(1));
 				scroll_transition_state = TSTATE_POSTSETUP;
@@ -282,11 +289,13 @@ void scroll_transition() {
 			vram[1] = temp;
 			for (i = 0; i < 4; i++) scfg0.plate_addr[i] = vram[0];
 			for (i = 0; i < 4; i++) scfg1.plate_addr[i] = vram[1];
-			scfg0.dispenbl = ON;
-			scfg1.dispenbl = ON;
 			SCL_SetConfig(SCL_NBG0, &scfg0);
 			SCL_SetConfig(SCL_NBG1, &scfg1);
+			scroll_scale(0, FIXED(1));
 			scroll_scale(1, FIXED(0.75));
+			SCL_SetColMixRate(SCL_NBG0, 32);
+			SCL_SetPriority(SCL_NBG0, 6);
+			SCL_SetPriority(SCL_NBG1, 5);
 			maps[0] = tilemaps[curr_map];
 			maps[1] = tilemaps[curr_map + 1];
 			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;

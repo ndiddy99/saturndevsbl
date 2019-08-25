@@ -7,6 +7,9 @@
         "sprite.h": "c",
         "graphicrefs.h": "c",
         "SCL_VBLV.C": "cpp",
-        "SCL_FU03.C": "cpp"
+        "SCL_FU03.C": "cpp",
+        "SCL_PR07.C": "cpp",
+        "SCL_PR10.C": "cpp",
+        "SCL_PRI.C": "cpp"
     }
 }
