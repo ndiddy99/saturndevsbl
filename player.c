@@ -50,12 +50,6 @@ void player_init() {
 }
 
 void player_input() {
-	//lock input if moving to new level
-	if (scroll_transition_state != TSTATE_NULL) {
-		scroll_transition();
-		return;
-	}
-
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
 	//if state changed, reset animation
@@ -106,8 +100,10 @@ void player_input() {
 	}
 
 	player_animate();
-	print_num(player.xPos >> 16, 0, 0); print_num(player.xPos & 0xffff, 0, 10);
-	print_num(player.yPos >> 16, 1, 0); print_num(player.yPos & 0xffff, 1, 10);
+	print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
+	print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
+	print_num(scrolls_x[1] >> 16, 2, 0); print_num(scrolls_x[1] & 0xffff, 2, 10);
+	print_num(scrolls_y[1] >> 16, 3, 0); print_num(scrolls_y[1] & 0xffff, 3, 10);
 }
 
 void player_animate() {

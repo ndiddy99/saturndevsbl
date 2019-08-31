@@ -37,6 +37,8 @@ typedef struct SpriteInfo {
 extern SPRITE_INFO sprites[];
 extern int num_sprites;
 
+//sets up initial sprite display
+void sprite_init(void);
 //automatically picks the simplest SBL function for drawing the sprite depending
 //on required features
 //needs command to be opened before calling

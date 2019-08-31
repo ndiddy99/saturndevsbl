@@ -1,14 +1,44 @@
 #include <sega_def.h>
 #include <sega_mth.h>
+#include <machine.h>
 #define _SPR2_
 #include <sega_spr.h>
+#include <sega_scl.h>
 
 #include "graphicrefs.h"
 #include "scroll.h"
 #include "sprite.h"
+#include "vblank.h"
 
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
+
+#define CommandMax    300
+#define GourTblMax    300
+#define LookupTblMax  100
+#define CharMax       32 //CHANGE WHEN YOU INCREASE TILES BEYOND THIS POINT
+#define DrawPrtyMax   256
+SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
+
+void sprite_init() {
+	int count, i;
+
+	SCL_Vdp2Init();
+	SPR_2Initial(&work2D);
+	count = 0;
+	SCL_SetColRamMode(SCL_CRM24_1024);
+	
+	SetVblank(); //setup vblank routine
+	set_imask(0);
+	
+	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
+	SCL_DisplayFrame();
+	for (i = 0; i < 19 * 2; i += 2) {
+		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
+		count++;
+	}
+	SCL_DisplayFrame();
+}
 
 void sprite_draw(SPRITE_INFO *info) {
 	XyInt xy[4];

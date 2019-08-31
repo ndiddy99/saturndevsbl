@@ -58,7 +58,7 @@ void collision_detect_down(SPRITE_INFO *sprite, int adjust) {
 		collision_detect_right(sprite, 0);
 	}
 	else if (adjust && !walkable_lr) {
-		sprite->yPos -= PLAYER_SPEED;
+		sprite->xPos -= PLAYER_SPEED;
 		collision_detect_left(sprite, 0);
 	}
 }
