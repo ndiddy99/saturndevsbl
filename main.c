@@ -11,10 +11,21 @@
 
 #include	"graphicrefs.h"
 
+Uint16 *levels[] = {map1, map2, map3};
+
 int main() {
 
 	sprite_init();
-	scroll_init(wood_chr, map1, map2, wood_pal);
+	SCROLL_DATA scroll;
+	scroll.bg_tiles = wood_chr;
+	scroll.num_bg_tiles = 40;
+	scroll.levels = levels;
+	scroll.bg_palette = wood_pal;
+	scroll.bg2_tiles = cloud_chr;
+	scroll.num_bg2_tiles = 24;
+	scroll.bg2_tilemap = map_cloud;
+	scroll.bg2_palette = cloud_pal;
+	scroll_init(&scroll);
 	player_init();
 	print_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);

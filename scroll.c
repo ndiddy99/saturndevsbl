@@ -6,15 +6,15 @@
 #include "player.h"
 #include "scroll.h"
 
-Fixed32 scrolls_x[] = {0, 0, 0, 0};
-Fixed32 scrolls_y[] = {0, 0, 0, 0};
-Sint32 map_tiles_x[] = {0, 0, 0, 0};
-Sint32 map_tiles_y[] = {0, 0, 0, 0};
-Uint32 copy_modes[] = {0, 0, 0, 0};
-Uint16 *maps[4]; //map locations in WRAM for the 4 backgrounds
-Uint16 *tilemaps[] = {map1, map2, map3}; //all the maps currently in WRAM
+Fixed32 scrolls_x[]  = {0, 0, 0, 0};
+Fixed32 scrolls_y[]  = {0, 0, 0, 0};
+Sint32 map_tiles_x[] = {0, 0};
+Sint32 map_tiles_y[] = {0, 0};
+Uint32 copy_modes[]  = {0, 0};
+Uint16 *maps[2]; //map locations in WRAM for the scrolling backgrounds
+Uint16 **tilemaps; //all the maps currently in WRAM
 int curr_map = 0; //which map the player is currently on
-Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, NULL, NULL}; //where in VRAM each tilemap is
+Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, SCL_VDP2_VRAM_B1, SCL_VDP2_VRAM_B1 + 0x800}; //where in VRAM each tilemap is
 #define VRAM_PTR(bg) ((Uint16 *)vram[bg])
 int scroll_transition_state = TSTATE_NULL;
 
@@ -49,14 +49,16 @@ int scroll_transition_state = TSTATE_NULL;
 Uint16	CycleTb[]={
 	0x0011,0xffff,
 	0x5555,0x4444,
-	0xffff,0xffff,
-	0xffff,0xffff
+	0x6677,0xffff,
+	0x23ff,0xffff
 };
 
 SclConfig scfg0;
 SclConfig scfg1;
+SclConfig scfg2;
+SclConfig scfg3;
 
-void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette) {
+void scroll_init(SCROLL_DATA *data) {
 	int count, i, j;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
@@ -64,22 +66,29 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
-		SCL_AllocColRam(SCL_NBG0,256,OFF); //set up palette data
-		SCL_SetColRam(SCL_NBG0,0,256,(void *)palette);
+		SCL_AllocColRam(SCL_NBG0, 256, OFF); //set up palette data
+		SCL_SetColRam(SCL_NBG0, 0, 256, (void *)data->bg_palette);
 		SCL_AllocColRam(SCL_NBG1, 256, OFF);
-		SCL_SetColRam(SCL_NBG1, 0, 256, (void *)palette);
+		SCL_SetColRam(SCL_NBG1, 0, 256, (void *)data->bg_palette);
+		SCL_AllocColRam(SCL_NBG2, 256, OFF);
+		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg2_palette);
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
-	memcpy(VramWorkP, tiles, 256 * 40);
+	memcpy(VramWorkP, data->bg_tiles, 256 * data->num_bg_tiles);
 
+	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg2 character pattern to vram b0
+	memcpy(VramWorkP, data->bg2_tiles, 256 * data->num_bg2_tiles);
 	
+	// VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0 + 0x10000; //halfway through vram b0
+	// memcpy(VramWorkP, data->bg3_tiles, 256 * data->num_bg3_tiles);
+
 	TilemapVram = VRAM_PTR(0);
 	count = 0;
 	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
 		for (j = 0; j < 32; j++) {
-			TilemapVram[count++] = tilemap0[i * 64 + j]; //level is 64*64
+			TilemapVram[count++] = data->levels[0][i * 64 + j]; //level is 64*64
 			
 		}
 	}
@@ -88,10 +97,17 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	count = 0;
 	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
 		for (j = 0; j < 32; j++) {
-			TilemapVram[count++] = tilemap1[i * 64 + j]; //level is 64*64
+			TilemapVram[count++] = data->levels[1][i * 64 + j]; //level is 64*64
 			
 		}
 	}
+	//BGs 2 and 3 don't need 4 way scrolling (just for decoration) so you can just memcpy the level data
+	TilemapVram = VRAM_PTR(2);
+	memcpy(TilemapVram, data->bg2_tilemap, 0x800);
+
+	// TilemapVram = VRAM_PTR(3);
+	// memcpy(TilemapVram, data->bg3_tilemap, 0x800);
+
 	//scroll initial configuration
 	SCL_InitConfigTb(&scfg0);
 		scfg0.dispenbl      = ON;
@@ -104,9 +120,19 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 		scfg0.patnamecontrl = 0x0004; //vram A1 offset
 	for(i=0;i<4;i++)   scfg0.plate_addr[i] = vram[0];
 	SCL_SetConfig(SCL_NBG0, &scfg0);
+
 	memcpy((void *)&scfg1, (void *)&scfg0, sizeof(SclConfig));
 	for(i=0;i<4;i++)   scfg1.plate_addr[i] = vram[1];
 	SCL_SetConfig(SCL_NBG1, &scfg1);
+
+	memcpy((void *)&scfg2, (void *)&scfg0, sizeof(SclConfig));
+	scfg2.patnamecontrl = 0x0008;
+	for(i=0;i<4;i++)   scfg2.plate_addr[i] = vram[2];
+	SCL_SetConfig(SCL_NBG2, &scfg2);
+
+	// memcpy((void *)&scfg3, (void *)&scfg0, sizeof(SclConfig));
+	// for(i=0;i<4;i++)   scfg3.plate_addr[i] = vram[3];
+	// SCL_SetConfig(SCL_NBG3, &scfg3);
 	
 	//setup VRAM configuration
 	SCL_InitVramConfigTb(&vram_cfg);
@@ -118,19 +144,27 @@ void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilem
 	SCL_SetCycleTable(CycleTb);
 	 
 	SCL_Open(SCL_NBG0);
-		SCL_MoveTo(FIXED(48), FIXED(10),0); //home position
+		SCL_MoveTo(FIXED(48), FIXED(10), 0); //home position
 	SCL_Close();
 	SCL_Open(SCL_NBG1);
+		SCL_MoveTo(FIXED(0), FIXED(0), 0);
+	SCL_Close();
+	SCL_Open(SCL_NBG2);
+		SCL_MoveTo(FIXED(0), FIXED(0), 0);
+	SCL_Close();
+	SCL_Open(SCL_NBG3);
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
 	SCL_Close();
 	scroll_scale(0, FIXED(1));
 	scroll_scale(1, FIXED(0.75));
 	SCL_SetPriority(SCL_NBG0, 7); //set layer priorities
+	SCL_SetPriority(SCL_SPR,  7);
 	SCL_SetPriority(SCL_NBG1, 6);
-	SCL_SetPriority(SCL_SPR, 7);
-	maps[0] = (Uint16 *)tilemap0;
-	maps[1] = (Uint16 *)tilemap1;
-
+	SCL_SetPriority(SCL_NBG2, 5);
+	SCL_SetPriority(SCL_NBG3, 4);
+	maps[0] = (Uint16 *)data->levels[0];
+	maps[1] = (Uint16 *)data->levels[1];
+	tilemaps = data->levels;
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {
@@ -252,7 +286,7 @@ void scroll_transition() {
 			Uint16 *TilemapWram = tilemaps[curr_map + 1];
 			scfg0.dispenbl = OFF;
 			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
-			SCL_DisplayFrame();
+			SCL_DisplayFrame(); //wait for change to propagate before writing to vram
 			count = 0;
 			for (int i = 0; i < 32; i++) { //saturn tilemap is 32*32
 				for (int j = 0; j < 32; j++) {

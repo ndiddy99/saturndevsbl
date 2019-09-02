@@ -20,6 +20,21 @@ extern Uint32 copy_modes[]; //what to copy to VRAM from the map
 extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];
 
+typedef struct {
+    Uint8 *bg_tiles; //tiles used by NBG0 and NBG1
+    size_t num_bg_tiles; //number of tiles
+    Uint16 **levels; //array of pointers in WRAM to each playfield tilemap
+    Uint32 *bg_palette; //256 color palette for NBG0 and NBG1
+    Uint8 *bg2_tiles; //tiles used by NBG2
+    size_t num_bg2_tiles;
+    Uint16 *bg2_tilemap; //32x32 NBG2 tilemap
+    Uint32 *bg2_palette; //256 color palette
+    Uint8 *bg3_tiles; //tiles used by NBG3
+    size_t num_bg3_tiles;
+    Uint16 *bg3_tilemap; //32x32 NBG3 tilemap
+    Uint32 *bg3_palette; //256 color palette
+} SCROLL_DATA;
+
 enum transition_states {
     TSTATE_NULL = 0,
     TSTATE_PRESETUP,
@@ -28,7 +43,7 @@ enum transition_states {
 };
 extern int scroll_transition_state;
 
-void scroll_init(const Uint8 *tiles, const Uint16 *tilemap0, const Uint16 *tilemap1, const Uint32 *palette);
+void scroll_init(SCROLL_DATA *data);
 //translate scroll by x,y amounts
 void scroll_move(int num, Fixed32 x, Fixed32 y);
 //moves scroll absolutely to coordinates
