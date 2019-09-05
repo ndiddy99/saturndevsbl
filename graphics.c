@@ -9,5 +9,6 @@ typedef unsigned long Uint32;
 #include "graphic/map2.c"
 #include "graphic/map3.c"
 
-#include "graphic/cloud.c"
-#include "graphic/map_cloud.c"
+#include "graphic/bg0.c"
+#include "graphic/bg0_2map.c"
+#include "graphic/bg0_3map.c"

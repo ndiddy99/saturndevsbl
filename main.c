@@ -17,14 +17,15 @@ int main() {
 
 	sprite_init();
 	SCROLL_DATA scroll;
-	scroll.bg_tiles = wood_chr;
-	scroll.num_bg_tiles = 40;
+	scroll.playfield_tiles = wood_chr;
+	scroll.playfield_tiles_num = 40;
+	scroll.playfield_palette = wood_pal;
 	scroll.levels = levels;
-	scroll.bg_palette = wood_pal;
-	scroll.bg2_tiles = cloud_chr;
-	scroll.num_bg2_tiles = 24;
-	scroll.bg2_tilemap = map_cloud;
-	scroll.bg2_palette = cloud_pal;
+	scroll.bg_tiles = bg0_chr;
+	scroll.bg_tiles_num = 44;
+	scroll.bg_palette = bg0_pal;
+	scroll.bg2_tilemap = bg0_2map;
+	scroll.bg3_tilemap = bg0_3map;
 	scroll_init(&scroll);
 	player_init();
 	print_init();

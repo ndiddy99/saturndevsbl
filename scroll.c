@@ -67,22 +67,21 @@ void scroll_init(SCROLL_DATA *data) {
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
 		SCL_AllocColRam(SCL_NBG0, 256, OFF); //set up palette data
-		SCL_SetColRam(SCL_NBG0, 0, 256, (void *)data->bg_palette);
+		SCL_SetColRam(SCL_NBG0, 0, 256, (void *)data->playfield_palette);
 		SCL_AllocColRam(SCL_NBG1, 256, OFF);
-		SCL_SetColRam(SCL_NBG1, 0, 256, (void *)data->bg_palette);
+		SCL_SetColRam(SCL_NBG1, 0, 256, (void *)data->playfield_palette);
 		SCL_AllocColRam(SCL_NBG2, 256, OFF);
-		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg2_palette);
+		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg_palette);
+		SCL_AllocColRam(SCL_NBG3, 256, OFF);
+		SCL_SetColRam(SCL_NBG3, 0, 256, (void *)data->bg_palette);
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
-	memcpy(VramWorkP, data->bg_tiles, 256 * data->num_bg_tiles);
+	memcpy(VramWorkP, data->playfield_tiles, 256 * data->playfield_tiles_num);
 
-	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg2 character pattern to vram b0
-	memcpy(VramWorkP, data->bg2_tiles, 256 * data->num_bg2_tiles);
-	
-	// VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0 + 0x10000; //halfway through vram b0
-	// memcpy(VramWorkP, data->bg3_tiles, 256 * data->num_bg3_tiles);
+	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
+	memcpy(VramWorkP, data->bg_tiles, 256 * data->bg_tiles_num);
 
 	TilemapVram = VRAM_PTR(0);
 	count = 0;
@@ -105,8 +104,8 @@ void scroll_init(SCROLL_DATA *data) {
 	TilemapVram = VRAM_PTR(2);
 	memcpy(TilemapVram, data->bg2_tilemap, 0x800);
 
-	// TilemapVram = VRAM_PTR(3);
-	// memcpy(TilemapVram, data->bg3_tilemap, 0x800);
+	TilemapVram = VRAM_PTR(3);
+	memcpy(TilemapVram, data->bg3_tilemap, 0x800);
 
 	//scroll initial configuration
 	SCL_InitConfigTb(&scfg0);
@@ -130,9 +129,10 @@ void scroll_init(SCROLL_DATA *data) {
 	for(i=0;i<4;i++)   scfg2.plate_addr[i] = vram[2];
 	SCL_SetConfig(SCL_NBG2, &scfg2);
 
-	// memcpy((void *)&scfg3, (void *)&scfg0, sizeof(SclConfig));
-	// for(i=0;i<4;i++)   scfg3.plate_addr[i] = vram[3];
-	// SCL_SetConfig(SCL_NBG3, &scfg3);
+	memcpy((void *)&scfg3, (void *)&scfg0, sizeof(SclConfig));
+	scfg3.patnamecontrl = 0x0008;
+	for(i=0;i<4;i++)   scfg3.plate_addr[i] = vram[3];
+	SCL_SetConfig(SCL_NBG3, &scfg3);
 	
 	//setup VRAM configuration
 	SCL_InitVramConfigTb(&vram_cfg);
