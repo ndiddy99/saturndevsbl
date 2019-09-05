@@ -37,6 +37,9 @@ int main() {
 		else {
 			scroll_transition();
 		}
+		scroll_move(2, FIXED(-1.2), FIXED(-1.2));
+		scroll_move(3, FIXED(-0.8), FIXED(-0.8));
+
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
 			print_display();

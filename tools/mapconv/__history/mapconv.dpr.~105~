@@ -34,7 +34,7 @@ var
   tiledFile: IXMLDocument;
   element: IXMLNode;
   val, currElement, varname: String;
-  width, height, i, j, count, strIndex, strLength: Integer;
+  width, height, i, j, count, strIndex, backslashPos, strLength: Integer;
   map: array of array of Uint32;
   saturnMap: WordMatrix;
 begin
@@ -99,14 +99,17 @@ begin
         begin
         //tiled stores maps 1 indexed for some reason
         //multiply by 2 because maps are stored with 8x8 tile indexes even when they're 16*16
-          saturnMap[i][j] := ((map[i][j] and $3ff) - 1) * 2;
+          saturnMap[i][j] := ((map[i][j] and $3ff) - 1);
           if (map[i][j] and $80000000) = $80000000 then  //is tile horizontally flipped?
             saturnMap[i][j] := saturnMap[i][j] or $400;
           if (map[i][j] and $40000000) = $40000000 then //is vertically flipped?
             saturnMap[i][j] := saturnMap[i][j] or $800;
         end;
     end;
-    varName := input.Substring(input.LastIndexOf('\'));
+
+    backslashPos := input.LastIndexOf('\');
+    strLength := input.LastIndexOf('.') - backslashPos - 1;
+    varName := input.Substring(backslashPos, strLength);
     outputC(varName, saturnMap);
 
   end

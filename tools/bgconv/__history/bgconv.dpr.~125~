@@ -4,7 +4,8 @@ uses
 
 var
   i,
-  outType: //c file (0) or binary (1)
+  outType, //c file (0) or binary (1)
+  numColors: //16 or 256
   Integer;
   filename: String;
 procedure printHelp;
@@ -12,6 +13,7 @@ begin
   WriteLn('Usage: bgconv [palette bitmap].bmp [outputfile]');
   WriteLn('Optional parameters:');
   WriteLn('-oc or -ob: output to c file or binary (default: c file)');
+  WriteLn('-b4 or -b8: 4bpp or 8bpp output (default: 8 bpp)');
 end;
 
 procedure outputC(var cFile: TextFile; varName: String; tiles: array of Uint8; palette: array of Uint32);
@@ -19,7 +21,7 @@ var
   count, i: Integer;
 begin
   WriteLn(cFile, 'const Uint32 ', varName, '_pal[] = {');
-  count := 1;
+  count := 0;
 
   for i := 0 to Length(palette) - 1 do
   begin
@@ -27,25 +29,45 @@ begin
   end;
   WriteLn(cFile, '};');
   WriteLn(cFile, 'const Uint8 ', varName, '_chr[] = {');
-  WriteLn(cFile, '    //0');
-  Write(cFile, '    ');
-  for i := 0 to Length(tiles) - 1 do
+  if Length(palette) = 16 then
   begin
-    Write(cFile, '', tiles[i], ',');
-    if ((i + 1) mod 256 = 0) and (i <> Length(tiles) - 1) then
+  i := 0;
+  while i < (Length(tiles) / 2) - 1 do
+  begin
+    if (i mod 256 = 0) and (i <> Length(tiles) - 1) then
     begin
       Write(cFile, #13#10#13#10, '    //', count, #13#10, '    ');
       Inc(count);
     end
-    else if (i + 1) mod 64 = 0 then
+    else if i mod 64 = 0 then
       Write(cFile, #13#10#13#10, '    ')
-    else if (i + 1) mod 8 = 0 then
+    else if i mod 8 = 0 then
       Write(cFile, #13#10, '    ');
+    Write(cFile, '', (tiles[i] and 15) or ((tiles[i + 1] and 15) shl 4), ',');
+    i := i + 2;
   end;
-  WriteLn(cFile, '};');
+    WriteLn(cFile, '};');
+  end
+  else
+  begin
+    for i := 0 to Length(tiles) - 1 do
+    begin
+      if (i mod 256 = 0) and (i <> Length(tiles) - 1) then
+      begin
+        Write(cFile, #13#10#13#10, '    //', count, #13#10, '    ');
+        Inc(count);
+      end
+      else if i mod 64 = 0 then
+        Write(cFile, #13#10#13#10, '    ')
+      else if i mod 8 = 0 then
+        Write(cFile, #13#10, '    ');
+      Write(cFile, '', tiles[i], ',');
+    end;
+    WriteLn(cFile, '};');
+  end;
 end;
 
-procedure handleImage(input: String; outType: Integer);
+procedure handleImage(input: String; outType: Integer; numColors: Integer);
 var
   img: TBitmap;
   imgPal: TMaxLogPalette;
@@ -54,7 +76,7 @@ var
   //Saturn palette format:
   //0123456789ABCDEF0123456789ABCDEF
   //RRRRRRRRGGGGGGGGBBBBBBBB00000000
-  saturnPal: array[0..255] of Uint32;
+  saturnPal: array of Uint32;
   i, j, k, l, count: Integer;
   r, g, b: Uint32;
   outFile: TextFile;
@@ -65,8 +87,9 @@ begin
   img := TBitmap.Create;
   img.LoadFromFile(input);
   SetLength(saturnTiles, img.Height * img.Width);
+  SetLength(saturnPal, numColors);
   GetPaletteEntries(img.Palette, 0, 256, imgPal.palPalEntry);
-  for i := 0 to 255 do
+  for i := 0 to (numColors - 1) do
   begin
     r := imgPal.palPalEntry[i].peRed;
     g := imgPal.palPalEntry[i].peGreen;
@@ -127,6 +150,7 @@ begin
       j := j + 16; //position: top pixel + 16
     end;
     i := i + 16; //inc y pos
+    j := 0;
   end;
 
 
@@ -145,6 +169,8 @@ end;
 begin
   //set up defaults
   outType := 0;
+  numColors := 256;
+
   if ParamCount > 0 then
   begin //process command line parameters
     for i := 1 to ParamCount do
@@ -163,6 +189,18 @@ begin
             exit;
           end
         end
+        else if paramstr(i)[2] = 'b' then
+        begin
+          if paramstr(i)[3] = '4' then
+            numColors := 16
+          else if paramstr(i)[3] = '8' then
+            numColors := 256
+          else
+          begin
+            printHelp;
+            exit;
+          end
+        end
         else
         begin
           printHelp;
@@ -174,7 +212,7 @@ begin
     begin
       filename := paramstr(i);
     end;
-  handleImage(filename, outType);
+  handleImage(filename, outType, numColors);
   end
   else
     printHelp;

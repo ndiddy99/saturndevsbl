@@ -22,12 +22,12 @@ extern Fixed32 scrolls_y[];
 
 typedef struct {
     Uint8 *playfield_tiles; //tiles used by NBG0 and NBG1
-    size_t playfield_tiles_num; //number of tiles
-    Uint32 *playfield_palette; //256 color palette for NBG0 and NBG1
+    Uint32 playfield_tiles_num; //number of tiles
+    Uint32 *playfield_palette; //16 color palette for NBG0 and NBG1
     Uint16 **levels; //array of pointers in WRAM to each playfield tilemap
     Uint8 *bg_tiles; //tiles used by NBG2
-    size_t bg_tiles_num;
-    Uint32 *bg_palette; //256 color palette
+    Uint32 bg_tiles_num;
+    Uint32 *bg_palette; //256 color palette for NBG2 and NBG3
     Uint16 *bg2_tilemap; //32x32 NBG2 tilemap
     Uint16 *bg3_tilemap; //32x32 NBG3 tilemap
 } SCROLL_DATA;

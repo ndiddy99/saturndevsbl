@@ -1,14 +1,14 @@
 del wood.c
-..\tools\bgconv\Win32\Debug\bgconv.exe wood.bmp
+..\tools\bgconv\Win32\Debug\bgconv.exe wood.bmp -b4
 rename out.c wood.c
 del map1.c
-..\tools\mapconv\Win32\Debug\mapconv.exe map1.tmx
+..\tools\mapconv\Win32\Debug\mapconv.exe map1.tmx -4
 rename out.c map1.c
 del map2.c
-..\tools\mapconv\Win32\Debug\mapconv.exe map2.tmx
+..\tools\mapconv\Win32\Debug\mapconv.exe map2.tmx -4
 rename out.c map2.c
 del map3.c
-..\tools\mapconv\Win32\Debug\mapconv.exe map3.tmx
+..\tools\mapconv\Win32\Debug\mapconv.exe map3.tmx -4
 rename out.c map3.c
 del bg0.c
 ..\tools\bgconv\Win32\Debug\bgconv.exe bg0.bmp

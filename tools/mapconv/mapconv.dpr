@@ -7,6 +7,9 @@ program MapConv;
 uses
   System.SysUtils, ActiveX, XMLIntf, XMLDoc;
 type WordMatrix = array of array of Uint16;
+var
+  i, bpp: Integer;
+  path: String;
 procedure outputC(name: String; map: WordMatrix);
 var
   i, j: Integer;
@@ -29,7 +32,7 @@ begin
   WriteLn(outFile, '};');
   CloseFile(outFile);
 end;
-procedure handleMap(input: String);
+procedure handleMap(input: String; bpp: Integer);
 var
   tiledFile: IXMLDocument;
   element: IXMLNode;
@@ -98,8 +101,15 @@ begin
       for j := 0 to width - 1 do
         begin
         //tiled stores maps 1 indexed for some reason
-        //multiply by 2 because maps are stored with 8x8 tile indexes even when they're 16*16
+        if bpp = 8 then
+        begin
+          //multiply by 2 because maps are stored with 8x8 tile indexes even when they're 16*16
           saturnMap[i][j] := ((map[i][j] and $3ff) - 1) * 2;
+        end
+        else
+        begin
+          saturnMap[i][j] := ((map[i][j] and $3ff) - 1);
+        end;
           if (map[i][j] and $80000000) = $80000000 then  //is tile horizontally flipped?
             saturnMap[i][j] := saturnMap[i][j] or $400;
           if (map[i][j] and $40000000) = $40000000 then //is vertically flipped?
@@ -120,10 +130,24 @@ begin
 end;
 
 begin
+  bpp := 8;
   if ParamCount > 0 then
   begin
-    handleMap(paramstr(1));
+    for i := 1 to ParamCount do
+    begin
+      if ParamStr(i)[1] = '-' then
+      begin
+        if ParamStr(i)[2] = '4' then
+          bpp := 4
+        else if ParamStr(i)[2] = '8' then
+          bpp := 8;
+      end
+      else
+        path := ParamStr(i);
+    end;
+    handleMap(path, bpp);
   end
   else
     WriteLn('Usage: mapconv [tiled name].tmx');
+    WriteLn('Optional parameter: -4 = 4bpp map, -8 = 8bpp map');
 end.

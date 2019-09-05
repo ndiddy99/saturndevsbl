@@ -7,6 +7,8 @@ program MapConv;
 uses
   System.SysUtils, ActiveX, XMLIntf, XMLDoc;
 type WordMatrix = array of array of Uint16;
+var
+  i: Integer;
 procedure outputC(name: String; map: WordMatrix);
 var
   i, j: Integer;
@@ -34,7 +36,7 @@ var
   tiledFile: IXMLDocument;
   element: IXMLNode;
   val, currElement, varname: String;
-  width, height, i, j, count, strIndex: Integer;
+  width, height, i, j, count, strIndex, backslashPos, strLength: Integer;
   map: array of array of Uint32;
   saturnMap: WordMatrix;
 begin
@@ -106,7 +108,10 @@ begin
             saturnMap[i][j] := saturnMap[i][j] or $800;
         end;
     end;
-    varName := input.Substring(input.LastIndexOf('\'));
+
+    backslashPos := input.LastIndexOf('\');
+    strLength := input.LastIndexOf('.') - backslashPos - 1;
+    varName := input.Substring(backslashPos, strLength);
     outputC(varName, saturnMap);
 
   end
@@ -119,7 +124,9 @@ end;
 begin
   if ParamCount > 0 then
   begin
-    handleMap(paramstr(1));
+  for i := 1 to ParamCount do
+  begin
+
   end
   else
     WriteLn('Usage: mapconv [tiled name].tmx');

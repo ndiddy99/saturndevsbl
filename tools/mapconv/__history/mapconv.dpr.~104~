@@ -107,7 +107,9 @@ begin
         end;
     end;
 
-    varName := input.Substring(input.LastIndexOf('\'));
+    backslashPos := input.LastIndexOf('\');
+    strLength := input.LastIndexOf('.') - backslashPos - 1;
+    varName := input.Substring(backslashPos, strLength);
     outputC(varName, saturnMap);
 
   end

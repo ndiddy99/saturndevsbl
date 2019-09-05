@@ -66,10 +66,10 @@ void scroll_init(SCROLL_DATA *data) {
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
-		SCL_AllocColRam(SCL_NBG0, 256, OFF); //set up palette data
-		SCL_SetColRam(SCL_NBG0, 0, 256, (void *)data->playfield_palette);
-		SCL_AllocColRam(SCL_NBG1, 256, OFF);
-		SCL_SetColRam(SCL_NBG1, 0, 256, (void *)data->playfield_palette);
+		SCL_AllocColRam(SCL_NBG0, 16, OFF); //set up palette data
+		SCL_SetColRam(SCL_NBG0, 0, 16, (void *)data->playfield_palette);
+		SCL_AllocColRam(SCL_NBG1, 16, OFF);
+		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)data->playfield_palette);
 		SCL_AllocColRam(SCL_NBG2, 256, OFF);
 		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg_palette);
 		SCL_AllocColRam(SCL_NBG3, 256, OFF);
@@ -78,7 +78,7 @@ void scroll_init(SCROLL_DATA *data) {
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
-	memcpy(VramWorkP, data->playfield_tiles, 256 * data->playfield_tiles_num);
+	memcpy(VramWorkP, data->playfield_tiles, 128 * data->playfield_tiles_num);
 
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
 	memcpy(VramWorkP, data->bg_tiles, 256 * data->bg_tiles_num);
@@ -114,7 +114,7 @@ void scroll_init(SCROLL_DATA *data) {
 		scfg0.pnamesize     = SCL_PN1WORD;
 		scfg0.flip          = SCL_PN_10BIT;
 		scfg0.platesize     = SCL_PL_SIZE_1X1; //they meant "plane size"
-		scfg0.coltype       = SCL_COL_TYPE_256;
+		scfg0.coltype       = SCL_COL_TYPE_16;
 		scfg0.datatype      = SCL_CELL;
 		scfg0.patnamecontrl = 0x0004; //vram A1 offset
 	for(i=0;i<4;i++)   scfg0.plate_addr[i] = vram[0];
@@ -125,12 +125,12 @@ void scroll_init(SCROLL_DATA *data) {
 	SCL_SetConfig(SCL_NBG1, &scfg1);
 
 	memcpy((void *)&scfg2, (void *)&scfg0, sizeof(SclConfig));
+	scfg2.coltype = SCL_COL_TYPE_256;
 	scfg2.patnamecontrl = 0x0008;
 	for(i=0;i<4;i++)   scfg2.plate_addr[i] = vram[2];
 	SCL_SetConfig(SCL_NBG2, &scfg2);
 
-	memcpy((void *)&scfg3, (void *)&scfg0, sizeof(SclConfig));
-	scfg3.patnamecontrl = 0x0008;
+	memcpy((void *)&scfg3, (void *)&scfg2, sizeof(SclConfig));
 	for(i=0;i<4;i++)   scfg3.plate_addr[i] = vram[3];
 	SCL_SetConfig(SCL_NBG3, &scfg3);
 	
@@ -171,24 +171,25 @@ void scroll_move(int num, Fixed32 x, Fixed32 y) {
 	Sint32 curr_tile_x, curr_tile_y;
 	scrolls_x[num] += x;
 	scrolls_y[num] += y;
-	curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
-	curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
-	// copy_modes[num] = 0;
-	if (curr_tile_x - map_tiles_x[num] > 0) { //if x value increasing
-		copy_modes[num] |= COPY_MODE_RCOL;
+	if (num < 2) { //only NBG0 and NBG1 have 4 way scrolling
+		curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
+		curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
+		// copy_modes[num] = 0;
+		if (curr_tile_x - map_tiles_x[num] > 0) { //if x value increasing
+			copy_modes[num] |= COPY_MODE_RCOL;
+		}
+		else if (curr_tile_x - map_tiles_x[num] < 0) { //if x value decreasing
+			copy_modes[num] |= COPY_MODE_LCOL;
+		}
+		if (curr_tile_y - map_tiles_y[num] > 0) { //if y value increasing
+			copy_modes[num] |= COPY_MODE_BROW;
+		}
+		else if (curr_tile_y - map_tiles_y[num] < 0) { //if y value decreasing
+			copy_modes[num] |= COPY_MODE_TROW;
+		}
+		map_tiles_x[num] = curr_tile_x;
+		map_tiles_y[num] = curr_tile_y;
 	}
-	else if (curr_tile_x - map_tiles_x[num] < 0) { //if x value decreasing
-		copy_modes[num] |= COPY_MODE_LCOL;
-	}
-	if (curr_tile_y - map_tiles_y[num] > 0) { //if y value increasing
-		copy_modes[num] |= COPY_MODE_BROW;
-	}
-	else if (curr_tile_y - map_tiles_y[num] < 0) { //if y value decreasing
-		copy_modes[num] |= COPY_MODE_TROW;
-	}
-	map_tiles_x[num] = curr_tile_x;
-	map_tiles_y[num] = curr_tile_y;
-	
 	//Scroll bitmasks are:
 	//NBG0 - (1 << 2)
 	//NBG1 - (1 << 3)
@@ -217,6 +218,8 @@ void scroll_scale(int num, Fixed32 scale) {
 	//reset the configuration byte for the given background
 	Scl_n_reg.zoomenbl &= (num == 0 ? HIGH_BYTE : LOW_BYTE);
 	if (scale >= FIXED(1)) {
+		Scl_n_reg.zoomenbl &= (num == 0 ? ~(ZOOM_HALF_NBG0 | ZOOM_QUARTER_NBG0)
+										: ~(ZOOM_HALF_NBG1 | ZOOM_QUARTER_NBG1));
 		return;
 	}
 	else if (scale < FIXED(1) && scale >= FIXED(0.5)) {
@@ -286,7 +289,7 @@ void scroll_transition() {
 			Uint16 *TilemapWram = tilemaps[curr_map + 1];
 			scfg0.dispenbl = OFF;
 			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
-			SCL_DisplayFrame(); //wait for change to propagate before writing to vram
+			SCL_DisplayFrame();
 			count = 0;
 			for (int i = 0; i < 32; i++) { //saturn tilemap is 32*32
 				for (int j = 0; j < 32; j++) {
@@ -298,8 +301,8 @@ void scroll_transition() {
 			scfg0.dispenbl = ON;
 			SCL_SetConfig(SCL_NBG0, &scfg0);
 			scroll_scale(0, FIXED(0.75));
-			SCL_SetPriority(SCL_NBG0, 5);
-			SCL_SetPriority(SCL_NBG1, 6);
+			SCL_SetPriority(SCL_NBG0, 6);
+			SCL_SetPriority(SCL_NBG1, 7);
 			scroll_transition_state = TSTATE_ZOOM;
 		break;
 		case TSTATE_ZOOM:;
@@ -325,8 +328,8 @@ void scroll_transition() {
 			scroll_scale(0, FIXED(1));
 			scroll_scale(1, FIXED(0.75));
 			SCL_SetColMixRate(SCL_NBG0, 32);
-			SCL_SetPriority(SCL_NBG0, 6);
-			SCL_SetPriority(SCL_NBG1, 5);
+			SCL_SetPriority(SCL_NBG0, 7);
+			SCL_SetPriority(SCL_NBG1, 6);
 			maps[0] = tilemaps[curr_map];
 			maps[1] = tilemaps[curr_map + 1];
 			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;

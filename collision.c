@@ -4,10 +4,10 @@
 #include "scroll.h"
 
 #define PLAYER_SPEED (MTH_FIXED(2))
-#define WALKABLE(TILE) (TILE <= 24 && floor_tiles[TILE])
+#define WALKABLE(TILE) (TILE <= 12 && floor_tiles[TILE])
 //if a tile is walkable or not
-                        // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
-const int floor_tiles[] = {0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1};
+                        // 0  1  2  3  4  5  6  7  8  9 10 11 12 
+const int floor_tiles[] = {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1};
 
 //gets tile number for given coordinates
 static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
@@ -15,10 +15,10 @@ static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
 }
 
 int over_air(SPRITE_INFO *sprite) {
-	return (get_tile(sprite->xPos, sprite->yPos) == 20 &&
-			get_tile(sprite->xPos + sprite->xSize - 1, sprite->yPos) == 20 &&
-			get_tile(sprite->xPos, sprite->yPos + sprite->ySize - 1) == 20 &&
-			get_tile(sprite->xPos + sprite->xSize - 1, sprite->yPos + sprite->ySize - 1) == 20); 
+	return (get_tile(sprite->xPos, sprite->yPos) == 10 &&
+			get_tile(sprite->xPos + sprite->xSize - 1, sprite->yPos) == 10 &&
+			get_tile(sprite->xPos, sprite->yPos + sprite->ySize - 1) == 10 &&
+			get_tile(sprite->xPos + sprite->xSize - 1, sprite->yPos + sprite->ySize - 1) == 10); 
 }
 
 void collision_detect_up(SPRITE_INFO *sprite, int adjust) {
