@@ -77,7 +77,10 @@ begin
         //WriteLn('r in: ', line[k], ' out: ', r);
         //WriteLn('g in: ', line[k + 1], ' out: ', g);
         //WriteLn('b in: ', line[k + 2], ' out: ', b);
-        saturnImg[j][count] := ($8000 or b or (g shl 5) or (r shl 10));
+        if (r > 0) or (g > 0) or (b > 0) then
+          saturnImg[j][count] := ($8000 or b or (g shl 5) or (r shl 10))
+        else
+          saturnImg[j][count] := 0;
         //WriteLn('out: ', saturnImg[i][count]);
         k := k + 3;
         count := count + 1;

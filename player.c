@@ -95,8 +95,14 @@ void player_input() {
 			collision_detect_down_right(&player);
 		break;
 	}
+	
 	if (over_air(&player)) {
 		scroll_transition_state = TSTATE_PRESETUP;
+	}
+
+	if (PadData1EW & PAD_C) {
+		SPRITE_INFO *ptr = sprite_next();
+		sprite_make(19, PLAYER_SPRITE_X + FIXED(15), PLAYER_SPRITE_Y + FIXED(15), ptr);
 	}
 
 	player_animate();

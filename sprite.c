@@ -33,7 +33,7 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 19 * 2; i += 2) {
+	for (i = 0; i < 20 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
@@ -84,17 +84,26 @@ void sprite_draw(SPRITE_INFO *info) {
 	}
 }
 
-void sprite_make(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
-	ptr->char_num = spriteNum;
+void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
+	ptr->char_num = tile_num;
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;
-	ptr->xSize = MTH_IntToFixed(dimensions[spriteNum << 1]);
-	ptr->ySize = MTH_IntToFixed(dimensions[(spriteNum << 1) + 1]);
+	ptr->xSize = MTH_IntToFixed(dimensions[tile_num << 1]);
+	ptr->ySize = MTH_IntToFixed(dimensions[(tile_num << 1) + 1]);
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
 	ptr->state = STATE_NULL;
+}
+
+void sprite_draw_all() {
+	int i;
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		if (sprites[i].state != STATE_NODISP) {
+			sprite_draw(&sprites[i]);
+		}
+	}
 }
 
 SPRITE_INFO *sprite_next() {

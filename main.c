@@ -11,7 +11,7 @@
 
 #include	"graphicrefs.h"
 
-Uint16 *levels[] = {map1, map2, map3};
+Uint16 *levels[] = {map1, map2, map3, NULL};
 
 int main() {
 
@@ -43,6 +43,7 @@ int main() {
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
 			print_display();
+			sprite_draw_all();
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();

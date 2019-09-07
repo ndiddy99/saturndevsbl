@@ -233,7 +233,7 @@ void scroll_scale(int num, Fixed32 scale) {
 //gets the value at the given coordinates for a square map
 Uint16 scroll_get(int map, int x, int y) {
 	Uint16 *map_ptr = maps[map];
-	if (x >= 64 || x < 0 || y >= 64 || y < 0) {
+	if (map_ptr == NULL || x >= 64 || x < 0 || y >= 64 || y < 0) {
 		return 0;
 	}
 	return map_ptr[y * 64 + x];
@@ -291,9 +291,14 @@ void scroll_transition() {
 			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
 			SCL_DisplayFrame();
 			count = 0;
-			for (int i = 0; i < 32; i++) { //saturn tilemap is 32*32
-				for (int j = 0; j < 32; j++) {
-					TilemapVram[count++] = TilemapWram[i * 64 + j]; //level is 64*64
+			if (TilemapWram == NULL) {
+				memset(TilemapVram, 0, 32 * 32);
+			}
+			else {
+				for (int i = 0; i < 32; i++) { //saturn tilemap is 32*32
+					for (int j = 0; j < 32; j++) {
+						TilemapVram[count++] = TilemapWram[i * 64 + j]; //level is 64*64
+					}
 				}
 			}
 			scale_val = FIXED(0.75);

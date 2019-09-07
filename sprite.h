@@ -43,7 +43,8 @@ void sprite_init(void);
 //on required features
 //needs command to be opened before calling
 void sprite_draw(SPRITE_INFO *info);
-void sprite_make(int spriteNum, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+void sprite_draw_all(void);
 SPRITE_INFO *sprite_next(void);
 void sprite_delete(int index);
 
