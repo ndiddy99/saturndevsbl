@@ -20,17 +20,23 @@ enum state {
 	STATE_DOWNRIGHT
 };
 
+struct SpriteInfo;
+
+typedef void (*IterateFunc)(struct SpriteInfo *);
+
 typedef struct SpriteInfo {
 	Uint16 char_num;
 	Fixed32 xPos;
 	Fixed32 yPos;
-	Uint16 mirror;
 	Fixed32 xSize;
 	Fixed32 ySize;
 	Fixed32 scale;
 	Fixed32 angle;
-	Uint16 animTimer;
-	Uint16 state;
+	Uint16 mirror;
+	Uint16 animTimer; //timer for animations
+	Uint16 state; //where the sprite is moving
+	Uint16 facing; //where the sprite is facing
+	IterateFunc iterate;
 } SPRITE_INFO;
 
 #define SPRITE_LIST_SIZE 200

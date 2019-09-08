@@ -4,6 +4,7 @@
 #define _SPR2_
 #include <sega_spr.h>
 #include <sega_scl.h>
+#include <string.h>
 
 #include "graphicrefs.h"
 #include "scroll.h"
@@ -95,13 +96,22 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->angle = 0;
 	ptr->animTimer = 0;
 	ptr->state = STATE_NULL;
+	ptr->facing = STATE_DOWN;
+	ptr->iterate = NULL;
 }
 
 void sprite_draw_all() {
 	int i;
+	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (sprites[i].state != STATE_NODISP) {
-			sprite_draw(&sprites[i]);
+			if (sprites[i].iterate != NULL) {
+				sprites[i].iterate(&sprites[i]);
+			}
+			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
+			tmp.xPos -=scrolls_x[0];
+			tmp.yPos -=scrolls_y[0];
+			sprite_draw(&tmp);
 		}
 	}
 }

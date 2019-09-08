@@ -1,6 +1,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include "bullet.h"
 #include "collision.h"
 #include "player.h"
 #include "print.h"
@@ -55,6 +56,9 @@ void player_input() {
 	//if state changed, reset animation
 	if (player.state != states[PadData1 >> 12]) {
 		player.state = states[PadData1 >> 12];
+		if (player.state != STATE_NULL) {
+			player.facing = player.state;
+		}
 		player.animTimer = 0;
 	}
 	switch (player.state) {
@@ -101,8 +105,7 @@ void player_input() {
 	}
 
 	if (PadData1EW & PAD_C) {
-		SPRITE_INFO *ptr = sprite_next();
-		sprite_make(19, PLAYER_SPRITE_X + FIXED(15), PLAYER_SPRITE_Y + FIXED(15), ptr);
+		bullet_make(&player);
 	}
 
 	player_animate();
