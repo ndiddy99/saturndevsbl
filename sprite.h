@@ -25,7 +25,8 @@ struct SpriteInfo;
 typedef void (*IterateFunc)(struct SpriteInfo *);
 
 typedef struct SpriteInfo {
-	Uint16 char_num;
+	Uint16 char_num; //tile number
+	Uint16 index; //where the sprite is in the sprites array
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Fixed32 xSize;
@@ -39,10 +40,6 @@ typedef struct SpriteInfo {
 	IterateFunc iterate;
 } SPRITE_INFO;
 
-#define SPRITE_LIST_SIZE 200
-extern SPRITE_INFO sprites[];
-extern int num_sprites;
-
 //sets up initial sprite display
 void sprite_init(void);
 //automatically picks the simplest SBL function for drawing the sprite depending
@@ -52,7 +49,7 @@ void sprite_draw(SPRITE_INFO *info);
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
 void sprite_draw_all(void);
 SPRITE_INFO *sprite_next(void);
-void sprite_delete(int index);
+void sprite_delete(SPRITE_INFO *sprite);
 
 
 #endif

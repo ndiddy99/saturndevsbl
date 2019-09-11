@@ -6,11 +6,14 @@
 #include <sega_scl.h>
 #include <string.h>
 
+#include "bullet.h"
 #include "graphicrefs.h"
+#include "print.h"
 #include "scroll.h"
 #include "sprite.h"
 #include "vblank.h"
 
+#define SPRITE_LIST_SIZE 200
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 
@@ -37,6 +40,9 @@ void sprite_init() {
 	for (i = 0; i < 20 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
+	}
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		sprites[i].state = STATE_NODISP;
 	}
 	SCL_DisplayFrame();
 }
@@ -87,6 +93,7 @@ void sprite_draw(SPRITE_INFO *info) {
 
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->char_num = tile_num;
+	ptr->index = 0; //updated by the sprite_next function
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;
@@ -104,10 +111,13 @@ void sprite_draw_all() {
 	int i;
 	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		if (sprites[i].state != STATE_NODISP && sprites[i].iterate != NULL) {
+			print_num(sprites[i].state, 5, 0);
+			sprites[i].iterate(&sprites[i]);
+		}
+	}
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (sprites[i].state != STATE_NODISP) {
-			if (sprites[i].iterate != NULL) {
-				sprites[i].iterate(&sprites[i]);
-			}
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
 			tmp.xPos -=scrolls_x[0];
 			tmp.yPos -=scrolls_y[0];
@@ -121,13 +131,18 @@ SPRITE_INFO *sprite_next() {
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (sprites[i].state == STATE_NODISP) {
 			num_sprites++;
+			sprites[i].index = i;
+			sprites[i].state = STATE_NULL;
+			sprites[i].iterate = NULL;
 			return &sprites[i];
 		}
 	}
 	return NULL;
 }
 
-void sprite_delete(int index) {
-	sprites[index].state = STATE_NODISP;
+void sprite_delete(SPRITE_INFO *sprite) {
+	sprite->state = STATE_NODISP;
+	sprite->iterate = NULL;
 	num_sprites--;
+	print_num(num_sprites, 4, 0);
 }

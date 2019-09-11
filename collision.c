@@ -3,14 +3,11 @@
 #include "collision.h"
 #include "scroll.h"
 
-#define PLAYER_SPEED (MTH_FIXED(2))
-#define WALKABLE(TILE) (TILE <= 12 && floor_tiles[TILE])
-//if a tile is walkable or not
-                        // 0  1  2  3  4  5  6  7  8  9 10 11 12 
-const int floor_tiles[] = {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1};
+                  // 0  1  2  3  4  5  6  7  8  9 10 11 12 
+int floor_tiles[] = {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1};
 
 //gets tile number for given coordinates
-static inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
+inline Uint16 get_tile(Fixed32 x, Fixed32 y) {
 	return scroll_get(0, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4);
 }
 
