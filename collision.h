@@ -9,7 +9,7 @@ extern int floor_tiles[];
 #define WALKABLE(TILE) (TILE <= 12 && floor_tiles[TILE])
 
 
-Uint16 get_tile(Fixed32 x, Fixed32 y);
+Uint16 collision_get_tile(Fixed32 x, Fixed32 y);
 int over_air(SPRITE_INFO *sprite);
 //adjust should be 1 if we want to move the sprite up/down on corners
 void collision_detect_up(SPRITE_INFO *sprite, int adjust);

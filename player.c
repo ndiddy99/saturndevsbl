@@ -9,9 +9,8 @@
 #include "sprite.h"
 #include "vblank.h"
 
-#define PLAYER_SPEED (MTH_FIXED(2))
-//normalize diagonal speed
 #define DIAGONAL_MULTIPLIER (MTH_FIXED(0.8))
+#define PLAYER_SPEED (MTH_FIXED(2))
 #define PLAYER_TOP (MTH_FIXED(0))
 #define PLAYER_SIDE (MTH_FIXED(15))
 #define PLAYER_BOTTOM (MTH_FIXED(31))
@@ -47,6 +46,7 @@ SPRITE_INFO player;
 
 void player_init() {
 	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	player.speed = PLAYER_SPEED;
 	scroll_set(0, MTH_FIXED(48), MTH_FIXED(16));
 }
 
@@ -61,44 +61,7 @@ void player_input() {
 		}
 		player.animTimer = 0;
 	}
-	switch (player.state) {
-		case STATE_UP:
-			player.yPos -= PLAYER_SPEED;
-			collision_detect_up(&player, 1);
-		break;
-		case STATE_DOWN:
-			player.yPos += PLAYER_SPEED;
-			collision_detect_down(&player, 1);
-		break;
-		case STATE_LEFT:
-			player.xPos -= PLAYER_SPEED;
-			collision_detect_left(&player, 1);
-		break;
-		case STATE_RIGHT:
-			player.xPos += PLAYER_SPEED;
-			collision_detect_right(&player, 1);
-		break;
-		case STATE_UPLEFT:
-			player.xPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player.yPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_up_left(&player);
-		break;
-		case STATE_UPRIGHT:
-			player.xPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player.yPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_up_right(&player);
-		break;
-		case STATE_DOWNLEFT:
-			player.xPos += MTH_Mul(-PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player.yPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_down_left(&player);
-		break;
-		case STATE_DOWNRIGHT:
-			player.xPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			player.yPos += MTH_Mul(PLAYER_SPEED, DIAGONAL_MULTIPLIER);
-			collision_detect_down_right(&player);
-		break;
-	}
+	sprite_move(&player, 1);
 	
 	if (over_air(&player)) {
 		scroll_transition_state = TSTATE_PRESETUP;

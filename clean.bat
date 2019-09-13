@@ -1,1 +1,1 @@
-make clean
+mingw32-make clean

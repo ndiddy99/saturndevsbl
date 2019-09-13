@@ -6,7 +6,7 @@
 #include <sega_scl.h>
 #include <string.h>
 
-#include "bullet.h"
+#include "collision.h"
 #include "graphicrefs.h"
 #include "print.h"
 #include "scroll.h"
@@ -16,6 +16,8 @@
 #define SPRITE_LIST_SIZE 200
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
+//normalize diagonal speed
+#define DIAGONAL_MULTIPLIER (MTH_FIXED(0.8))
 
 #define CommandMax    300
 #define GourTblMax    300
@@ -99,6 +101,7 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->mirror = 0;
 	ptr->xSize = MTH_IntToFixed(dimensions[tile_num << 1]);
 	ptr->ySize = MTH_IntToFixed(dimensions[(tile_num << 1) + 1]);
+	ptr->speed = 0;
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
@@ -145,4 +148,62 @@ void sprite_delete(SPRITE_INFO *sprite) {
 	sprite->iterate = NULL;
 	num_sprites--;
 	print_num(num_sprites, 4, 0);
+}
+
+Uint16 sprite_move(SPRITE_INFO *sprite, int collision) {
+    switch(sprite->state) {
+        case STATE_UP:
+            sprite->yPos -= sprite->speed;
+			if (collision) {
+				collision_detect_up(sprite, 1);
+			}
+        break;
+        case STATE_DOWN:
+            sprite->yPos += sprite->speed;
+			if (collision) {
+				collision_detect_down(sprite, 1);
+			}
+        break;
+        case STATE_LEFT:
+            sprite->xPos -= sprite->speed;
+			if (collision) {
+				collision_detect_left(sprite, 1);
+			}
+        break;
+        case STATE_RIGHT:
+            sprite->xPos += sprite->speed;
+			if (collision) {
+				collision_detect_right(sprite, 1);
+			}
+        break;
+        case STATE_UPLEFT:
+            sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+            sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+			if (collision) {
+				collision_detect_up_left(sprite);
+			}
+        break;
+        case STATE_UPRIGHT:
+            sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+            sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+			if (collision) {
+				collision_detect_up_right(sprite);
+			}
+        break;
+        case STATE_DOWNLEFT:
+            sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+            sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+			if (collision) {
+				collision_detect_down_left(sprite);
+			}
+        break;
+        case STATE_DOWNRIGHT:
+            sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+            sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
+			if (collision) {
+				collision_detect_down_right(sprite);
+			}
+        break;
+    }
+	return collision_get_tile(sprite->xPos, sprite->yPos);
 }

@@ -1,2 +1,2 @@
 cd C:\saturn\sblproj
-make -f makefile
+mingw32-make -f makefile

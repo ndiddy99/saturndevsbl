@@ -31,6 +31,7 @@ typedef struct SpriteInfo {
 	Fixed32 yPos;
 	Fixed32 xSize;
 	Fixed32 ySize;
+	Fixed32 speed; //sprite's max speed
 	Fixed32 scale;
 	Fixed32 angle;
 	Uint16 mirror;
@@ -46,10 +47,17 @@ void sprite_init(void);
 //on required features
 //needs command to be opened before calling
 void sprite_draw(SPRITE_INFO *info);
+//inits the SPRITE_INFO pointer given
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr);
+//draws all sprites in the sprite list
 void sprite_draw_all(void);
+//gets a pointer to the next sprite in the list
 SPRITE_INFO *sprite_next(void);
+//deletes the given sprite from the sprite list
 void sprite_delete(SPRITE_INFO *sprite);
-
+//utility function that moves a sprite based on its state
+//collision: 1 to do collision, 0 to not
+//returns the tile the sprite is over
+Uint16 sprite_move(SPRITE_INFO *sprite, int collision);
 
 #endif

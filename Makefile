@@ -74,5 +74,6 @@ $(TARGET).bin:	$(OBJS)
 	cmd //c $(AS) $< $(ASFLAGS) $(_ASFLAGS) -o $@
 
 clean:
-	rm *.o
+	del *.o
+
 
