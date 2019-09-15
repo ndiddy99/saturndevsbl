@@ -8,12 +8,11 @@
 #define BULLET_CHARNUM (19)
 #define BULLET_SPEED MTH_FIXED(5)
 
-void bullet_make(SPRITE_INFO *parent) {
+void bullet_make(Fixed32 x, Fixed32 y, Uint16 direction) {
     SPRITE_INFO *bullet = sprite_next();
-    sprite_make(BULLET_CHARNUM, parent->xPos + MTH_Div(parent->xSize, MTH_FIXED(2)),
-                                parent->yPos + MTH_Div(parent->ySize, MTH_FIXED(2)), bullet);
+    sprite_make(BULLET_CHARNUM, x, y, bullet);
     bullet->speed = BULLET_SPEED;
-    bullet->state = parent->facing;
+    bullet->state = direction;
     bullet->iterate = &bullet_move;
 }
 

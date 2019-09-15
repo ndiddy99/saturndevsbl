@@ -7,18 +7,20 @@
 #define MIRROR_HORIZ (1 << 4)
 #define MIRROR_VERT (1 << 5)
 
-enum state {
-	STATE_NODISP = 0,
-	STATE_NULL,
-	STATE_UP,
-	STATE_DOWN,
-	STATE_LEFT,
-	STATE_RIGHT,
-	STATE_UPLEFT,
-	STATE_UPRIGHT,
-	STATE_DOWNLEFT,
-	STATE_DOWNRIGHT
-};
+//what xSize is set to if sprite isn't initialized
+#define NODISP (0)
+
+#define SPRITE_NULL      (0)
+#define SPRITE_UP        (1 << 1)
+#define SPRITE_DOWN      (1 << 2)
+#define SPRITE_LEFT      (1 << 3)
+#define SPRITE_RIGHT     (1 << 4)
+#define SPRITE_UPLEFT    (SPRITE_UP | SPRITE_LEFT)
+#define SPRITE_UPRIGHT   (SPRITE_UP | SPRITE_RIGHT)
+#define SPRITE_DOWNLEFT  (SPRITE_DOWN | SPRITE_LEFT)
+#define SPRITE_DOWNRIGHT (SPRITE_DOWN | SPRITE_RIGHT)
+
+
 
 struct SpriteInfo;
 

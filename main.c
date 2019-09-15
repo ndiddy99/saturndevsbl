@@ -12,6 +12,7 @@
 #include	"graphicrefs.h"
 
 Uint16 *levels[] = {map1, map2, map3, NULL};
+Uint32 frame = 0;
 
 int main() {
 
@@ -31,6 +32,7 @@ int main() {
 	print_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	while(1) {
+		frame++;
 		if (scroll_transition_state == TSTATE_NULL) {
 			player_input();
 		}

@@ -44,7 +44,7 @@ void sprite_init() {
 		count++;
 	}
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		sprites[i].state = STATE_NODISP;
+		sprites[i].xSize = NODISP;
 	}
 	SCL_DisplayFrame();
 }
@@ -105,8 +105,8 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
-	ptr->state = STATE_NULL;
-	ptr->facing = STATE_DOWN;
+	ptr->state = SPRITE_NULL;
+	ptr->facing = SPRITE_DOWN;
 	ptr->iterate = NULL;
 }
 
@@ -114,13 +114,13 @@ void sprite_draw_all() {
 	int i;
 	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].state != STATE_NODISP && sprites[i].iterate != NULL) {
+		if (sprites[i].xSize != NODISP && sprites[i].iterate != NULL) {
 			print_num(sprites[i].state, 5, 0);
 			sprites[i].iterate(&sprites[i]);
 		}
 	}
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].state != STATE_NODISP) {
+		if (sprites[i].xSize != NODISP) {
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
 			tmp.xPos -=scrolls_x[0];
 			tmp.yPos -=scrolls_y[0];
@@ -132,10 +132,10 @@ void sprite_draw_all() {
 SPRITE_INFO *sprite_next() {
 	int i;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].state == STATE_NODISP) {
+		if (sprites[i].xSize == NODISP) {
 			num_sprites++;
 			sprites[i].index = i;
-			sprites[i].state = STATE_NULL;
+			sprites[i].state = SPRITE_NULL;
 			sprites[i].iterate = NULL;
 			return &sprites[i];
 		}
@@ -144,7 +144,7 @@ SPRITE_INFO *sprite_next() {
 }
 
 void sprite_delete(SPRITE_INFO *sprite) {
-	sprite->state = STATE_NODISP;
+	sprite->xSize = NODISP;
 	sprite->iterate = NULL;
 	num_sprites--;
 	print_num(num_sprites, 4, 0);
@@ -152,52 +152,52 @@ void sprite_delete(SPRITE_INFO *sprite) {
 
 Uint16 sprite_move(SPRITE_INFO *sprite, int collision) {
     switch(sprite->state) {
-        case STATE_UP:
+        case SPRITE_UP:
             sprite->yPos -= sprite->speed;
 			if (collision) {
 				collision_detect_up(sprite, 1);
 			}
         break;
-        case STATE_DOWN:
+        case SPRITE_DOWN:
             sprite->yPos += sprite->speed;
 			if (collision) {
 				collision_detect_down(sprite, 1);
 			}
         break;
-        case STATE_LEFT:
+        case SPRITE_LEFT:
             sprite->xPos -= sprite->speed;
 			if (collision) {
 				collision_detect_left(sprite, 1);
 			}
         break;
-        case STATE_RIGHT:
+        case SPRITE_RIGHT:
             sprite->xPos += sprite->speed;
 			if (collision) {
 				collision_detect_right(sprite, 1);
 			}
         break;
-        case STATE_UPLEFT:
+        case SPRITE_UPLEFT:
             sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
             sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
 			if (collision) {
 				collision_detect_up_left(sprite);
 			}
         break;
-        case STATE_UPRIGHT:
+        case SPRITE_UPRIGHT:
             sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
             sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
 			if (collision) {
 				collision_detect_up_right(sprite);
 			}
         break;
-        case STATE_DOWNLEFT:
+        case SPRITE_DOWNLEFT:
             sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
             sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
 			if (collision) {
 				collision_detect_down_left(sprite);
 			}
         break;
-        case STATE_DOWNRIGHT:
+        case SPRITE_DOWNRIGHT:
             sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
             sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
 			if (collision) {
