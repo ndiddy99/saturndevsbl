@@ -2,6 +2,7 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "bullet.h"
+#include "circle.h"
 #include "collision.h"
 #include "player.h"
 #include "print.h"
@@ -54,6 +55,7 @@ void player_init() {
 	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 	player.speed = PLAYER_SPEED;
 	scroll_set(0, MTH_FIXED(48), MTH_FIXED(16));
+	circle_make(player.xPos, player.yPos);
 }
 
 void player_input() {

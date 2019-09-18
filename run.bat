@@ -12,4 +12,4 @@ del out.bin
 del out.cue
 :nodelete
 "c:\Program Files\PowerISO\piso.exe" convert out.iso -o out.bin
-REM c:\saturn\mednafen\mednafen out.cue 
+c:\saturn\mednafen\mednafen out.cue 

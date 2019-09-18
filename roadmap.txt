@@ -1,0 +1,10 @@
+Things I need for the demo to be ready:
+Title screen
+2 levels, each with a boss
+music for each level and sound effects
+a few different enemy types
+
+tech stuff this would require:
+arbitrary text display
+cd access for loading levels off the disc and cdda
+adding binary output to the image converter and binary reading to the engine
