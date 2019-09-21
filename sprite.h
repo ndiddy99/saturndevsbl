@@ -43,6 +43,9 @@ typedef struct SpriteInfo {
 	IterateFunc iterate;
 } SPRITE_INFO;
 
+#define SPRITE_LIST_SIZE (200)
+extern SPRITE_INFO sprites[];
+
 //sets up initial sprite display
 void sprite_init(void);
 //automatically picks the simplest SBL function for drawing the sprite depending

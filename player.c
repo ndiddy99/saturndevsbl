@@ -22,22 +22,22 @@ extern Uint32 frame;
 //what state the character should be set to given the d-pad's input
 const Uint16 states[] = {
 	                  // RLDU
-	SPRITE_NULL,       // 0000
-	SPRITE_UP,         // 0001
+	SPRITE_NULL,      // 0000
+	SPRITE_UP,        // 0001
 	SPRITE_DOWN,  	  // 0010
-	SPRITE_NULL,       // 0011
-	SPRITE_LEFT,       // 0100
-	SPRITE_UPLEFT,     // 0101
-	SPRITE_DOWNLEFT,   // 0110
-	SPRITE_LEFT,       // 0111
-	SPRITE_RIGHT,      // 1000 
-	SPRITE_UPRIGHT,    // 1001
-	SPRITE_DOWNRIGHT,  // 1010
-	SPRITE_RIGHT,      // 1011 
-	SPRITE_NULL,       // 1100
-	SPRITE_UP,         // 1101
-	SPRITE_DOWN,       // 1110
-	SPRITE_NULL        // 1111
+	SPRITE_NULL,      // 0011
+	SPRITE_LEFT,      // 0100
+	SPRITE_UPLEFT,    // 0101
+	SPRITE_DOWNLEFT,  // 0110
+	SPRITE_LEFT,      // 0111
+	SPRITE_RIGHT,     // 1000 
+	SPRITE_UPRIGHT,   // 1001
+	SPRITE_DOWNRIGHT, // 1010
+	SPRITE_RIGHT,     // 1011 
+	SPRITE_NULL,      // 1100
+	SPRITE_UP,        // 1101
+	SPRITE_DOWN,      // 1110
+	SPRITE_NULL       // 1111
 };
 const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's walking down
 const Uint16 player_up[] = {14, 13, 15, 13};
@@ -79,8 +79,20 @@ void player_input() {
 	if (PadData1 & PAD_B && frame - bullet_lastframe > BULLET_DELAY) {
 		bullet_direction = player.facing;
 		bullet_lastframe = frame;
-		bullet_make(player.xPos + MTH_Div(player.xSize, MTH_FIXED(2)),
-					player.yPos + MTH_Div(player.ySize, MTH_FIXED(2)),
+		bullet_make(player.xPos + (player.xSize >> 1),
+					player.yPos + (player.ySize >> 1),
+					bullet_direction);
+	}
+	//A button fires in the opposite direction the player is facing (behind)
+	else if (PadData1 & PAD_A && frame - bullet_lastframe > BULLET_DELAY) {
+		bullet_direction = 0;
+		if (player.facing & SPRITE_UP)    { bullet_direction |= SPRITE_DOWN; }
+		if (player.facing & SPRITE_DOWN)  { bullet_direction |= SPRITE_UP; }
+		if (player.facing & SPRITE_LEFT)  { bullet_direction |= SPRITE_RIGHT; }
+		if (player.facing & SPRITE_RIGHT) { bullet_direction |= SPRITE_LEFT; }
+		bullet_lastframe = frame;
+		bullet_make(player.xPos + (player.xSize >> 1),
+				    player.yPos + (player.ySize >> 1),
 					bullet_direction);
 	}
 	//C button keeps fire locked in the same direction after you hold it
@@ -90,8 +102,8 @@ void player_input() {
 			bullet_direction = player.facing;
 		}
 		bullet_lastframe = frame;
-		bullet_make(player.xPos + MTH_Div(player.xSize, MTH_FIXED(2)),
-					player.yPos + MTH_Div(player.ySize, MTH_FIXED(2)),
+		bullet_make(player.xPos + (player.xSize >> 1),
+					player.yPos + (player.ySize >> 1),
 					bullet_direction);
 	}
 

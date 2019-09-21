@@ -5,7 +5,7 @@
 #include "player.h"
 
 #define CIRCLE_CHARNUM (20)
-#define CIRCLE_SPEED MTH_FIXED(1.2)
+#define CIRCLE_SPEED MTH_FIXED(0.5)
 
 void circle_make(Fixed32 x, Fixed32 y) {
     SPRITE_INFO *circle = sprite_next();

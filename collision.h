@@ -20,5 +20,7 @@ inline void collision_detect_up_left(SPRITE_INFO *sprite);
 inline void collision_detect_up_right(SPRITE_INFO *sprite);
 inline void collision_detect_down_left(SPRITE_INFO *sprite);
 inline void collision_detect_down_right(SPRITE_INFO *sprite);
-
+//checks if sprite1's center is inside sprite2
+//returns 1 if yes, 0 if no
+int collision_point_sprite(SPRITE_INFO *sprite1, SPRITE_INFO *sprite2);
 #endif

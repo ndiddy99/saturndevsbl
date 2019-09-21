@@ -122,3 +122,14 @@ inline void collision_detect_down_right(SPRITE_INFO *sprite) {
 	collision_detect_right(sprite, 1);
 }
 
+//checks if the center of sprite 1 is inside sprite 2
+int collision_point_sprite(SPRITE_INFO *sprite1, SPRITE_INFO *sprite2) {
+	Fixed32 center_x = sprite1->xPos + (sprite1->xSize >> 1);
+	Fixed32 center_y = sprite1->yPos + (sprite1->ySize >> 1);
+	if (center_x >= sprite2->xPos && center_x < (sprite2->xPos + sprite2->xSize)) {
+		if (center_y >= sprite2->yPos && center_y < (sprite2->yPos + sprite2->ySize)) {
+			return 1;
+		}	
+	}
+	return 0;
+}

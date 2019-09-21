@@ -13,7 +13,6 @@
 #include "sprite.h"
 #include "vblank.h"
 
-#define SPRITE_LIST_SIZE 200
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 //normalize diagonal speed
@@ -95,7 +94,6 @@ void sprite_draw(SPRITE_INFO *info) {
 
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->char_num = tile_num;
-	ptr->index = 0; //updated by the sprite_next function
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;

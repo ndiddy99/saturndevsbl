@@ -26,4 +26,13 @@ void bullet_move(SPRITE_INFO *bullet) {
         !WALKABLE(collision_get_tile(bullet->xPos, bullet->yPos))) {
             sprite_delete(bullet);
     }
+    //delete bullet if it hits another sprite
+    int i;
+    for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+        if (i != bullet->index && sprites[i].xSize != NODISP &&
+            collision_point_sprite(bullet, &sprites[i])) {
+            sprite_delete(bullet);
+            break;
+        }
+    }
 }
