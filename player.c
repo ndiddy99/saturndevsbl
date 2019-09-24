@@ -4,6 +4,7 @@
 #include "bullet.h"
 #include "circle.h"
 #include "collision.h"
+#include "enemylist.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
@@ -55,7 +56,7 @@ void player_init() {
 	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 	player.speed = PLAYER_SPEED;
 	scroll_set(0, MTH_FIXED(48), MTH_FIXED(16));
-	circle_make(player.xPos, player.yPos);
+	enemylist_spawn(0);
 }
 
 void player_input() {
