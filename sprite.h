@@ -60,6 +60,8 @@ void sprite_draw_all(void);
 SPRITE_INFO *sprite_next(void);
 //deletes the given sprite from the sprite list
 void sprite_delete(SPRITE_INFO *sprite);
+//deletes all sprites from the list
+void sprite_deleteall(void);
 //utility function that moves a sprite based on its state
 //collision: 1 to do collision, 0 to not
 //returns the tile the sprite is over

@@ -40,9 +40,9 @@ const Uint16 states[] = {
 	SPRITE_DOWN,      // 1110
 	SPRITE_NULL       // 1111
 };
-const Uint16 player_down[] = {11, 10, 12, 10}; //frames for when the player's walking down
-const Uint16 player_up[] = {14, 13, 15, 13};
-const Uint16 player_side[] = {17, 16, 18, 16};
+const Uint16 player_down[] = {37, 36, 38, 36}; //frames for when the player's walking down
+const Uint16 player_up[] = {40, 39, 41, 39};
+const Uint16 player_side[] = {43, 42, 44, 42};
 int anim_cursor = 0;
 SPRITE_INFO player;
 //if you hold the fire button down, this keeps firing in the direction you were 
@@ -53,10 +53,12 @@ Uint32 bullet_lastframe = 0;
 #define BULLET_DELAY (10) 
 
 void player_init() {
-	sprite_make(10, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	sprite_make(36, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 	player.speed = PLAYER_SPEED;
 	scroll_set(0, MTH_FIXED(48), MTH_FIXED(16));
 	enemylist_spawn(0);
+	print_string("THE QUICK BROWN FOX", 8, 0);
+	print_string("JUMPS OVER A LAZY DOG", 9, 0);
 }
 
 void player_input() {

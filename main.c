@@ -28,8 +28,8 @@ int main() {
 	scroll.bg2_tilemap = bg0_2map;
 	scroll.bg3_tilemap = bg0_3map;
 	scroll_init(&scroll);
-	player_init();
 	print_init();
+	player_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	while(1) {
 		frame++;

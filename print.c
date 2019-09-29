@@ -28,6 +28,14 @@ void print_num(Uint32 num, int row, int col) {
 	}
 }
 
+void print_string(char *ch, int row, int col) {
+	int index = 0;
+	while (ch[index]) {
+		text[row][col + index] = (Uint16)ch[index] - 55;
+		index++;
+	}
+}
+
 void print_display() {
 	int i, j;
 	SPRITE_INFO text_spr;

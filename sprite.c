@@ -21,7 +21,7 @@ SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 #define CommandMax    300
 #define GourTblMax    300
 #define LookupTblMax  100
-#define CharMax       32 //CHANGE WHEN YOU INCREASE TILES BEYOND THIS POINT
+#define CharMax       64 //CHANGE WHEN YOU INCREASE TILES BEYOND THIS POINT
 #define DrawPrtyMax   256
 SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
 
@@ -38,7 +38,7 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 21 * 2; i += 2) {
+	for (i = 0; i < 47 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
@@ -146,6 +146,14 @@ void sprite_delete(SPRITE_INFO *sprite) {
 	sprite->iterate = NULL;
 	num_sprites--;
 	print_num(num_sprites, 4, 0);
+}
+
+void sprite_deleteall() {
+	int i;
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		sprites[i].xSize = NODISP;
+	}
+	num_sprites = 0;
 }
 
 Uint16 sprite_move(SPRITE_INFO *sprite, int collision) {

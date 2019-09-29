@@ -2,9 +2,11 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include "enemylist.h"
 #include "graphicrefs.h"
 #include "player.h"
 #include "scroll.h"
+#include "sprite.h"
 
 Fixed32 scrolls_x[]  = {0, 0, 0, 0};
 Fixed32 scrolls_y[]  = {0, 0, 0, 0};
@@ -284,6 +286,7 @@ void scroll_transition() {
 
 	switch (scroll_transition_state) {
 		case TSTATE_PRESETUP:; //semicolon makes variable declaration work in C99
+			sprite_deleteall(); //wipe all sprites from current level
 			Uint16 *TilemapVram = VRAM_PTR(0);
 			curr_map++;
 			Uint16 *TilemapWram = tilemaps[curr_map + 1];
@@ -339,6 +342,7 @@ void scroll_transition() {
 			maps[1] = tilemaps[curr_map + 1];
 			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;
 			player.yPos = scrolls_y[1] + PLAYER_SPRITE_Y;
+			enemylist_spawn(curr_map);
 			scroll_transition_state = TSTATE_NULL;
 		break;
 	}

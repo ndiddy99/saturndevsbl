@@ -89,6 +89,7 @@ begin
     if outType = 0 then
     begin
       varName := copy(input[i], 0, pos('.', input[i]) - 1);
+      varName := stringreplace(varName, '\', '', [rfReplaceAll]);
       varNames[i] := varName;
       outputC(outFile, varName, saturnImg);
     end;

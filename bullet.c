@@ -5,7 +5,7 @@
 #include "scroll.h"
 #include "sprite.h"
 
-#define BULLET_CHARNUM (19)
+#define BULLET_CHARNUM (45)
 #define BULLET_SPEED MTH_FIXED(5)
 
 void bullet_make(Fixed32 x, Fixed32 y, Uint16 direction) {
@@ -32,6 +32,7 @@ void bullet_move(SPRITE_INFO *bullet) {
         if (i != bullet->index && sprites[i].xSize != NODISP &&
             collision_point_sprite(bullet, &sprites[i])) {
             sprite_delete(bullet);
+            sprite_delete(&sprites[i]);
             break;
         }
     }
