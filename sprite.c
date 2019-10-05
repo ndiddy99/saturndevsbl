@@ -38,7 +38,7 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 47 * 2; i += 2) {
+	for (i = 0; i < 48 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
@@ -64,19 +64,19 @@ void sprite_draw(SPRITE_INFO *info) {
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
 		//the way scale works is by giving the x/y coordinates of the top left and
 		//bottom right corner of the sprite
-		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(MTH_IntToFixed(info->xSize), info->scale) + info->xPos));
-		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(MTH_IntToFixed(info->ySize), info->scale) + info->yPos));
+		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(info->xSize, info->scale) + info->xPos));
+		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(info->ySize, info->scale) + info->yPos));
 		SPR_2ScaleSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb scaled sprite
 	}
 	
 	else {
 		//offset of top left sprite corner from the origin
-		xOffset = -(MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale));
-		yOffset = -(MTH_Mul(MTH_IntToFixed(info->ySize >> 1), info->scale));
+		xOffset = -(MTH_Mul(info->xSize >> 1, info->scale));
+		yOffset = -(MTH_Mul(info->ySize >> 1, info->scale));
 		sin = MTH_Sin(info->angle);
 		cos = MTH_Cos(info->angle);
-		scaledX = info->xPos + MTH_Mul(MTH_IntToFixed(info->xSize >> 1), info->scale);
-		scaledY = info->yPos + MTH_Mul(MTH_IntToFixed(info->ySize >> 1), info->scale);
+		scaledX = info->xPos + MTH_Mul(info->xSize >> 1, info->scale);
+		scaledY = info->yPos + MTH_Mul(info->ySize >> 1, info->scale);
 		//formula from
 		//https://gamedev.stackexchange.com/questions/86755/
 		for (i = 0; i < 4; i++) {

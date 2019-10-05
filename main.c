@@ -44,8 +44,8 @@ int main() {
 
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
-			print_display();
 			sprite_draw_all();
+			print_display();
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();
