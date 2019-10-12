@@ -38,7 +38,7 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 48 * 2; i += 2) {
+	for (i = 0; i < 52 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}

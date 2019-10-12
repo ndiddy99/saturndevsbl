@@ -1,8 +1,8 @@
 #include <sega_mth.h>
 
 #include "circle.h"
-#include "sprite.h"
-#include "player.h"
+#include "../sprite.h"
+#include "../player.h"
 
 #define CIRCLE_CHARNUM (46)
 #define CIRCLE_SPEED MTH_FIXED(0.5)

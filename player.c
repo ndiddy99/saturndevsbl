@@ -2,7 +2,6 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "bullet.h"
-#include "circle.h"
 #include "collision.h"
 #include "enemylist.h"
 #include "player.h"
@@ -72,7 +71,10 @@ void player_input() {
 		}
 		player.animTimer = 0;
 	}
-	sprite_move(&player, 1);
+	//just turn if x, y, or z is pressed, don't move
+	if (!(PadData1 & (PAD_X | PAD_Y | PAD_Z))) {
+		sprite_move(&player, 1);
+	}
 
 	if (over_air(&player)) {
 		scroll_transition_state = TSTATE_PRESETUP;

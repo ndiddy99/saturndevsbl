@@ -75,5 +75,7 @@ $(TARGET).bin:	$(OBJS)
 
 clean:
 	rm *.o
+	cd sprite_code
+	rm *.o
 
 
