@@ -1,1 +1,3 @@
-mingw32-make clean
+del *.o
+cd sprite_code
+del *.o

@@ -38,7 +38,7 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 56 * 2; i += 2) {
+	for (i = 0; i < 57 * 2; i += 2) {
 		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 		count++;
 	}
@@ -99,6 +99,8 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->mirror = 0;
 	ptr->xSize = MTH_IntToFixed(dimensions[tile_num << 1]);
 	ptr->ySize = MTH_IntToFixed(dimensions[(tile_num << 1) + 1]);
+	ptr->dx = 0;
+	ptr->dy = 0;
 	ptr->speed = 0;
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;

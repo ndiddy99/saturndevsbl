@@ -29,10 +29,13 @@ typedef void (*IterateFunc)(struct SpriteInfo *);
 typedef struct SpriteInfo {
 	Uint16 char_num; //tile number
 	Uint16 index; //where the sprite is in the sprites array
+	Uint16 options;
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Fixed32 xSize;
 	Fixed32 ySize;
+	Fixed32 dx;
+	Fixed32 dy;
 	Fixed32 speed; //sprite's max speed
 	Fixed32 scale;
 	Fixed32 angle;

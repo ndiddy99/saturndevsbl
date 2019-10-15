@@ -8,3 +8,9 @@ tech stuff this would require:
 arbitrary text display
 cd access for loading levels off the disc and cdda
 adding binary output to the image converter and binary reading to the engine
+
+enemy ideas:
+-guy who drops bombs which explode
+-heat seaking missile turret
+-guy who runs at you
+-guy who attacks you with sword

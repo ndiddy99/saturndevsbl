@@ -73,9 +73,5 @@ $(TARGET).bin:	$(OBJS)
 %.o: %.src
 	cmd //c $(AS) $< $(ASFLAGS) $(_ASFLAGS) -o $@
 
-clean:
-	rm *.o
-	cd sprite_code
-	rm *.o
 
 

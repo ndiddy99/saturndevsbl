@@ -10,6 +10,7 @@
         "SCL_FU03.C": "cpp",
         "SCL_PR07.C": "cpp",
         "SCL_PR10.C": "cpp",
-        "SCL_PRI.C": "cpp"
+        "SCL_PRI.C": "cpp",
+        "print.h": "c"
     }
 }
