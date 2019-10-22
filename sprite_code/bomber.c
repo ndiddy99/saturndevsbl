@@ -6,10 +6,10 @@
 #include "../player.h"
 
 #define BOMBER_CHARNUM (56)
-#define BOMBER_MAXSPEED (MTH_FIXED(1.5))
-#define BOMBER_ACCEL (MTH_FIXED(0.2))
+#define BOMBER_MAXSPEED (MTH_FIXED(2))
+#define BOMBER_ACCEL (MTH_FIXED(0.15))
 //frames between placing bombs
-#define BOMBING_INTERVAL (60)
+#define BOMBING_INTERVAL (30)
 
 void bomber_make(Fixed32 x, Fixed32 y) {
     SPRITE_INFO *bomber = sprite_next();

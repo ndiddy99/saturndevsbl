@@ -1,6 +1,6 @@
 #include <sega_mth.h>
 
-#include "template.h"
+#include "!template.h"
 #include "../sprite.h"
 #include "../player.h"
 
