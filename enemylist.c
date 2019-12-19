@@ -15,7 +15,7 @@
 //list format: type, x position (tiles), y position (tiles)
 void (*enemy_arr[])(Fixed32, Fixed32) = {NULL, circle_make, bomber_make, hurler_make};
 Uint16 floor0_enemies[] = {TYPE_CIRCLE, 43, 40, END_LIST};
-Uint16 floor1_enemies[] = {TYPE_HURLER, 15, 8, END_LIST};
+Uint16 floor1_enemies[] = {TYPE_HURLER, 10, 8, END_LIST};
 Uint16 floor2_enemies[] = {TYPE_CIRCLE, 13, 21, TYPE_CIRCLE, 10, 3, END_LIST};
 Uint16 *enemy_lists[] = {floor0_enemies, floor1_enemies, floor2_enemies};
 

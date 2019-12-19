@@ -72,10 +72,10 @@ void scroll_init(SCROLL_DATA *data) {
 		SCL_SetColRam(SCL_NBG0, 0, 16, (void *)data->playfield_palette);
 		SCL_AllocColRam(SCL_NBG1, 16, OFF);
 		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)data->playfield_palette);
-		SCL_AllocColRam(SCL_NBG2, 256, OFF);
+		SCL_AllocColRam(SCL_NBG2 | SCL_NBG3, 256, OFF);
 		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg_palette);
-		SCL_AllocColRam(SCL_NBG3, 256, OFF);
-		SCL_SetColRam(SCL_NBG3, 0, 256, (void *)data->bg_palette);
+		// SCL_AllocColRam(SCL_NBG3, 256, OFF);
+		// SCL_SetColRam(SCL_NBG3, 0, 256, (void *)data->bg_palette);
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	

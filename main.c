@@ -4,6 +4,7 @@
 #include	<sega_scl.h> 
 #include	<sega_mth.h>
 
+#include    "cd.h"
 #include	"sprite.h"
 #include	"scroll.h"
 #include    "player.h"
@@ -14,8 +15,10 @@
 Uint16 *levels[] = {map1, map2, map3, NULL};
 Uint32 frame = 0;
 
-int main() {
+Uint32 buf[2];
 
+int main() {
+	cd_init();
 	sprite_init();
 	SCROLL_DATA scroll;
 	scroll.playfield_tiles = wood_chr;
@@ -29,24 +32,31 @@ int main() {
 	scroll.bg3_tilemap = bg0_3map;
 	scroll_init(&scroll);
 	print_init();
-	player_init();
+	// player_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
+	SPRITE_INFO info;
+	sprite_make(0, 0, 0, &info);
 	while(1) {
+		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
+		// print_display();
+		sprite_draw(&info);
+		SPR_2CloseCommand();
 		frame++;
-		if (scroll_transition_state == TSTATE_NULL) {
-			player_input();
-		}
-		else {
-			scroll_transition();
-		}
+		print_num(frame, 0, 0);
+		// if (scroll_transition_state == TSTATE_NULL) {
+		// 	player_input();
+		// }
+		// else {
+		// 	scroll_transition();
+		// }
 		scroll_move(2, FIXED(-1.2), FIXED(-1.2));
 		scroll_move(3, FIXED(-0.8), FIXED(-0.8));
 
-		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
-			player_draw();
-			sprite_draw_all();
-			print_display();
-		SPR_2CloseCommand();
+		// SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
+		// 	player_draw();
+		// 	sprite_draw_all();
+		// 	print_display();
+		// SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();
 	}

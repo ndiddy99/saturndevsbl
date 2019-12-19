@@ -6,12 +6,15 @@
 #include <sega_scl.h>
 #include <string.h>
 
+#include "cd.h"
 #include "collision.h"
 #include "graphicrefs.h"
 #include "print.h"
 #include "scroll.h"
 #include "sprite.h"
 #include "vblank.h"
+#include "guy.c"
+#include "test.c"
 
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
@@ -24,6 +27,9 @@ SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 #define CharMax       128 //CHANGE WHEN YOU INCREASE TILES BEYOND THIS POINT
 #define DrawPrtyMax   256
 SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
+
+char image_buf[2048];
+
 
 void sprite_init() {
 	int count, i;
@@ -38,10 +44,18 @@ void sprite_init() {
 	
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
-	for (i = 0; i < 64 * 2; i += 2) {
-		SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
-		count++;
-	}
+	
+	cd_open("TEST.SPR", image_buf, 768);
+	// for (i = 0; i < 64 * 2; i += 2) {
+	// 	SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
+	// 	count++;
+	// }
+	// memset(&image_buf, 2, 768);
+
+	// print_num(test, 5, 5);
+	SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, image_buf);
+	SCL_AllocColRam(SCL_SPR, 16, OFF);
+	SCL_SetColRam(SCL_SPR, 0, 16, &test_pal);
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		sprites[i].xSize = NODISP;
 	}
@@ -56,7 +70,7 @@ void sprite_draw(SPRITE_INFO *info) {
 	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
-		SPR_2NormSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb normal sprite
+		SPR_2NormSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp normal sprite
 	}
 	
 	else if (info->angle == 0){
@@ -66,7 +80,7 @@ void sprite_draw(SPRITE_INFO *info) {
 		//bottom right corner of the sprite
 		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(info->xSize, info->scale) + info->xPos));
 		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(info->ySize, info->scale) + info->yPos));
-		SPR_2ScaleSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb scaled sprite
+		SPR_2ScaleSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp scaled sprite
 	}
 	
 	else {
@@ -88,7 +102,7 @@ void sprite_draw(SPRITE_INFO *info) {
 			xy[i].y = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, sin) +
 				MTH_Mul(yOffset, cos) + scaledY);
 		}
-		SPR_2DistSpr(0, info->mirror, COLOR_5, 0, info->char_num, xy, NO_GOUR); //rgb distorted sprite
+		SPR_2DistSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp distorted sprite
 	}
 }
 
@@ -116,7 +130,6 @@ void sprite_draw_all() {
 	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (sprites[i].xSize != NODISP && sprites[i].iterate != NULL) {
-			print_num(sprites[i].state, 5, 0);
 			sprites[i].iterate(&sprites[i]);
 		}
 	}
@@ -148,7 +161,6 @@ void sprite_delete(SPRITE_INFO *sprite) {
 	sprite->xSize = NODISP;
 	sprite->iterate = NULL;
 	num_sprites--;
-	print_num(num_sprites, 4, 0);
 }
 
 void sprite_deleteall() {
