@@ -3,3 +3,4 @@ s explosion
 s font
 s guy
 t8 bg.bmp
+m8 map.tmx

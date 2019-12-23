@@ -44,7 +44,7 @@ void sprite_init() {
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
 	
-	cd_load(guy_name, image_buf, 768);
+	cd_load(guy_name, image_buf, guy_size * guy_num);
 	// for (i = 0; i < 64 * 2; i += 2) {
 	// 	SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 	// 	count++;
@@ -52,9 +52,11 @@ void sprite_init() {
 	// memset(&image_buf, 2, 768);
 
 	// print_num(test, 5, 5);
+	SPR_2ClrAllChar();
 	for (i = 0; i < guy_num; i++) {
-		SPR_2SetChar(i, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf + guy_size * i));
+		SPR_2SetChar(i, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + (i * guy_size));
 	}
+	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
 	SCL_AllocColRam(SCL_SPR, 32, OFF);
 	SCL_SetColRam(SCL_SPR, 0, 16, &test_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);

@@ -52,7 +52,7 @@ public class SatConv {
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }
                     else if (line.charAt(1) == '8') {
-                        MapReader mapReader = new MapReader(line.substring(2), 8);
+                        MapReader mapReader = new MapReader(line.substring(3), 8);
                         mapReader.outputMap(line.substring(3, line.indexOf('.')) + ".map");
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }

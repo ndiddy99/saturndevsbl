@@ -38,7 +38,7 @@ public class TileConverter {
                     imageData = image.getData().getPixels(j, i, 8, 8, imageData);
                     if (bpp == 8) {
                         for (int k = 0; k < imageData.length; k++) {
-                            System.out.println(imageData[k] + " " + k);
+//                            System.out.println(imageData[k] + " " + k);
                             tileData.add((byte) (imageData[k] & 0xFF));
                         }
                     }

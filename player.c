@@ -13,9 +13,7 @@
 extern Uint32 frame;
 //maps to the D-Pad bitmap provided by the Saturn hardware
 //what state the character should be set to given the d-pad's input
-const Uint16 player_down[] = {37, 36, 38, 36}; //frames for when the player's walking down
-const Uint16 player_up[] = {40, 39, 41, 39};
-const Uint16 player_side[] = {43, 42, 44, 42};
+const Uint16 player_frames[] = {1, 0, 2, 0};
 int anim_cursor = 0;
 SPRITE_INFO player;
 //if you hold the fire button down, this keeps firing in the direction you were 
@@ -68,7 +66,19 @@ void player_input() {
 }
 
 void player_animate() {
-	
+	if (player.dx) {
+		player.animTimer++;
+		if (player.animTimer >= 10) {
+			player.animTimer = 0;
+			player.animCursor++;
+			if (player.animCursor > 3) { player.animCursor = 0; }
+			player.char_num = player_frames[player.animCursor];
+		}
+	}
+	else {
+		player.char_num = 0;
+		player.animTimer = 10;
+	}
 }
 //allows me to treat the player sprite like any other sprite while only moving the screen
 //around it
