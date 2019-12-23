@@ -13,6 +13,8 @@
         "SCL_PRI.C": "cpp",
         "print.h": "c",
         "string.h": "c",
-        "GFS.C": "cpp"
+        "GFS.C": "cpp",
+        "SCL_PR02.C": "cpp",
+        "SCL_PR05.C": "cpp"
     }
 }

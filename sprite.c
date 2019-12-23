@@ -7,7 +7,6 @@
 #include <string.h>
 
 #include "cd.h"
-#include "collision.h"
 #include "graphicrefs.h"
 #include "print.h"
 #include "scroll.h"
@@ -28,7 +27,7 @@ SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 #define DrawPrtyMax   256
 SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
 
-char image_buf[2048];
+Uint32 image_buf[512];
 
 
 void sprite_init() {
@@ -45,7 +44,7 @@ void sprite_init() {
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
 	
-	cd_open("TEST.SPR", image_buf, 768);
+	cd_load(guy_name, image_buf, 768);
 	// for (i = 0; i < 64 * 2; i += 2) {
 	// 	SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
 	// 	count++;
@@ -53,12 +52,13 @@ void sprite_init() {
 	// memset(&image_buf, 2, 768);
 
 	// print_num(test, 5, 5);
-	SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, image_buf);
-	SCL_AllocColRam(SCL_SPR, 16, OFF);
-	SCL_SetColRam(SCL_SPR, 0, 16, &test_pal);
-	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		sprites[i].xSize = NODISP;
+	for (i = 0; i < guy_num; i++) {
+		SPR_2SetChar(i, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf + guy_size * i));
 	}
+	SCL_AllocColRam(SCL_SPR, 32, OFF);
+	SCL_SetColRam(SCL_SPR, 0, 16, &test_pal);
+	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
+	sprite_deleteall();
 	SCL_DisplayFrame();
 }
 
@@ -70,7 +70,7 @@ void sprite_draw(SPRITE_INFO *info) {
 	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
-		SPR_2NormSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp normal sprite
+		SPR_2NormSpr(0, info->mirror, COLOR_0, 16, info->char_num, xy, NO_GOUR); //4bpp normal sprite
 	}
 	
 	else if (info->angle == 0){
@@ -108,33 +108,29 @@ void sprite_draw(SPRITE_INFO *info) {
 
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->char_num = tile_num;
+	ptr->options = 0;
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;
-	ptr->xSize = MTH_IntToFixed(dimensions[tile_num << 1]);
-	ptr->ySize = MTH_IntToFixed(dimensions[(tile_num << 1) + 1]);
 	ptr->dx = 0;
 	ptr->dy = 0;
-	ptr->speed = 0;
 	ptr->scale = MTH_FIXED(1);
 	ptr->angle = 0;
 	ptr->animTimer = 0;
 	ptr->animCursor = 0;
-	ptr->state = SPRITE_NULL;
-	ptr->facing = SPRITE_DOWN;
 	ptr->iterate = NULL;
 }
 
 void sprite_draw_all() {
 	int i;
 	SPRITE_INFO tmp;
-	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].xSize != NODISP && sprites[i].iterate != NULL) {
+	for (i = 0; i < num_sprites; i++) {
+		if (!(sprites[i].options & OPTION_NODISP) && sprites[i].iterate != NULL) {
 			sprites[i].iterate(&sprites[i]);
 		}
 	}
-	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].xSize != NODISP) {
+	for (i = 0; i < num_sprites; i++) {
+		if (!(sprites[i].options & OPTION_NODISP)) {
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
 			tmp.xPos -=scrolls_x[0];
 			tmp.yPos -=scrolls_y[0];
@@ -146,10 +142,9 @@ void sprite_draw_all() {
 SPRITE_INFO *sprite_next() {
 	int i;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (sprites[i].xSize == NODISP) {
+		if (sprites[i].options & OPTION_NODISP) {
 			num_sprites++;
 			sprites[i].index = i;
-			sprites[i].state = SPRITE_NULL;
 			sprites[i].iterate = NULL;
 			return &sprites[i];
 		}
@@ -158,73 +153,15 @@ SPRITE_INFO *sprite_next() {
 }
 
 void sprite_delete(SPRITE_INFO *sprite) {
-	sprite->xSize = NODISP;
+	sprite->options |= OPTION_NODISP;
 	sprite->iterate = NULL;
 	num_sprites--;
 }
 
 void sprite_deleteall() {
-	int i;
-	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		sprites[i].xSize = NODISP;
+	for (int i = 0; i < SPRITE_LIST_SIZE; i++) {
+		sprites[i].options = OPTION_NODISP;
 	}
 	num_sprites = 0;
 }
 
-Uint16 sprite_move(SPRITE_INFO *sprite, int collision) {
-    switch(sprite->state) {
-        case SPRITE_UP:
-            sprite->yPos -= sprite->speed;
-			if (collision) {
-				collision_detect_up(sprite, 1);
-			}
-        break;
-        case SPRITE_DOWN:
-            sprite->yPos += sprite->speed;
-			if (collision) {
-				collision_detect_down(sprite, 1);
-			}
-        break;
-        case SPRITE_LEFT:
-            sprite->xPos -= sprite->speed;
-			if (collision) {
-				collision_detect_left(sprite, 1);
-			}
-        break;
-        case SPRITE_RIGHT:
-            sprite->xPos += sprite->speed;
-			if (collision) {
-				collision_detect_right(sprite, 1);
-			}
-        break;
-        case SPRITE_UPLEFT:
-            sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-            sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-			if (collision) {
-				collision_detect_up_left(sprite);
-			}
-        break;
-        case SPRITE_UPRIGHT:
-            sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-            sprite->yPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-			if (collision) {
-				collision_detect_up_right(sprite);
-			}
-        break;
-        case SPRITE_DOWNLEFT:
-            sprite->xPos -= MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-            sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-			if (collision) {
-				collision_detect_down_left(sprite);
-			}
-        break;
-        case SPRITE_DOWNRIGHT:
-            sprite->xPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-            sprite->yPos += MTH_Mul(sprite->speed, DIAGONAL_MULTIPLIER);
-			if (collision) {
-				collision_detect_down_right(sprite);
-			}
-        break;
-    }
-	return collision_get_tile(sprite->xPos, sprite->yPos);
-}

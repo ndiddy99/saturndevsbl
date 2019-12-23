@@ -9,9 +9,11 @@ import java.util.ArrayList;
 
 public class SpriteConverter {
     private ArrayList<Byte> imgData;
+    private int numSprites;
 
     public SpriteConverter() {
         imgData = new ArrayList<>();
+        numSprites = 0;
     }
 
     public void addImage(File bmpFile) {
@@ -46,7 +48,7 @@ public class SpriteConverter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        numSprites++;
     }
 
     public void writeImages(String filename) {
@@ -94,10 +96,19 @@ public class SpriteConverter {
             }
             PrintWriter writer = new PrintWriter(outFile, "UTF-8");
             String substring = outFile.substring(outFile.lastIndexOf('/') + 1, outFile.indexOf('.'));
-            writer.println("const Uint16 " + substring + "_width = " + image.getWidth() + ";");
-            writer.println("const Uint16 " + substring + "_height = " + image.getHeight() + ";");
-            writer.println("const char " + substring + "_name[] = \"" + (substring + ".spr\";").toUpperCase());
-            writer.print("const Uint32 " + substring + "_pal[] = {");
+            writer.println("const Uint16 " + substring + "_num = " + numSprites + ";");
+            int imageLength;
+            if (size == 256) {
+                imageLength = image.getWidth() * image.getHeight();
+            }
+            else {
+                imageLength = (image.getWidth() * image.getHeight()) / 2;
+            }
+            writer.println("Uint16 " + substring + "_size = " + imageLength + ";");
+            writer.println("Uint16 " + substring + "_width = " + image.getWidth() + ";");
+            writer.println("Uint16 " + substring + "_height = " + image.getHeight() + ";");
+            writer.println("char " + substring + "_name[] = \"" + (substring + ".spr\";").toUpperCase());
+            writer.print("Uint32 " + substring + "_pal[] = {");
             for (int i = 0; i < palettes.size(); i += 8) {
     //            //if a row is entirely zeroes, assume we've reached the end of a palette definition
     //            boolean allZeroes = true;

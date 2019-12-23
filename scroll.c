@@ -2,7 +2,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
-#include "enemylist.h"
+#include "cd.h"
 #include "graphicrefs.h"
 #include "player.h"
 #include "scroll.h"
@@ -60,58 +60,61 @@ SclConfig scfg1;
 SclConfig scfg2;
 SclConfig scfg3;
 
-void scroll_init(SCROLL_DATA *data) {
-	int count, i, j;
+
+void scroll_init() {
+	int i;
+	// int count, j;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
 	Uint16 *TilemapVram;
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
-		SCL_AllocColRam(SCL_NBG0, 16, OFF); //set up palette data
-		SCL_SetColRam(SCL_NBG0, 0, 16, (void *)data->playfield_palette);
-		SCL_AllocColRam(SCL_NBG1, 16, OFF);
-		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)data->playfield_palette);
-		SCL_AllocColRam(SCL_NBG2 | SCL_NBG3, 256, OFF);
-		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)data->bg_palette);
-		// SCL_AllocColRam(SCL_NBG3, 256, OFF);
-		// SCL_SetColRam(SCL_NBG3, 0, 256, (void *)data->bg_palette);
+		// SCL_AllocColRam(SCL_NBG0, 16, OFF); //set up palette data
+		// SCL_SetColRam(SCL_NBG0, 0, 16, (void *)data->playfield_palette);
+		// SCL_AllocColRam(SCL_NBG1, 16, OFF);
+		// SCL_SetColRam(SCL_NBG1, 0, 16, (void *)data->playfield_palette);
+		SCL_AllocColRam(SCL_NBG2, 256, OFF);
+		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)bg_pal);
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 	
-	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
-	memcpy(VramWorkP, data->playfield_tiles, 128 * data->playfield_tiles_num);
+	// VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
+	// memcpy(VramWorkP, data->playfield_tiles, 128 * data->playfield_tiles_num);
 
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
-	memcpy(VramWorkP, data->bg_tiles, 256 * data->bg_tiles_num);
+	cd_load(bg_name, (void *)LWRAM, 256 * bg_num);
+	memcpy(VramWorkP, (void *)LWRAM, 256 * bg_num);
 
-	TilemapVram = VRAM_PTR(0);
-	count = 0;
-	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
-		for (j = 0; j < 32; j++) {
-			TilemapVram[count++] = data->levels[0][i * 64 + j]; //level is 64*64
+	// TilemapVram = VRAM_PTR(0);
+	// count = 0;
+	// for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
+	// 	for (j = 0; j < 32; j++) {
+	// 		TilemapVram[count++] = data->levels[0][i * 64 + j]; //level is 64*64
 			
-		}
-	}
+	// 	}
+	// }
 
-	TilemapVram = VRAM_PTR(1);
-	count = 0;
-	for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
-		for (j = 0; j < 32; j++) {
-			TilemapVram[count++] = data->levels[1][i * 64 + j]; //level is 64*64
+	// TilemapVram = VRAM_PTR(1);
+	// count = 0;
+	// for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
+	// 	for (j = 0; j < 32; j++) {
+	// 		TilemapVram[count++] = data->levels[1][i * 64 + j]; //level is 64*64
 			
-		}
-	}
+	// 	}
+	// }
 	//BGs 2 and 3 don't need 4 way scrolling (just for decoration) so you can just memcpy the level data
 	TilemapVram = VRAM_PTR(2);
-	memcpy(TilemapVram, data->bg2_tilemap, 0x800);
+	// memcpy(TilemapVram, data->bg2_tilemap, 0x800);
+	TilemapVram[0] = 2;
+	TilemapVram[1] = 2;
 
-	TilemapVram = VRAM_PTR(3);
-	memcpy(TilemapVram, data->bg3_tilemap, 0x800);
+	// TilemapVram = VRAM_PTR(3);
+	// memcpy(TilemapVram, data->bg3_tilemap, 0x800);
 
 	//scroll initial configuration
 	SCL_InitConfigTb(&scfg0);
-		scfg0.dispenbl      = ON;
+		scfg0.dispenbl      = OFF;
 		scfg0.charsize      = SCL_CHAR_SIZE_2X2;
 		scfg0.pnamesize     = SCL_PN1WORD;
 		scfg0.flip          = SCL_PN_10BIT;
@@ -127,12 +130,14 @@ void scroll_init(SCROLL_DATA *data) {
 	SCL_SetConfig(SCL_NBG1, &scfg1);
 
 	memcpy((void *)&scfg2, (void *)&scfg0, sizeof(SclConfig));
+	scfg2.dispenbl = ON;
 	scfg2.coltype = SCL_COL_TYPE_256;
 	scfg2.patnamecontrl = 0x0008;
 	for(i=0;i<4;i++)   scfg2.plate_addr[i] = vram[2];
 	SCL_SetConfig(SCL_NBG2, &scfg2);
 
 	memcpy((void *)&scfg3, (void *)&scfg2, sizeof(SclConfig));
+	scfg3.dispenbl = OFF;
 	for(i=0;i<4;i++)   scfg3.plate_addr[i] = vram[3];
 	SCL_SetConfig(SCL_NBG3, &scfg3);
 	
@@ -164,9 +169,9 @@ void scroll_init(SCROLL_DATA *data) {
 	SCL_SetPriority(SCL_NBG1, 6);
 	SCL_SetPriority(SCL_NBG2, 5);
 	SCL_SetPriority(SCL_NBG3, 4);
-	maps[0] = (Uint16 *)data->levels[0];
-	maps[1] = (Uint16 *)data->levels[1];
-	tilemaps = data->levels;
+	// maps[0] = (Uint16 *)data->levels[0];
+	// maps[1] = (Uint16 *)data->levels[1];
+	// tilemaps = data->levels;
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {
@@ -280,70 +285,3 @@ void scroll_copy(int num) {
 	}
 }
 
-void scroll_transition() {
-	static Fixed32 scale_val;
-	static int count;
-
-	switch (scroll_transition_state) {
-		case TSTATE_PRESETUP:; //semicolon makes variable declaration work in C99
-			sprite_deleteall(); //wipe all sprites from current level
-			Uint16 *TilemapVram = VRAM_PTR(0);
-			curr_map++;
-			Uint16 *TilemapWram = tilemaps[curr_map + 1];
-			scfg0.dispenbl = OFF;
-			SCL_SetConfig(SCL_NBG0, &scfg0); //disable NBG0
-			SCL_DisplayFrame();
-			count = 0;
-			if (TilemapWram == NULL) {
-				memset(TilemapVram, 0, 32 * 32);
-			}
-			else {
-				for (int i = 0; i < 32; i++) { //saturn tilemap is 32*32
-					for (int j = 0; j < 32; j++) {
-						TilemapVram[count++] = TilemapWram[i * 64 + j]; //level is 64*64
-					}
-				}
-			}
-			scale_val = FIXED(0.75);
-			count = 30;
-			scfg0.dispenbl = ON;
-			SCL_SetConfig(SCL_NBG0, &scfg0);
-			scroll_scale(0, FIXED(0.75));
-			SCL_SetPriority(SCL_NBG0, 6);
-			SCL_SetPriority(SCL_NBG1, 7);
-			scroll_transition_state = TSTATE_ZOOM;
-		break;
-		case TSTATE_ZOOM:;
-			Fixed32 reciprocal;
-			scroll_scale(1, scale_val);
-			reciprocal = MTH_Div(FIXED(1), scale_val);
-			scroll_move(1, reciprocal, reciprocal);
-			scale_val += FIXED(0.01);
-			SCL_SetColMixRate(SCL_NBG0, count--);
-			if (scale_val >= FIXED(1)) {
-				scroll_scale(1, FIXED(1));
-				scroll_transition_state = TSTATE_POSTSETUP;
-			}
-		break;
-		case TSTATE_POSTSETUP:;
-			Uint32 temp = vram[0]; //swap VRAM addresses
-			vram[0] = vram[1];
-			vram[1] = temp;
-			for (int i = 0; i < 4; i++) scfg0.plate_addr[i] = vram[0];
-			for (int i = 0; i < 4; i++) scfg1.plate_addr[i] = vram[1];
-			SCL_SetConfig(SCL_NBG0, &scfg0);
-			SCL_SetConfig(SCL_NBG1, &scfg1);
-			scroll_scale(0, FIXED(1));
-			scroll_scale(1, FIXED(0.75));
-			SCL_SetColMixRate(SCL_NBG0, 32);
-			SCL_SetPriority(SCL_NBG0, 7);
-			SCL_SetPriority(SCL_NBG1, 6);
-			maps[0] = tilemaps[curr_map];
-			maps[1] = tilemaps[curr_map + 1];
-			player.xPos = scrolls_x[1] + PLAYER_SPRITE_X;
-			player.yPos = scrolls_y[1] + PLAYER_SPRITE_Y;
-			enemylist_spawn(curr_map);
-			scroll_transition_state = TSTATE_NULL;
-		break;
-	}
-}

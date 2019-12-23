@@ -7,10 +7,5 @@ copy c:\saturn\cdtools\cpy.txt cd\cpy.txt
 copy out.bin cd\0.bin
 c:\saturn\cdtools\mkisofs -sysid "SEGA SATURN" -volid "SaturnApp" -volset "SaturnApp" -publisher "SEGA ENTERPRISES, LTD." -preparer "SEGA ENTERPRISES, LTD." -appid "SaturnApp" -abstract "c:\saturn\cdtools\ABS.TXT" -copyright "c:\saturn\cdtools\CPY.TXT" -biblio "c:\saturn\cdtools\BIB.TXT" -generic-boot "c:\saturn\cdtools\ip_gnu.bin" -full-iso9660-filenames -o out\out.iso cd
 cd out
-REM if not exist out.bin goto nodelete
-REM del out.bin
-REM del out.cue
-REM :nodelete
-REM "c:\Program Files\PowerISO\piso.exe" convert out.iso -o out.bin
-REM c:\saturn\mednafen\mednafen out.cue 
-c:\saturn\yabause\!yabause.exe
+c:\saturn\mednafen\mednafen out.cue 
+REM c:\saturn\yabause\!yabause.exe

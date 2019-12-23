@@ -7,14 +7,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class MapReader {
     //palettes used for each tile
     private int[] palettes = new int[]{0x100, 0x100};
     private int[][] mapArr;
+    private int bpp;
 
-    public MapReader(String filename) {
+    public MapReader(String filename, int bpp) {
+        this.bpp = bpp;
         File mapFile = new File(filename);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = null;
@@ -47,6 +52,7 @@ public class MapReader {
             String[] elements = line.split(",");
             for (int i = 0; i < elements.length; i++) {
                 if (!elements[i].equals("")) {
+                    //tiled stores map elements 1 indexed
                     mapArr[rowCount][i] = Integer.parseInt(elements[i]) - 1;
                 }
             }
@@ -65,24 +71,36 @@ public class MapReader {
     }
 
     public void outputMap(String filename) {
-        PrintWriter writer = null;
         try {
-            writer = new PrintWriter(filename);
+            Path path = Paths.get(filename);
+            byte[] byteArr = new byte[mapArr[0].length * mapArr.length * 2];
+            for (int i = 0; i < mapArr[0].length; i++) {
+                for (int j = 0; j < mapArr.length; j++) {
+                    short mapVal = 0;
+                    if (bpp == 8) {
+                        mapVal = (short)(((mapArr[j][i] & 0x3ff) * 2) & 0xffff);
+                    }
+                    else if (bpp == 4) {
+                        mapVal = (short)((mapArr[j][i] & 0x3ff) & 0xffff);
+                    }
+                    //is tile horizontally flipped?
+                    if ((mapArr[j][i] & 0x80000000) == 0x80000000) {
+                        mapVal |= 0x400;
+                    }
+                    //is tile vertically flipped?
+                    if ((mapArr[j][i] & 0x40000000) == 0x40000000) {
+                        mapVal |= 0x800;
+                    }
+                    byteArr[i * mapArr.length + (j * 2)] = (byte)(((mapVal & 0xFF00) >> 8) & 0xff);
+                    byteArr[i * mapArr.length + (j * 2 + 1)] = (byte)(mapVal & 0xff);
+                }
+            }
+            Files.write(path, byteArr);
         }
         catch (Exception e) {
             e.printStackTrace();
             return;
         }
-        writer.println(filename.substring(filename.lastIndexOf('/') + 1, filename.indexOf('.')) + ":");
-        for (int i = 0; i < mapArr[0].length; i++) {
-            for (int j = 0; j < mapArr.length; j++) {
-                int tile = mapArr[j][i];
-                writer.print("\tdc.w ");
-                writer.print(String.format("$%04X,", tile));
-                writer.println(String.format("$%04X", palettes[tile]));
-            }
-        }
-        writer.close();
     }
 
     public void writeInfo(String filename) {
@@ -95,9 +113,9 @@ public class MapReader {
             return;
         }
         String varName = filename.substring(filename.lastIndexOf('/') + 1, filename.indexOf('.'));
-        writer.println("const Uint16 " + varName + "_width = " + mapArr[0].length);
-        writer.println("const Uint16 " + varName + "_height = " + mapArr.length);
-        writer.println("const char " + varName + "_filename[] = \"" + varName + ".map\";");
+        writer.println("Uint16 " + varName + "_width = " + mapArr[0].length);
+        writer.println("Uint16 " + varName + "_height = " + mapArr.length);
+        writer.println("char " + varName + "_name[] = \"" + varName.toUpperCase() + ".MAP\";");
         writer.close();
     }
 }

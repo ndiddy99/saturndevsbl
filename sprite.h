@@ -7,47 +7,33 @@
 #define MIRROR_HORIZ (1 << 4)
 #define MIRROR_VERT (1 << 5)
 
-//what xSize is set to if sprite isn't initialized
-#define NODISP (0)
-
-#define SPRITE_NULL      (0)
-#define SPRITE_UP        (1 << 1)
-#define SPRITE_DOWN      (1 << 2)
-#define SPRITE_LEFT      (1 << 3)
-#define SPRITE_RIGHT     (1 << 4)
-#define SPRITE_UPLEFT    (SPRITE_UP | SPRITE_LEFT)
-#define SPRITE_UPRIGHT   (SPRITE_UP | SPRITE_RIGHT)
-#define SPRITE_DOWNLEFT  (SPRITE_DOWN | SPRITE_LEFT)
-#define SPRITE_DOWNRIGHT (SPRITE_DOWN | SPRITE_RIGHT)
-
-
 
 struct SpriteInfo;
 
 typedef void (*IterateFunc)(struct SpriteInfo *);
 
+#define OPTION_NODISP (1 << 0)
+
 typedef struct SpriteInfo {
 	Uint16 char_num; //tile number
 	Uint16 index; //where the sprite is in the sprites array
 	Uint16 options;
+	Uint16 state;
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Fixed32 xSize;
 	Fixed32 ySize;
 	Fixed32 dx;
 	Fixed32 dy;
-	Fixed32 speed; //sprite's max speed
 	Fixed32 scale;
 	Fixed32 angle;
 	Uint16 mirror;
 	Uint16 animTimer; //timer for animations
 	Uint16 animCursor; //where we are in animation array
-	Uint16 state; //where the sprite is moving
-	Uint16 facing; //where the sprite is facing
 	IterateFunc iterate;
 } SPRITE_INFO;
 
-#define SPRITE_LIST_SIZE (200)
+#define SPRITE_LIST_SIZE (20)
 extern SPRITE_INFO sprites[];
 
 //sets up initial sprite display

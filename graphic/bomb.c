@@ -1,0 +1,9 @@
+const Uint16 bomb_num = 4;
+Uint16 bomb_size = 128;
+Uint16 bomb_width = 16;
+Uint16 bomb_height = 16;
+char bomb_name[] = "BOMB.SPR";
+Uint32 bomb_pal[] = {
+	0x0000,0x312121,0x523131,0x5A3939,0x3131AD,0x2173DE,0x9CC6EF,0xFFFFFF,
+	0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+};

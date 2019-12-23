@@ -1,0 +1,5 @@
+s bomb
+s explosion
+s font
+s guy
+t8 bg.bmp

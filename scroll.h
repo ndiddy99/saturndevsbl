@@ -40,7 +40,7 @@ enum transition_states {
 };
 extern int scroll_transition_state;
 
-void scroll_init(SCROLL_DATA *data);
+void scroll_init();
 //translate scroll by x,y amounts
 void scroll_move(int num, Fixed32 x, Fixed32 y);
 //moves scroll absolutely to coordinates
@@ -51,5 +51,4 @@ void scroll_scale(int num, Fixed32 scale);
 Uint16 scroll_get(int map, int x, int y);
 //copies scroll to VRAM after position has been changed by move/set scroll
 void scroll_copy(int num);
-void scroll_transition(void);
 #endif
