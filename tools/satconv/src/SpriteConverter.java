@@ -31,8 +31,7 @@ public class SpriteConverter {
             int imageHeight = image.getHeight();
             int[] imageData = new int[imageWidth * imageHeight];
             imageData = image.getData().getPixels(0, 0, imageWidth, imageHeight, imageData);
-//            byte[] tileData = Tile.imageToByteArr(imageData, imageWidth, imageHeight);
-            System.out.println(colorModel.getMapSize());
+//            System.out.println(colorModel.getMapSize());
             if (colorModel.getMapSize() == 256) {
                 for (int i = 0; i < imageData.length; i++) {
 //                    System.out.println(imageData[i]);

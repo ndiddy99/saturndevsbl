@@ -62,11 +62,11 @@ SclConfig scfg3;
 
 
 void scroll_init() {
-	int i;
-	// int count, j;
+	int i, j, count;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
 	Uint16 *TilemapVram;
+	Uint16 *lwram_ptr = (Uint16 *)LWRAM;
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
@@ -103,11 +103,20 @@ void scroll_init() {
 			
 	// 	}
 	// }
+
+	//load map data to LWRAM
+	cd_load(map_name, (void *)LWRAM, map_width * map_height * 2);
 	//BGs 2 and 3 don't need 4 way scrolling (just for decoration) so you can just memcpy the level data
+	count = 0;
 	TilemapVram = VRAM_PTR(2);
-	// memcpy(TilemapVram, data->bg2_tilemap, 0x800);
-	TilemapVram[0] = 2;
-	TilemapVram[1] = 2;
+	for (i = 0; i < 20; i++) {
+		for (j = 0; j < 16; j++) {
+			TilemapVram[j * 32 + i] = lwram_ptr[count++];
+		}
+	}
+	// memcpy(TilemapVram, (void *)LWRAM, 0x800);
+	// TilemapVram[0] = 2;
+	// TilemapVram[1] = 2;
 
 	// TilemapVram = VRAM_PTR(3);
 	// memcpy(TilemapVram, data->bg3_tilemap, 0x800);

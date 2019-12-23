@@ -91,9 +91,10 @@ public class MapReader {
                     if ((mapArr[j][i] & 0x40000000) == 0x40000000) {
                         mapVal |= 0x800;
                     }
-                    byteArr[i * mapArr.length + (j * 2)] = (byte)(((mapVal & 0xFF00) >> 8) & 0xff);
-                    byteArr[i * mapArr.length + (j * 2 + 1)] = (byte)(mapVal & 0xff);
+                    byteArr[(i * mapArr.length * 2) + (j * 2)] = (byte)(((mapVal & 0xFF00) >> 8) & 0xff);
+                    byteArr[(i * mapArr.length * 2) + (j * 2 + 1)] = (byte)(mapVal & 0xff);
                 }
+                System.out.println();
             }
             Files.write(path, byteArr);
         }
@@ -113,8 +114,8 @@ public class MapReader {
             return;
         }
         String varName = filename.substring(filename.lastIndexOf('/') + 1, filename.indexOf('.'));
-        writer.println("Uint16 " + varName + "_width = " + mapArr[0].length);
-        writer.println("Uint16 " + varName + "_height = " + mapArr.length);
+        writer.println("Uint16 " + varName + "_width = " + mapArr[0].length + ";");
+        writer.println("Uint16 " + varName + "_height = " + mapArr.length + ";");
         writer.println("char " + varName + "_name[] = \"" + varName.toUpperCase() + ".MAP\";");
         writer.close();
     }

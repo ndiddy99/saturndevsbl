@@ -3,4 +3,5 @@ typedef unsigned short Uint16;
 typedef unsigned long Uint32;
 
 #include "graphic/bg.c"
+#include "graphic/map.c"
 // #include "graphic/guy.c"
