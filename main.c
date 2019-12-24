@@ -30,18 +30,22 @@ int main() {
 	// scroll.bg2_tilemap = bg0_2map;
 	// scroll.bg3_tilemap = bg0_3map;
 	scroll_init();
-	// print_init();
+	print_init();
 	player_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
+	print_string("The quick brown fox jumps over a lazy", 2, 0);
+	print_string("dog.", 3, 0);
 	while(1) {
+		frame++;
 		player_input();
+		print_num(frame, 0, 0);
 		// scroll_move(2, FIXED(-1.2), FIXED(-1.2));
 		// scroll_move(3, FIXED(-0.8), FIXED(-0.8));
 
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
 		// 	sprite_draw_all();
-		// 	print_display();
+			print_display();
 		SPR_2CloseCommand();
 		
 		SCL_DisplayFrame();
