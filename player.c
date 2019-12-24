@@ -13,7 +13,10 @@
 extern Uint32 frame;
 //maps to the D-Pad bitmap provided by the Saturn hardware
 //what state the character should be set to given the d-pad's input
-const Uint16 player_frames[] = {1, 0, 2, 0};
+#define FRAME_STAND (96)
+#define FRAME_WALK1 (FRAME_STAND + 1)
+#define FRAME_WALK2 (FRAME_STAND + 2)
+const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
 int anim_cursor = 0;
 SPRITE_INFO player;
 //if you hold the fire button down, this keeps firing in the direction you were 
@@ -24,7 +27,7 @@ Uint32 bullet_lastframe = 0;
 #define BULLET_DELAY (10) 
 
 void player_init() {
-	sprite_make(0, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	sprite_make(96, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 }
 
 void player_input() {
@@ -76,7 +79,7 @@ void player_animate() {
 		}
 	}
 	else {
-		player.char_num = 0;
+		player.char_num = FRAME_STAND;
 		player.animTimer = 10;
 	}
 }

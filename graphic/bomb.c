@@ -1,4 +1,4 @@
-const Uint16 bomb_num = 4;
+Uint16 bomb_num = 4;
 Uint16 bomb_size = 128;
 Uint16 bomb_width = 16;
 Uint16 bomb_height = 16;

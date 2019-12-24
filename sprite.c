@@ -12,8 +12,6 @@
 #include "scroll.h"
 #include "sprite.h"
 #include "vblank.h"
-#include "guy.c"
-#include "test.c"
 
 int num_sprites = 0;
 SPRITE_INFO sprites[SPRITE_LIST_SIZE];
@@ -27,7 +25,7 @@ SPRITE_INFO sprites[SPRITE_LIST_SIZE];
 #define DrawPrtyMax   256
 SPR_2DefineWork(work2D, CommandMax, GourTblMax, LookupTblMax, CharMax, DrawPrtyMax)
 
-Uint32 image_buf[512];
+Uint32 image_buf[1024];
 
 
 void sprite_init() {
@@ -44,21 +42,18 @@ void sprite_init() {
 	SPR_2FrameChgIntr(1); //wait until next frame to set color mode
 	SCL_DisplayFrame();
 	
-	cd_load(guy_name, image_buf, guy_size * guy_num);
-	// for (i = 0; i < 64 * 2; i += 2) {
-	// 	SPR_2SetChar((Uint16)count, COLOR_5, 0, dimensions[i], dimensions[i + 1], (char *)tiles[count]);
-	// 	count++;
-	// }
-	// memset(&image_buf, 2, 768);
+	cd_load(font_name, image_buf, font_size * font_num);
+	for (i = 0; i < font_num; i++) {
+		SPR_2SetChar(i, COLOR_0, 0, font_width, font_height, (Uint8 *)(image_buf) + (i * font_size));
+	}
 
-	// print_num(test, 5, 5);
-	SPR_2ClrAllChar();
+	cd_load(guy_name, image_buf, guy_size * guy_num);
 	for (i = 0; i < guy_num; i++) {
-		SPR_2SetChar(i, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + (i * guy_size));
+		SPR_2SetChar(i + font_num, COLOR_0, 16, guy_width, guy_height, (Uint8 *)(image_buf) + (i * guy_size));
 	}
 	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
-	SCL_AllocColRam(SCL_SPR, 32, OFF);
-	SCL_SetColRam(SCL_SPR, 0, 16, &test_pal);
+	SCL_AllocColRam(SCL_SPR, 16, OFF);
+	SCL_SetColRam(SCL_SPR, 0, 16, &font_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
 	sprite_deleteall();
 	SCL_DisplayFrame();
@@ -72,7 +67,7 @@ void sprite_draw(SPRITE_INFO *info) {
 	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
-		SPR_2NormSpr(0, info->mirror, COLOR_0, 16, info->char_num, xy, NO_GOUR); //4bpp normal sprite
+		SPR_2NormSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp normal sprite
 	}
 	
 	else if (info->angle == 0){
@@ -82,7 +77,7 @@ void sprite_draw(SPRITE_INFO *info) {
 		//bottom right corner of the sprite
 		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(info->xSize, info->scale) + info->xPos));
 		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(info->ySize, info->scale) + info->yPos));
-		SPR_2ScaleSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp scaled sprite
+		SPR_2ScaleSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp scaled sprite
 	}
 	
 	else {
@@ -104,7 +99,7 @@ void sprite_draw(SPRITE_INFO *info) {
 			xy[i].y = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, sin) +
 				MTH_Mul(yOffset, cos) + scaledY);
 		}
-		SPR_2DistSpr(0, info->mirror, COLOR_0, 0, info->char_num, xy, NO_GOUR); //4bpp distorted sprite
+		SPR_2DistSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp distorted sprite
 	}
 }
 

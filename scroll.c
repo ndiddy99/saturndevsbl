@@ -257,7 +257,7 @@ Uint16 scroll_get(int map, int x, int y) {
 
 void scroll_copy(int num) {
 	int i, pos;
-	
+
 	Uint16 *vram_ptr = VRAM_PTR(num);
 	if (copy_modes[num] & COPY_MODE_RCOL) {
 		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {

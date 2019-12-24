@@ -95,7 +95,7 @@ public class SpriteConverter {
             }
             PrintWriter writer = new PrintWriter(outFile, "UTF-8");
             String substring = outFile.substring(outFile.lastIndexOf('/') + 1, outFile.indexOf('.'));
-            writer.println("const Uint16 " + substring + "_num = " + numSprites + ";");
+            writer.println("Uint16 " + substring + "_num = " + numSprites + ";");
             int imageLength;
             if (size == 256) {
                 imageLength = image.getWidth() * image.getHeight();
