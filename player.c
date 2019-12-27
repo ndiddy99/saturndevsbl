@@ -61,7 +61,15 @@ void player_input() {
 	}
 	player.xPos += player.dx;
 
+	if (PadData1 & PAD_U) {
+		player.yPos -= MTH_FIXED(1);
+	}
+	if (PadData1 & PAD_D) {
+		player.yPos += MTH_FIXED(1);
+	}
+
 	player_animate();
+	print_num(scroll_get(2, player.xPos >> 20, player.yPos >> 20), 4, 0);
 	// print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
 	// print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
 	// print_num(scrolls_x[1] >> 16, 2, 0); print_num(scrolls_x[1] & 0xffff, 2, 10);

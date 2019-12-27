@@ -5,6 +5,7 @@
 #include "cd.h"
 #include "graphicrefs.h"
 #include "player.h"
+#include "print.h"
 #include "scroll.h"
 #include "sprite.h"
 
@@ -14,8 +15,9 @@ Sint32 map_tiles_x[] = {0, 0};
 Sint32 map_tiles_y[] = {0, 0};
 Uint32 copy_modes[]  = {0, 0};
 Uint16 *maps[2]; //map locations in WRAM for the scrolling backgrounds
-Uint16 **tilemaps; //all the maps currently in WRAM
-int curr_map = 0; //which map the player is currently on
+#define WRAM_MAPS(bg) (maps[bg - 2]) //only nbg2 and nbg3 have infinite scrolling
+int scroll_xsize = 0;
+int scroll_ysize = 0;
 Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, SCL_VDP2_VRAM_B1, SCL_VDP2_VRAM_B1 + 0x800}; //where in VRAM each tilemap is
 #define VRAM_PTR(bg) ((Uint16 *)vram[bg])
 int scroll_transition_state = TSTATE_NULL;
@@ -85,6 +87,8 @@ void scroll_init() {
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
 	cd_load(bg_name, (void *)LWRAM, 256 * bg_num);
 	memcpy(VramWorkP, (void *)LWRAM, 256 * bg_num);
+	scroll_xsize = map_width;
+	scroll_ysize = map_height;
 
 	// TilemapVram = VRAM_PTR(0);
 	// count = 0;
@@ -114,6 +118,7 @@ void scroll_init() {
 			TilemapVram[j * 32 + i] = lwram_ptr[count++];
 		}
 	}
+	WRAM_MAPS(2) = (Uint16 *)LWRAM;
 	// memcpy(TilemapVram, (void *)LWRAM, 0x800);
 	// TilemapVram[0] = 2;
 	// TilemapVram[1] = 2;
@@ -246,13 +251,15 @@ void scroll_scale(int num, Fixed32 scale) {
 	}
 }
 
-//gets the value at the given coordinates for a square map
+//gets the value at the given coordinates for a map
 Uint16 scroll_get(int map, int x, int y) {
-	Uint16 *map_ptr = maps[map];
-	if (map_ptr == NULL || x >= 64 || x < 0 || y >= 64 || y < 0) {
+	Uint16 *map_ptr = WRAM_MAPS(map);
+	if (map_ptr == NULL || x >= scroll_xsize || x < 0 || y >= scroll_ysize || y < 0) {
 		return 0;
 	}
-	return map_ptr[y * 64 + x];
+	print_num(scroll_xsize, 5, 7);
+	print_num(scroll_ysize, 6, 7);
+	return map_ptr[(x * scroll_ysize) + y];
 }
 
 void scroll_copy(int num) {

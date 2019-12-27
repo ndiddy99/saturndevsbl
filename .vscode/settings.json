@@ -15,6 +15,8 @@
         "string.h": "c",
         "GFS.C": "cpp",
         "SCL_PR02.C": "cpp",
-        "SCL_PR05.C": "cpp"
+        "SCL_PR05.C": "cpp",
+        "DMA_SCU1.C": "cpp",
+        "DMA_SCU0.C": "cpp"
     }
 }

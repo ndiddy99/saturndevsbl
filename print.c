@@ -23,7 +23,7 @@ void print_num(Uint32 num, int row, int col) {
 	int right_col = col + 9; //rightmost column
 	int i;
 	for (i = 0; i < 9; i++) {
-		text[row][right_col--] =(num % 10) + 16;
+		text[row][right_col--] = (num % 10) + 16;
 		num /= 10;
 	}
 }
