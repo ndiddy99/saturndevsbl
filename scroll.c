@@ -110,7 +110,6 @@ void scroll_init() {
 
 	//load map data to LWRAM
 	cd_load(map_name, (void *)LWRAM, map_width * map_height * 2);
-	//BGs 2 and 3 don't need 4 way scrolling (just for decoration) so you can just memcpy the level data
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
 	for (i = 0; i < 20; i++) {
@@ -118,7 +117,7 @@ void scroll_init() {
 			TilemapVram[j * 32 + i] = lwram_ptr[count++];
 		}
 	}
-	WRAM_MAPS(2) = (Uint16 *)LWRAM;
+	maps[SCROLL_PLAYFIELD] = (Uint16 *)LWRAM;
 	// memcpy(TilemapVram, (void *)LWRAM, 0x800);
 	// TilemapVram[0] = 2;
 	// TilemapVram[1] = 2;
@@ -253,12 +252,10 @@ void scroll_scale(int num, Fixed32 scale) {
 
 //gets the value at the given coordinates for a map
 Uint16 scroll_get(int map, int x, int y) {
-	Uint16 *map_ptr = WRAM_MAPS(map);
+	Uint16 *map_ptr = maps[map];
 	if (map_ptr == NULL || x >= scroll_xsize || x < 0 || y >= scroll_ysize || y < 0) {
 		return 0;
 	}
-	print_num(scroll_xsize, 5, 7);
-	print_num(scroll_ysize, 6, 7);
 	return map_ptr[(x * scroll_ysize) + y];
 }
 

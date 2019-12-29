@@ -7,18 +7,20 @@
 #define MIRROR_HORIZ (1 << 4)
 #define MIRROR_VERT (1 << 5)
 
-
 struct SpriteInfo;
 
 typedef void (*IterateFunc)(struct SpriteInfo *);
 
 #define OPTION_NODISP (1 << 0)
+#define OPTION_ONGROUND (1 << 1)
+#define SPRITE_GRAVITY (MTH_FIXED(0.5))
 
 typedef struct SpriteInfo {
 	Uint16 char_num; //tile number
 	Uint16 index; //where the sprite is in the sprites array
 	Uint16 options;
 	Uint16 state;
+	Uint16 collision;
 	Fixed32 xPos;
 	Fixed32 yPos;
 	Fixed32 xSize;

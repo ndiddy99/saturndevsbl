@@ -1,6 +1,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include "collision.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
@@ -8,26 +9,19 @@
 #include "vblank.h"
 
 #define PLAYER_ACCEL (MTH_FIXED(0.5))
+#define PLAYER_JUMPSPEED (-MTH_FIXED(8))
 #define PLAYER_MAXSPEED (MTH_FIXED(4))
 
-extern Uint32 frame;
-//maps to the D-Pad bitmap provided by the Saturn hardware
-//what state the character should be set to given the d-pad's input
 #define FRAME_STAND (96)
 #define FRAME_WALK1 (FRAME_STAND + 1)
 #define FRAME_WALK2 (FRAME_STAND + 2)
 const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
-int anim_cursor = 0;
 SPRITE_INFO player;
-//if you hold the fire button down, this keeps firing in the direction you were 
-//moving initially (so you can fire and move in different directions)
-Uint16 bullet_direction;
-Uint32 bullet_lastframe = 0;
-//how long after firing you have to wait before you can fire again
-#define BULLET_DELAY (10) 
 
 void player_init() {
 	sprite_make(96, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	player.xSize = MTH_FIXED(16);
+	player.ySize = MTH_FIXED(32);
 }
 
 void player_input() {
@@ -60,16 +54,30 @@ void player_input() {
 		}		
 	}
 	player.xPos += player.dx;
+	player_animate();	
+	collision_eject_horiz(&player);
 
-	if (PadData1 & PAD_U) {
-		player.yPos -= MTH_FIXED(1);
+	//jump button
+	if ((PadData1EW & PAD_B) && (player.options & OPTION_ONGROUND)) {
+		player.dy = -MTH_FIXED(8);
+		player.options &= ~OPTION_ONGROUND;
 	}
-	if (PadData1 & PAD_D) {
-		player.yPos += MTH_FIXED(1);
+	//if you hold the jump button longer, jump higher
+	else if ((PadData1 & PAD_B) && player.dy < 0) {
+		player.dy += MTH_FIXED(0.25);
 	}
+	else {
+		player.dy += SPRITE_GRAVITY;
+	}
+	player.yPos += player.dy;
+	collision_eject_vert(&player);
 
-	player_animate();
-	print_num(scroll_get(2, player.xPos >> 20, player.yPos >> 20), 4, 0);
+	print_num(scroll_get(SCROLL_PLAYFIELD, player.xPos >> 20, player.yPos >> 20), 4, 0);
+	print_num(player.collision, 5, 0);
+	print_num(player.options, 6, 0);
+	print_num(player.dx, 7, 0);
+	print_num(player.dy, 8, 0);
+	
 	// print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
 	// print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
 	// print_num(scrolls_x[1] >> 16, 2, 0); print_num(scrolls_x[1] & 0xffff, 2, 10);

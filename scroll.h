@@ -16,6 +16,11 @@ extern Sint32 map_tiles_x[], map_tiles_y[];
 #define COPY_MODE_TROW 4 
 #define COPY_MODE_BROW 8
 
+#define SCROLL_PLAYFIELD (0)
+#define SCROLL_FOREGROUND (1)
+#define SCROLL_BACKGROUND1 (2)
+#define SCROLL_BACKGROUND2 (3)
+
 extern Uint32 copy_modes[]; //what to copy to VRAM from the map
 extern Fixed32 scrolls_x[];
 extern Fixed32 scrolls_y[];
