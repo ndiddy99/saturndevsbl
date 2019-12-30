@@ -40,10 +40,8 @@ void SetVblank(void) {
 
 
 void UsrVblankIn(void) {
-	if (scroll_transition_state == TSTATE_NULL) {
-		scroll_copy(0);
-		scroll_copy(1);
-	}
+	scroll_copy(SCROLL_PLAYFIELD);
+	// scroll_copy(1);
 	
 	SCL_VblankStart();
 }

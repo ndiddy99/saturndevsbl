@@ -15,7 +15,6 @@ Sint32 map_tiles_x[] = {0, 0};
 Sint32 map_tiles_y[] = {0, 0};
 Uint32 copy_modes[]  = {0, 0};
 Uint16 *maps[2]; //map locations in WRAM for the scrolling backgrounds
-#define WRAM_MAPS(bg) (maps[bg - 2]) //only nbg2 and nbg3 have infinite scrolling
 int scroll_xsize = 0;
 int scroll_ysize = 0;
 Uint32 vram[] = {SCL_VDP2_VRAM_A0, SCL_VDP2_VRAM_A0 + 0x800, SCL_VDP2_VRAM_B1, SCL_VDP2_VRAM_B1 + 0x800}; //where in VRAM each tilemap is
@@ -112,7 +111,7 @@ void scroll_init() {
 	cd_load(map_name, (void *)LWRAM, map_width * map_height * 2);
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
-	for (i = 0; i < 20; i++) {
+	for (i = 0; i < 32; i++) {
 		for (j = 0; j < 16; j++) {
 			TilemapVram[j * 32 + i] = lwram_ptr[count++];
 		}
@@ -210,11 +209,20 @@ void scroll_move(int num, Fixed32 x, Fixed32 y) {
 		map_tiles_x[num] = curr_tile_x;
 		map_tiles_y[num] = curr_tile_y;
 	}
-	//Scroll bitmasks are:
-	//NBG0 - (1 << 2)
-	//NBG1 - (1 << 3)
-	//etc
-	SCL_Open(1 << (num + 2));
+	switch (num) {
+		case SCROLL_PLAYFIELD:
+			SCL_Open(SCL_NBG2);
+			break;
+		case SCROLL_FOREGROUND:
+			SCL_Open(SCL_NBG3);
+			break;
+		case SCROLL_BACKGROUND1:
+			SCL_Open(SCL_NBG0);
+			break;
+		case SCROLL_BACKGROUND2:
+			SCL_Open(SCL_NBG1);
+			break;
+	}
 		SCL_MoveTo(scrolls_x[num], scrolls_y[num], 0);
 	SCL_Close();
 }
@@ -262,39 +270,39 @@ Uint16 scroll_get(int map, int x, int y) {
 void scroll_copy(int num) {
 	int i, pos;
 
-	Uint16 *vram_ptr = VRAM_PTR(num);
+	Uint16 *vram_ptr = VRAM_PTR(num + 2);
 	if (copy_modes[num] & COPY_MODE_RCOL) {
-		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			pos = (((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32);
+		for (i = 0; i < 16; i++) {
+			pos = (i * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32);
 			if (pos >= 0) {
-				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, map_tiles_y[num] + i);
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, i);
 			}
 		}
 	}
 	if (copy_modes[num] & COPY_MODE_LCOL) {
-		for (i = -1; i < SCREEN_TILES_Y + 1; i++) {
-			pos = (((i + map_tiles_y[num]) % 32) * 32) + ((map_tiles_x[num] - 1) % 32);
+		for (i = 0; i < 16; i++) {
+			pos = (i * 32) + ((map_tiles_x[num] - 1) % 32);
 			if (pos >= 0) {
-				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] - 1, map_tiles_y[num] + i);
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] - 1, i);
 			}
 		}		
 	}
-	if (copy_modes[num] & COPY_MODE_BROW) {
-		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			pos = (((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
-			if (pos >= 0) {
-				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
-			}
-		}
-	}
-	if (copy_modes[num] & COPY_MODE_TROW) {
-		for (i = -1; i < SCREEN_TILES_X + 1; i++) {
-			pos = (((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
-			if (pos >= 0) {
-				vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
-					scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
-			}
-		}
-	}
+	// if (copy_modes[num] & COPY_MODE_BROW) {
+	// 	for (i = -1; i < SCREEN_TILES_X + 1; i++) {
+	// 		pos = (((map_tiles_y[num] + SCREEN_TILES_Y) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
+	// 		if (pos >= 0) {
+	// 			vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] + SCREEN_TILES_Y);
+	// 		}
+	// 	}
+	// }
+	// if (copy_modes[num] & COPY_MODE_TROW) {
+	// 	for (i = -1; i < SCREEN_TILES_X + 1; i++) {
+	// 		pos = (((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32);
+	// 		if (pos >= 0) {
+	// 			vram_ptr[(((map_tiles_y[num] - 1) % 32) * 32) + ((i + map_tiles_x[num]) % 32)] =
+	// 				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
+	// 		}
+	// 	}
+	// }
 }
 

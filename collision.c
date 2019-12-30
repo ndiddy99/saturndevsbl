@@ -23,6 +23,15 @@ inline int collision_check_down(SPRITE_INFO *sprite) {
     return 0;
 }
 
+inline int collision_check_below(SPRITE_INFO *sprite) {
+    //bottom: bottom left or bottom right pixel hits something
+    if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1)))) ||
+        scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))))) {
+        return 1;
+    }
+    return 0;
+}
+
 inline int collision_check_left(SPRITE_INFO *sprite) {
     //left: top left + 8px and bottom left - 8px hits something
     if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + MTH_FIXED(8))) ||

@@ -1,6 +1,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include <string.h>
 #include "collision.h"
 #include "player.h"
 #include "print.h"
@@ -11,6 +12,7 @@
 #define PLAYER_ACCEL (MTH_FIXED(0.5))
 #define PLAYER_JUMPSPEED (-MTH_FIXED(8))
 #define PLAYER_MAXSPEED (MTH_FIXED(4))
+#define PLAYER_MAXXPOS (MTH_FIXED(152))
 
 #define FRAME_STAND (96)
 #define FRAME_WALK1 (FRAME_STAND + 1)
@@ -19,7 +21,7 @@ const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STA
 SPRITE_INFO player;
 
 void player_init() {
-	sprite_make(96, MTH_FIXED(48) + PLAYER_SPRITE_X, MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	sprite_make(FRAME_STAND, MTH_FIXED(10), MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
 }
@@ -58,7 +60,7 @@ void player_input() {
 	collision_eject_horiz(&player);
 
 	//jump button
-	if ((PadData1EW & PAD_B) && (player.options & OPTION_ONGROUND)) {
+	if ((PadData1EW & PAD_B) && collision_check_below(&player)) {
 		player.dy = -MTH_FIXED(8);
 		player.options &= ~OPTION_ONGROUND;
 	}
@@ -102,5 +104,13 @@ void player_animate() {
 //allows me to treat the player sprite like any other sprite while only moving the screen
 //around it
 void player_draw() {
-	sprite_draw(&player);
+	SPRITE_INFO temp;
+	memcpy(&temp, &player, sizeof(temp));
+	if (temp.xPos > PLAYER_MAXXPOS) {
+		scroll_set(SCROLL_PLAYFIELD, temp.xPos - PLAYER_MAXXPOS, 0);
+		temp.xPos = PLAYER_MAXXPOS;
+	}
+	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
+
+	sprite_draw(&temp);
 }
