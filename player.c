@@ -21,7 +21,7 @@ const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STA
 SPRITE_INFO player;
 
 void player_init() {
-	sprite_make(FRAME_STAND, MTH_FIXED(10), MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+	sprite_make(FRAME_STAND, MTH_FIXED(20), MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
 }
@@ -73,8 +73,8 @@ void player_input() {
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
 
-	print_num(player.xPos, 4, 0);
-	print_num(player.yPos, 5, 0);
+	print_num(player.xPos >> 16, 4, 0);
+	print_num(player.yPos >> 16, 5, 0);
 	print_num(player.dx, 7, 0);
 	print_num(player.dy, 8, 0);
 	

@@ -18,8 +18,12 @@ inline int collision_check_up(SPRITE_INFO *sprite) {
 
 inline int collision_check_down(SPRITE_INFO *sprite) {
     //bottom: bottom left or bottom right pixel hits something
-    if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1)))) ||
-        scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1))))) {
+    Uint16 bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1))));
+    Uint16 bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1))));
+    if (bottom_left || bottom_right) {
+        if (block_slopes[bottom_left >> 1] != NULL || block_slopes[bottom_right >> 1] != NULL) {
+            return 0;
+        }
         return 1;
     }
     return 0;
@@ -40,9 +44,9 @@ inline int collision_check_left(SPRITE_INFO *sprite) {
     top_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + MTH_FIXED(8)));
     bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1)) - MTH_FIXED(8)));
     if (top_left || bottom_left) {
-        // if (block_slopes[bottom_left >> 1] != NULL) {
-        //     return 0;
-        // }
+        if (block_slopes[bottom_left >> 1] != NULL) {
+            return 0;
+        }
         return 1;
     }
     return 0;
@@ -54,9 +58,9 @@ inline int collision_check_right(SPRITE_INFO *sprite) {
     top_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + MTH_FIXED(8)));
     bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1)) - MTH_FIXED(8)));
     if (top_right || bottom_right) {
-        // if (block_slopes[bottom_right >> 1] != NULL) {
-        //     return 0;
-        // }
+        if (block_slopes[bottom_right >> 1] != NULL) {
+            return 0;
+        }
         return 1;
     }
     return 0;
@@ -91,7 +95,22 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
         while (collision_check_down(sprite)) {
             sprite->dy = 0;
             sprite->yPos -= MTH_FIXED(1);
-        }  
+        }
+        Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
+        Uint8 *block_arr = block_slopes[bottom >> 1];
+        int block_index = ((sprite->xPos + (sprite->xSize >> 1)) >> 16) & 0xf;
+        print_num(block_index, 9, 0);
+        if (block_arr != NULL) {
+            print_num(block_arr[block_index], 10, 0);
+            if (sprite->yPos & 0xf0000) {
+                sprite->yPos &= 0xfff00000;
+                sprite->yPos += MTH_FIXED(16);
+            }
+            sprite->yPos -= block_arr[block_index] << 16;
+        }
+        else {
+            print_string("no ", 10, 0);
+        }
     }
 }
 
