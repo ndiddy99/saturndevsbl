@@ -12,7 +12,6 @@ struct SpriteInfo;
 typedef void (*IterateFunc)(struct SpriteInfo *);
 
 #define OPTION_NODISP (1 << 0)
-#define OPTION_ONGROUND (1 << 1)
 #define SPRITE_GRAVITY (MTH_FIXED(0.5))
 
 typedef struct SpriteInfo {

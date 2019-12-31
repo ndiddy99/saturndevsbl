@@ -62,7 +62,6 @@ void player_input() {
 	//jump button
 	if ((PadData1EW & PAD_B) && collision_check_below(&player)) {
 		player.dy = -MTH_FIXED(8);
-		player.options &= ~OPTION_ONGROUND;
 	}
 	//if you hold the jump button longer, jump higher
 	else if ((PadData1 & PAD_B) && player.dy < 0) {
@@ -74,9 +73,8 @@ void player_input() {
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
 
-	print_num(scroll_get(SCROLL_PLAYFIELD, player.xPos >> 20, player.yPos >> 20), 4, 0);
-	print_num(player.collision, 5, 0);
-	print_num(player.options, 6, 0);
+	print_num(player.xPos, 4, 0);
+	print_num(player.yPos, 5, 0);
 	print_num(player.dx, 7, 0);
 	print_num(player.dy, 8, 0);
 	
@@ -109,6 +107,9 @@ void player_draw() {
 	if (temp.xPos > PLAYER_MAXXPOS) {
 		scroll_set(SCROLL_PLAYFIELD, temp.xPos - PLAYER_MAXXPOS, 0);
 		temp.xPos = PLAYER_MAXXPOS;
+	}
+	else {
+		scroll_set(SCROLL_PLAYFIELD, 0, 0);
 	}
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
 
