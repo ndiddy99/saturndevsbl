@@ -75,6 +75,7 @@ void player_input() {
 
 	print_num(player.xPos >> 16, 4, 0);
 	print_num(player.yPos >> 16, 5, 0);
+	print_num(player.options, 6, 0);
 	print_num(player.dx, 7, 0);
 	print_num(player.dy, 8, 0);
 	

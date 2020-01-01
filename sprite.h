@@ -11,7 +11,11 @@ struct SpriteInfo;
 
 typedef void (*IterateFunc)(struct SpriteInfo *);
 
+//if the sprite shouldn't be displayed
 #define OPTION_NODISP (1 << 0)
+//if we're on a slope
+#define OPTION_SLOPE (1 << 1)
+
 #define SPRITE_GRAVITY (MTH_FIXED(0.5))
 
 typedef struct SpriteInfo {
