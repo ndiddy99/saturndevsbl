@@ -20,15 +20,15 @@ inline int collision_check_down(SPRITE_INFO *sprite) {
     //bottom: bottom left or bottom right pixel hits something
     Uint16 bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1))));
     Uint16 bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1))));
-    if (block_slopes[bottom_left >> 1] != NULL) {
+    if (block_check(bottom_left)) {
         bottom_left = 0;
     }
-    if (block_slopes[bottom_right >> 1] != NULL) {
+    if (block_check(bottom_right)) {
         bottom_right = 0;
     }    
     if (bottom_left || bottom_right) {
         Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
-        if (block_slopes[bottom >> 1] != NULL) {
+        if (block_check(bottom)) {
             return 0;
         }
         return 1;
@@ -57,7 +57,7 @@ inline int collision_check_left(SPRITE_INFO *sprite) {
         bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1)) - MTH_FIXED(8)));
     }
     if (top_left || bottom_left) {
-        if (block_slopes[bottom_left >> 1] != NULL) {
+        if (block_check(bottom_left)) {
             return 0;
         }
         return 1;
@@ -77,7 +77,7 @@ inline int collision_check_right(SPRITE_INFO *sprite) {
         bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize - MTH_FIXED(1)) - MTH_FIXED(8)));
     }
     if (top_right || bottom_right) {
-        if (block_slopes[bottom_right >> 1] != NULL) {
+        if (block_check(bottom_right)) {
             return 0;
         }
         return 1;
@@ -116,8 +116,7 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
             sprite->yPos -= MTH_FIXED(1);
         }
         Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
-        Uint8 *block_arr = block_slopes[bottom >> 1];
-        if (block_arr != NULL) {
+        if (block_check(bottom)) {
             //if we're on a tile boundary, don't need to do anything to the position.
             //if we're not (have been moved vertically by the previous tile), set the position to the
             //bottom of the tile before modifying it with the heightmap
