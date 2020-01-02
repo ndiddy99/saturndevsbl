@@ -1,4 +1,4 @@
-const Uint16 test_num = 1;
+Uint16 test_num = 1;
 Uint16 test_size = 256;
 Uint16 test_width = 16;
 Uint16 test_height = 32;

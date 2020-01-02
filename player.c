@@ -73,16 +73,10 @@ void player_input() {
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
 
-	print_num(player.xPos >> 16, 4, 0);
-	print_num(player.yPos >> 16, 5, 0);
-	print_num(player.options, 6, 0);
-	print_num(player.dx, 7, 0);
-	print_num(player.dy, 8, 0);
-	
-	// print_num(scrolls_x[0] >> 16, 0, 0); print_num(scrolls_x[0] & 0xffff, 0, 10);
-	// print_num(scrolls_y[0] >> 16, 1, 0); print_num(scrolls_y[0] & 0xffff, 1, 10);
-	// print_num(scrolls_x[1] >> 16, 2, 0); print_num(scrolls_x[1] & 0xffff, 2, 10);
-	// print_num(scrolls_y[1] >> 16, 3, 0); print_num(scrolls_y[1] & 0xffff, 3, 10);
+	print_num(player.xPos >> 16, 2, 0);
+	print_num(player.yPos >> 16, 3, 0);
+	print_num(player.dx, 4, 0);
+	print_num(player.dy, 5, 0);
 }
 
 void player_animate() {

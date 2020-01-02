@@ -33,8 +33,6 @@ int main() {
 	print_init();
 	player_init();
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
-	print_string("The quick brown fox jumps over a lazy", 2, 0);
-	print_string("dog.", 3, 0);
 	while(1) {
 		frame++;
 		player_input();

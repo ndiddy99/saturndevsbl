@@ -53,7 +53,7 @@ public class MapReader {
             for (int i = 0; i < elements.length; i++) {
                 if (!elements[i].equals("")) {
                     //tiled stores map elements 1 indexed
-                    mapArr[rowCount][i] = Integer.parseInt(elements[i]) - 1;
+                    mapArr[rowCount][i] = Integer.parseUnsignedInt(elements[i]) - 1;
                 }
             }
             rowCount++;
