@@ -35,6 +35,7 @@ void player_init() {
 }
 
 void player_input() {
+	//this is cargo culting from sega's code, maybe there's some reason why i can't read PadData1E more than once?
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
 	if (PadData1 & PAD_L) {
@@ -64,7 +65,7 @@ void player_input() {
 		}		
 	}
 	player.xPos += player.dx;
-	player_animate();	
+	player_animate();
 	collision_eject_horiz(&player);
 
 	//jump button
@@ -99,6 +100,7 @@ void player_input() {
 		boost--;
 	}
 
+	collision_spikes(&player);
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4);
 	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4);
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);

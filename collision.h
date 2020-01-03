@@ -14,6 +14,8 @@ inline int collision_check_down(SPRITE_INFO *sprite);
 inline int collision_check_below(SPRITE_INFO *sprite);
 inline int collision_check_left(SPRITE_INFO *sprite);
 inline int collision_check_right(SPRITE_INFO *sprite);
+//returns 1 if the sprite's head or foot hits a spike, 0 otherwise
+int collision_spikes(SPRITE_INFO *sprite);
 void collision_eject_vert(SPRITE_INFO *sprite);
 void collision_eject_horiz(SPRITE_INFO *sprite);
 

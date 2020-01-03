@@ -103,6 +103,19 @@ void collision_check(SPRITE_INFO *sprite) {
     sprite->collision = collision;
 }
 
+int collision_spikes(SPRITE_INFO *sprite) {
+    if (block_spike(sprite->xPos, sprite->yPos - MTH_FIXED(1)) ||
+        block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos - MTH_FIXED(1)) ||
+        block_spike(sprite->xPos, sprite->yPos + sprite->ySize) ||
+        block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos + sprite->ySize)) {
+
+        print_string("spike", 7, 0);
+        return 1;
+    }
+    print_string("nospi", 7, 0);
+    return 0;
+}
+
 void collision_eject_vert(SPRITE_INFO *sprite) {
     if (sprite->dy < 0) {
         while (collision_check_up(sprite)) {

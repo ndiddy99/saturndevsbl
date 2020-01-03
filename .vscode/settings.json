@@ -18,6 +18,8 @@
         "SCL_PR05.C": "cpp",
         "DMA_SCU1.C": "cpp",
         "DMA_SCU0.C": "cpp",
-        "SEGA_MTH.H": "cpp"
+        "SEGA_MTH.H": "cpp",
+        "PER_X2.C": "cpp",
+        "PER_X1.C": "cpp"
     }
 }
