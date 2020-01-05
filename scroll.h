@@ -60,6 +60,6 @@ void scroll_scale(int num, Fixed32 scale);
 Uint16 scroll_get(int map, int x, int y);
 //copies scroll to VRAM after position has been changed by move/set scroll
 void scroll_copy(int num);
-//sets all backgrounds to how they were on init
+//sets all backgrounds to how they were on initl
 void scroll_reset(void);
 #endif

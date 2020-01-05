@@ -1,6 +1,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#include <sega_sys.h>
 #include <string.h>
 #include "collision.h"
 #include "player.h"
@@ -29,6 +30,7 @@ SPRITE_INFO player;
 LEVEL *curr_level;
 Uint8 boost = 0;
 Uint8 jumps = 0;
+Uint8 lives = 3;
 
 void player_init(LEVEL *level) {
 	sprite_make(FRAME_STAND, level->player_startx, level->player_starty, &player);
@@ -41,6 +43,12 @@ void player_input() {
 	//this is cargo culting from sega's code, maybe there's some reason why i can't read PadData1E more than once?
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
+	//soft reset
+	if (PadData1 == (PAD_A | PAD_B | PAD_C | PAD_S)) {
+		//go back to the cd player screen if a+b+c+start is pressed
+		SYS_EXECDMP();
+	}
+
 	if (PadData1 & PAD_L) {
 		if (player.dx > -PLAYER_MAXSPEED) {
 			player.dx -= PLAYER_ACCEL;
@@ -68,6 +76,19 @@ void player_input() {
 		}		
 	}
 	player.xPos += player.dx;
+	//boost button
+	if ((PadData1EW & PAD_A) && boost == 0) {
+		boost = BOOST_TIMER;
+		if (PadData1 & PAD_L) {
+			player.dx -= BOOST_SPEED;
+		}
+		if (PadData1 & PAD_R) {
+			player.dx += BOOST_SPEED;
+		}
+	}
+	if (boost) { 
+		boost--;
+	}
 	player_animate();
 	collision_eject_horiz(&player);
 
@@ -92,20 +113,7 @@ void player_input() {
 	}
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
-
-	//boost button
-	if ((PadData1EW & PAD_A) && boost == 0) {
-		boost = BOOST_TIMER;
-		if (PadData1 & PAD_L) {
-			player.dx -= BOOST_SPEED;
-		}
-		if (PadData1 & PAD_R) {
-			player.dx += BOOST_SPEED;
-		}
-	}
-	if (boost) { 
-		boost--;
-	}
+	//if the player hits spikes, kill him
 	if (collision_spikes(&player)) {
 		player.xPos = curr_level->player_startx;
 		player.yPos = curr_level->player_starty;
@@ -113,6 +121,7 @@ void player_input() {
 		player.dy = 0;
 		jumps = 0;
 		boost = 0;
+		lives--;
 		scroll_reset();
 	}
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4);
@@ -120,6 +129,7 @@ void player_input() {
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);
 	print_string("dy: ", 5, 0); print_num(player.dy, 5, 4);
 	print_string("boost: ", 6, 0); print_num(boost, 6, 7);
+	print_string("lives: ", 6, 0); print_num(lives, 6, 7);
 }
 
 void player_animate() {
