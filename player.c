@@ -24,14 +24,17 @@
 #define FRAME_WALK1 (FRAME_STAND + 1)
 #define FRAME_WALK2 (FRAME_STAND + 2)
 const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
+
 SPRITE_INFO player;
+LEVEL *curr_level;
 Uint8 boost = 0;
 Uint8 jumps = 0;
 
-void player_init() {
-	sprite_make(FRAME_STAND, MTH_FIXED(20), MTH_FIXED(16) + PLAYER_SPRITE_Y, &player);
+void player_init(LEVEL *level) {
+	sprite_make(FRAME_STAND, level->player_startx, level->player_starty, &player);
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
+	curr_level = level;
 }
 
 void player_input() {
@@ -82,6 +85,10 @@ void player_input() {
 	}
 	else {
 		player.dy += SPRITE_GRAVITY;
+		if (player.dy > SPRITE_MAXFALLSPEED) {
+			player.dy = SPRITE_MAXFALLSPEED;
+		}
+		
 	}
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
@@ -99,8 +106,15 @@ void player_input() {
 	if (boost) { 
 		boost--;
 	}
-
-	collision_spikes(&player);
+	if (collision_spikes(&player)) {
+		player.xPos = curr_level->player_startx;
+		player.yPos = curr_level->player_starty;
+		player.dx = 0;
+		player.dy = 0;
+		jumps = 0;
+		boost = 0;
+		scroll_reset();
+	}
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4);
 	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4);
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);

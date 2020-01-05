@@ -5,33 +5,29 @@
 #include	<sega_mth.h>
 
 #include    "cd.h"
+#include	"graphicrefs.h"
 #include	"sprite.h"
 #include	"scroll.h"
 #include    "player.h"
 #include    "print.h"
 
-#include	"graphicrefs.h"
-
 Uint32 frame = 0;
-
-Uint32 buf[2];
 
 int main() {
 	cd_init();
 	sprite_init();
-	// SCROLL_DATA scroll;
-	// scroll.playfield_tiles = wood_chr;
-	// scroll.playfield_tiles_num = 40;
-	// scroll.playfield_palette = wood_pal;
-	// scroll.levels = levels;
-	// scroll.bg_tiles = bg0_chr;
-	// scroll.bg_tiles_num = 44;
-	// scroll.bg_palette = bg0_pal;
-	// scroll.bg2_tilemap = bg0_2map;
-	// scroll.bg3_tilemap = bg0_3map;
-	scroll_init();
+	LEVEL level1;
+	level1.player_startx = MTH_FIXED(64);
+	level1.player_starty = MTH_FIXED(176);
+	level1.playfield_tile_filename = bg_name;
+	level1.playfield_tile_num = bg_num;
+	level1.playfield_palette = bg_pal;
+	level1.playfield_map_filename = map_name;
+	level1.playfield_map_width = map_width;
+	level1.playfield_map_height = map_height;
+	scroll_init(&level1);
 	print_init();
-	player_init();
+	player_init(&level1);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	while(1) {
 		frame++;

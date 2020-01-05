@@ -17,6 +17,7 @@ typedef void (*IterateFunc)(struct SpriteInfo *);
 #define OPTION_SLOPE (1 << 1)
 
 #define SPRITE_GRAVITY (MTH_FIXED(0.5))
+#define SPRITE_MAXFALLSPEED (MTH_FIXED(14))
 
 typedef struct SpriteInfo {
 	Uint16 char_num; //tile number

@@ -7,6 +7,11 @@
 extern Uint16 bg_num;
 extern char bg_name[];
 extern Uint32 bg_pal[];
+//---background tilemaps---
+//map.c
+extern Uint16 map_width;
+extern Uint16 map_height;
+extern char map_name[];
 //---sprite graphics---
 //font.c
 extern Uint16 font_num;
@@ -22,10 +27,5 @@ extern Uint16 guy_width;
 extern Uint16 guy_height;
 extern char guy_name[];
 extern Uint32 guy_pal[];
-//---background tilemaps---
-//map.c
-extern Uint16 map_width;
-extern Uint16 map_height;
-extern char map_name[];
 
 #endif

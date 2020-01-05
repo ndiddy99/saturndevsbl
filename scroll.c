@@ -3,7 +3,6 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "cd.h"
-#include "graphicrefs.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
@@ -62,7 +61,7 @@ SclConfig scfg2;
 SclConfig scfg3;
 
 
-void scroll_init() {
+void scroll_init(LEVEL *level) {
 	int i, j, count;
 	Uint16 BackCol;
 	Uint8 *VramWorkP;
@@ -71,44 +70,19 @@ void scroll_init() {
 	SclVramConfig vram_cfg;
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
-		// SCL_AllocColRam(SCL_NBG0, 16, OFF); //set up palette data
-		// SCL_SetColRam(SCL_NBG0, 0, 16, (void *)data->playfield_palette);
-		// SCL_AllocColRam(SCL_NBG1, 16, OFF);
-		// SCL_SetColRam(SCL_NBG1, 0, 16, (void *)data->playfield_palette);
 		SCL_AllocColRam(SCL_NBG2, 256, OFF);
-		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)bg_pal);
+		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)(level->playfield_palette));
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
-	
-	// VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1; //scroll character pattern to VRAM A1
-	// memcpy(VramWorkP, data->playfield_tiles, 128 * data->playfield_tiles_num);
 
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
-	cd_load(bg_name, (void *)LWRAM, 256 * bg_num);
-	memcpy(VramWorkP, (void *)LWRAM, 256 * bg_num);
-	scroll_xsize = map_width;
-	scroll_ysize = map_height;
-
-	// TilemapVram = VRAM_PTR(0);
-	// count = 0;
-	// for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
-	// 	for (j = 0; j < 32; j++) {
-	// 		TilemapVram[count++] = data->levels[0][i * 64 + j]; //level is 64*64
-			
-	// 	}
-	// }
-
-	// TilemapVram = VRAM_PTR(1);
-	// count = 0;
-	// for (i = 0; i < 32; i++) { //saturn tilemap is 32*32
-	// 	for (j = 0; j < 32; j++) {
-	// 		TilemapVram[count++] = data->levels[1][i * 64 + j]; //level is 64*64
-			
-	// 	}
-	// }
+	cd_load(level->playfield_tile_filename, (void *)LWRAM, 256 * level->playfield_tile_num);
+	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield_tile_num);
+	scroll_xsize = level->playfield_map_width;
+	scroll_ysize = level->playfield_map_height;
 
 	//load map data to LWRAM
-	cd_load(map_name, (void *)LWRAM, map_width * map_height * 2);
+	cd_load(level->playfield_map_filename, (void *)LWRAM, scroll_xsize * scroll_ysize * 2);
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
 	for (i = 0; i < 32; i++) {
@@ -163,7 +137,7 @@ void scroll_init() {
 	SCL_SetCycleTable(CycleTb);
 	 
 	SCL_Open(SCL_NBG0);
-		SCL_MoveTo(FIXED(48), FIXED(10), 0); //home position
+		SCL_MoveTo(FIXED(0), FIXED(0), 0); //home position
 	SCL_Close();
 	SCL_Open(SCL_NBG1);
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
@@ -175,7 +149,7 @@ void scroll_init() {
 		SCL_MoveTo(FIXED(0), FIXED(0), 0);
 	SCL_Close();
 	scroll_scale(0, FIXED(1));
-	scroll_scale(1, FIXED(0.75));
+	scroll_scale(1, FIXED(1));
 	SCL_SetPriority(SCL_NBG0, 7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,  7);
 	SCL_SetPriority(SCL_NBG1, 6);
@@ -304,5 +278,19 @@ void scroll_copy(int num) {
 	// 		}
 	// 	}
 	// }
+}
+
+void scroll_reset(void) {
+	int i, j, count;
+	Uint16 *lwram_ptr = (Uint16 *)LWRAM;
+	Uint16 *tilemap_vram;
+	scroll_set(SCROLL_PLAYFIELD, 0, 0);
+	count = 0;
+	tilemap_vram = VRAM_PTR(2);
+	for (i = 0; i < 32; i++) {
+		for (j = 0; j < 16; j++) {
+			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
+		}
+	}
 }
 
