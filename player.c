@@ -94,7 +94,7 @@ void player_input() {
 	collision_eject_horiz(&player);
 
 	//jump button
-	if ((player.options & OPTION_SLOPE) || collision_check_below(&player)) {
+	if ((player.dy > 0) && ((player.options & OPTION_SLOPE) || collision_check_below(&player))) {
 		jumps = 0;
 	}
 	if ((PadData1EW & PAD_B) && jumps < PLAYER_MAXJUMPS) {

@@ -148,6 +148,7 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
             sprite->yPos -= MTH_FIXED(1);
         }
         Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
+        print_num(bottom, 9, 0);
         if (block_check(bottom)) {
             //if we're on a tile boundary, don't need to do anything to the position.
             //if we're not (have been moved vertically by the slope tile), set the position to the
@@ -159,6 +160,10 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
             int block_index = ((sprite->xPos + (sprite->xSize >> 1)) >> 16) & 0xf;
             sprite->yPos -= block_get(bottom, block_index) << 16;//block_arr[block_index] << 16;
             sprite->options |= OPTION_SLOPE;
+            print_string("slope", 10, 0);
+        }
+        else {
+            print_string("nope ", 10, 0);
         }
     }
 }
