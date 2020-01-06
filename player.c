@@ -24,6 +24,7 @@
 #define FRAME_STAND (96)
 #define FRAME_WALK1 (FRAME_STAND + 1)
 #define FRAME_WALK2 (FRAME_STAND + 2)
+#define FRAME_JUMP (FRAME_STAND + 3)
 const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
 
 SPRITE_INFO player;
@@ -93,7 +94,7 @@ void player_input() {
 	collision_eject_horiz(&player);
 
 	//jump button
-	if (collision_check_below(&player)) {
+	if ((player.options & OPTION_SLOPE) || collision_check_below(&player)) {
 		jumps = 0;
 	}
 	if ((PadData1EW & PAD_B) && jumps < PLAYER_MAXJUMPS) {
@@ -113,8 +114,8 @@ void player_input() {
 	}
 	player.yPos += player.dy;
 	collision_eject_vert(&player);
-	//if the player hits spikes, kill him
-	if (collision_spikes(&player)) {
+	//if the player hits spikes or falls into a pit, kill him
+	if (collision_spikes(&player) || player.yPos > MTH_FIXED(224)) {
 		player.xPos = curr_level->player_startx;
 		player.yPos = curr_level->player_starty;
 		player.dx = 0;
@@ -129,11 +130,15 @@ void player_input() {
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);
 	print_string("dy: ", 5, 0); print_num(player.dy, 5, 4);
 	print_string("boost: ", 6, 0); print_num(boost, 6, 7);
-	print_string("lives: ", 6, 0); print_num(lives, 6, 7);
+	print_string("lives: ", 7, 0); print_num(lives, 7, 7);
 }
 
 void player_animate() {
-	if (player.dx) {
+	if (jumps) {
+		player.char_num = FRAME_JUMP;
+		player.animTimer = 10;
+	}
+	else if (player.dx) {
 		player.animTimer++;
 		if (player.animTimer >= 10) {
 			player.animTimer = 0;

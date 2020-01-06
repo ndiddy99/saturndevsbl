@@ -5,7 +5,9 @@ Sik
 Flygon
 fafling
 vbt
+mrkotfw
+Emerald Nova
+Ponut64
 
-The Mednafen team
-The SBL team
-SEGA
+The Mednafen devs
+The SBL devs and everyone at Sega Developer Technical Support

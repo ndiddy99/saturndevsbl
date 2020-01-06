@@ -37,12 +37,28 @@ inline int collision_check_down(SPRITE_INFO *sprite) {
 }
 
 inline int collision_check_below(SPRITE_INFO *sprite) {
-    //bottom: bottom left or bottom right pixel hits something
-    if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1)))) ||
-        scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))))) {
+    // //bottom: bottom left or bottom right pixel hits something
+    // if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1)))) ||
+    //     scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))))) {
+    //     return 1;
+    // }
+    // return 0; 
+    Uint16 bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))));
+    Uint16 bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))));
+    if (block_check(bottom_left)) {
+        bottom_left = 0;
+    }
+    if (block_check(bottom_right)) {
+        bottom_right = 0;
+    }    
+    if (bottom_left || bottom_right) {
+        Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
+        if (block_check(bottom)) {
+            return 0;
+        }
         return 1;
     }
-    return 0;
+    return 0;    
 }
 
 inline int collision_check_left(SPRITE_INFO *sprite) {
@@ -109,14 +125,17 @@ int collision_spikes(SPRITE_INFO *sprite) {
         block_spike(sprite->xPos, sprite->yPos + sprite->ySize) ||
         block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos + sprite->ySize)) {
 
-        print_string("spike", 7, 0);
+        print_string("spike", 8, 0);
         return 1;
     }
-    print_string("nospi", 7, 0);
+    print_string("nospi", 8, 0);
     return 0;
 }
 
 void collision_eject_vert(SPRITE_INFO *sprite) {
+    //reset slope bit
+    sprite->options &= ~OPTION_SLOPE;
+
     if (sprite->dy < 0) {
         while (collision_check_up(sprite)) {
             sprite->dy = 0;
@@ -131,7 +150,7 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
         Uint16 bottom = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + (sprite->xSize >> 1)), TO_TILE(sprite->yPos + sprite->ySize - MTH_FIXED(1)));
         if (block_check(bottom)) {
             //if we're on a tile boundary, don't need to do anything to the position.
-            //if we're not (have been moved vertically by the previous tile), set the position to the
+            //if we're not (have been moved vertically by the slope tile), set the position to the
             //bottom of the tile before modifying it with the heightmap
             if (sprite->yPos & 0xf0000) {
                 sprite->yPos &= 0xfff00000;
@@ -140,10 +159,6 @@ void collision_eject_vert(SPRITE_INFO *sprite) {
             int block_index = ((sprite->xPos + (sprite->xSize >> 1)) >> 16) & 0xf;
             sprite->yPos -= block_get(bottom, block_index) << 16;//block_arr[block_index] << 16;
             sprite->options |= OPTION_SLOPE;
-        }
-        else {
-            // print_string("no ", 10, 0);
-            sprite->options &= ~OPTION_SLOPE;
         }
     }
 }
