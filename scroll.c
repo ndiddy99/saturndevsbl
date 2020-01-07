@@ -3,6 +3,7 @@
 #include <sega_mth.h>
 #include <sega_scl.h>
 #include "cd.h"
+#include "graphicrefs.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
@@ -72,9 +73,22 @@ void scroll_init(LEVEL *level) {
 	SCL_SetColRamMode(SCL_CRM24_1024);
 		SCL_AllocColRam(SCL_NBG2, 256, OFF);
 		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)(level->playfield_palette));
+
+		SCL_AllocColRam(SCL_NBG0, 16, OFF);
+		SCL_SetColRam(SCL_NBG0, 0, 16, hills_pal);
+
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
+	//---nbg0: hills in bg---
+	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1;
+	cd_load(hills_name, (void *)LWRAM, 128 * hills_num);
+	memcpy(VramWorkP, (void *)LWRAM, 128 * hills_num);
+	cd_load(hill_map_name, (void *)LWRAM, hill_map_width * hill_map_height * 2);
+	TilemapVram = VRAM_PTR(0);
+	memcpy(TilemapVram, (void *)LWRAM, hill_map_width * hill_map_height * 2);
+	
 
+	//---nbg2: playfield---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
 	cd_load(level->playfield_tile_filename, (void *)LWRAM, 256 * level->playfield_tile_num);
 	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield_tile_num);
@@ -100,7 +114,7 @@ void scroll_init(LEVEL *level) {
 
 	//scroll initial configuration
 	SCL_InitConfigTb(&scfg0);
-		scfg0.dispenbl      = OFF;
+		scfg0.dispenbl      = ON;
 		scfg0.charsize      = SCL_CHAR_SIZE_2X2;
 		scfg0.pnamesize     = SCL_PN1WORD;
 		scfg0.flip          = SCL_PN_10BIT;
@@ -112,6 +126,7 @@ void scroll_init(LEVEL *level) {
 	SCL_SetConfig(SCL_NBG0, &scfg0);
 
 	memcpy((void *)&scfg1, (void *)&scfg0, sizeof(SclConfig));
+	scfg1.dispenbl = OFF;
 	for(i=0;i<4;i++)   scfg1.plate_addr[i] = vram[1];
 	SCL_SetConfig(SCL_NBG1, &scfg1);
 
@@ -150,11 +165,11 @@ void scroll_init(LEVEL *level) {
 	SCL_Close();
 	scroll_scale(0, FIXED(1));
 	scroll_scale(1, FIXED(1));
-	SCL_SetPriority(SCL_NBG0, 7); //set layer priorities
-	SCL_SetPriority(SCL_SPR,  7);
-	SCL_SetPriority(SCL_NBG1, 6);
-	SCL_SetPriority(SCL_NBG2, 5);
-	SCL_SetPriority(SCL_NBG3, 4);
+	SCL_SetPriority(SCL_NBG3, 7); //set layer priorities
+	SCL_SetPriority(SCL_SPR,  6);
+	SCL_SetPriority(SCL_NBG2, 6);
+	SCL_SetPriority(SCL_NBG0, 5);
+	SCL_SetPriority(SCL_NBG1, 4);
 	// maps[0] = (Uint16 *)data->levels[0];
 	// maps[1] = (Uint16 *)data->levels[1];
 	// tilemaps = data->levels;

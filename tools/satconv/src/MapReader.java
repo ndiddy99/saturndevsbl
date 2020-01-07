@@ -70,7 +70,7 @@ public class MapReader {
         scanner.close();
     }
 
-    public void outputMap(String filename) {
+    public void outputLevel(String filename) {
         try {
             Path path = Paths.get(filename);
             byte[] byteArr = new byte[mapArr[0].length * mapArr.length * 2];
@@ -93,6 +93,40 @@ public class MapReader {
                     }
                     byteArr[(i * mapArr.length * 2) + (j * 2)] = (byte)(((mapVal & 0xFF00) >> 8) & 0xff);
                     byteArr[(i * mapArr.length * 2) + (j * 2 + 1)] = (byte)(mapVal & 0xff);
+                }
+                System.out.println();
+            }
+            Files.write(path, byteArr);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
+    public void outputMap(String filename) {
+        try {
+            Path path = Paths.get(filename);
+            byte[] byteArr = new byte[mapArr[0].length * mapArr.length * 2];
+            for (int i = 0; i < mapArr.length; i++) {
+                for (int j = 0; j < mapArr[0].length; j++) {
+                    short mapVal = 0;
+                    if (bpp == 8) {
+                        mapVal = (short)(((mapArr[i][j] & 0x3ff) * 2) & 0xffff);
+                    }
+                    else if (bpp == 4) {
+                        mapVal = (short)((mapArr[i][j] & 0x3ff) & 0xffff);
+                    }
+                    //is tile horizontally flipped?
+                    if ((mapArr[i][j] & 0x80000000) == 0x80000000) {
+                        mapVal |= 0x400;
+                    }
+                    //is tile vertically flipped?
+                    if ((mapArr[i][j] & 0x40000000) == 0x40000000) {
+                        mapVal |= 0x800;
+                    }
+                    byteArr[(i * mapArr[0].length * 2) + (j * 2)] = (byte)(((mapVal & 0xFF00) >> 8) & 0xff);
+                    byteArr[(i * mapArr[0].length * 2) + (j * 2 + 1)] = (byte)(mapVal & 0xff);
                 }
                 System.out.println();
             }

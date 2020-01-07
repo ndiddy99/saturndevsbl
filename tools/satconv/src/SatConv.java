@@ -44,7 +44,20 @@ public class SatConv {
                         tileConverter.writeTiles(line.substring(3, line.indexOf('.')) + ".tle");
                     }
                 }
-                //tiled map
+                //tiled level (scrolls horizontally, so format is a bunch of columns)
+                else if (line.charAt(0) == 'l') {
+                    if (line.charAt(1) == '4') {
+                        MapReader mapReader = new MapReader(line.substring(3), 4);
+                        mapReader.outputLevel(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
+                    }
+                    else if (line.charAt(1) == '8') {
+                        MapReader mapReader = new MapReader(line.substring(3), 8);
+                        mapReader.outputLevel(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
+                    }
+                }
+                //tiled map (standard saturn tilemap format)
                 else if (line.charAt(0) == 'm') {
                     if (line.charAt(1) == '4') {
                         MapReader mapReader = new MapReader(line.substring(3), 4);

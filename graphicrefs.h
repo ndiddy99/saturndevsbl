@@ -7,11 +7,21 @@
 extern Uint16 bg_num;
 extern char bg_name[];
 extern Uint32 bg_pal[];
+//hills.c
+extern Uint16 hills_num;
+extern char hills_name[];
+extern Uint32 hills_pal[];
 //---background tilemaps---
 //map.c
 extern Uint16 map_width;
 extern Uint16 map_height;
 extern char map_name[];
+
+//hill_map.c
+extern Uint16 hill_map_width;
+extern Uint16 hill_map_height;
+extern char hill_map_name[];
+
 //---sprite graphics---
 //font.c
 extern Uint16 font_num;
