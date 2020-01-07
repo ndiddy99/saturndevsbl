@@ -1280,329 +1280,329 @@ LOAD C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a
  *(.dtors)
                 0x06023c10                ___dtors_end = .
 
-.data           0x06023c10     0x15e0
+.data           0x06023c10     0x15f0
                 0x06023c10                STARTOF_R = .
  *(.data)
  .data          0x06023c10      0x400 ../sbl6/segasmp/per/smpclib/per_x1.o
- .data          0x06024010       0x50 blocks.o
-                0x06024048                tile2_slope
-                0x06024028                tile4_slope
+ .data          0x06024010       0x60 blocks.o
+                0x06024060                tile2_slope
+                0x06024040                tile4_slope
                 0x06024010                block_slopes
-                0x06024038                tile3_slope
- .data          0x06024060      0x4c0 graphics.o
-                0x060240ba                guy_num
-                0x06024518                bg_num
-                0x06024110                bg_pal
-                0x060240ac                guy_name
-                0x0602406c                guy_pal
-                0x06024106                font_height
-                0x0602406a                map_width
-                0x06024068                map_height
-                0x060240b6                guy_width
-                0x06024060                map_name
-                0x060240fc                font_name
-                0x06024510                bg_name
-                0x06024108                font_width
-                0x060240b4                guy_height
-                0x0602410c                font_num
-                0x060240bc                font_pal
-                0x060240b8                guy_size
-                0x0602410a                font_size
- .data          0x06024520       0x10 player.o
-                0x06024520                lives
- .data          0x06024530       0x30 sprite.o
- .data          0x06024560       0x20 scroll.o
-                0x06024560                CycleTb
-                0x06024570                vram
- .data          0x06024580      0x400 ../sbl6/segalib/lib/sega_int.a(int.o)
- .data          0x06024980       0x1c ../sbl6/segalib/lib/sega_spr.a(spr_slv.o)
-                0x06024988                SPR_SlaveParam
-                0x06024998                SPR_SMPC_SF
-                0x06024990                SPR_SMPC_COM
-                0x0602498c                SPR_SlaveSHEntry
-                0x06024984                SPR_SlaveState
-                0x06024980                SPR_SlaveCommand
-                0x06024994                SPR_SMPC_RET
- *fill*         0x0602499c        0x4 00
- .data          0x060249a0       0x34 ../sbl6/segalib/lib/sega_spr.a(spr_1c.o)
-                0x060249a0                SpInitialFlag
- *fill*         0x060249d4        0xc 00
- .data          0x060249e0       0x1c ../sbl6/segalib/lib/sega_scl.a(scl_vblv.o)
-                0x060249e8                VBInterval
-                0x060249f0                ReqDisplayFlag
-                0x060249e0                SpFrameChgMode
-                0x060249ec                VBIntervalCounter
-                0x060249e4                SpFrameEraseMode
- *fill*         0x060249fc        0x4 00
- .data          0x06024a00       0x36 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
-                0x06024a10                SclRotregBuff
-                0x06024a0c                SclDisplayY
-                0x06024a14                SclRotateTableMode
-                0x06024a08                SclProcess
-                0x06024a04                SclCurSclNum
-                0x06024a00                SclLengthLsTbl
-                0x06024a0a                SclDisplayX
-                0x06024a02                SclLengthCsTbl
- *fill*         0x06024a36        0xa 00
- .data          0x06024a40       0x18 ../sbl6/segalib/lib/sega_scl.a(scl_pri.o)
-                0x06024a44                SclRealSpPriNum
-                0x06024a54                SclRealColOffset
-                0x06024a50                SclRealBgColMix
-                0x06024a4c                SclRealSpColMix
-                0x06024a48                SclRealBgPriNum
-                0x06024a40                SclRealOtherPri
- *fill*         0x06024a58        0x8 00
- .data          0x06024a60      0x380 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(impure.o)
-                0x06024ddc                _impure_ptr
- .data          0x06024de0      0x410 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
-                0x06024de8                __malloc_av_
-                0x06024de4                __malloc_trim_threshold
-                0x06024de0                __malloc_sbrk_base
-                0x060251f0                SIZEOF_R = (. - STARTOF_R)
-                0x060251f0                ENDOF_R = .
+                0x06024050                tile3_slope
+ .data          0x06024070      0x4c0 graphics.o
+                0x060240ca                guy_num
+                0x06024528                bg_num
+                0x06024120                bg_pal
+                0x060240bc                guy_name
+                0x0602407c                guy_pal
+                0x06024116                font_height
+                0x0602407a                map_width
+                0x06024078                map_height
+                0x060240c6                guy_width
+                0x06024070                map_name
+                0x0602410c                font_name
+                0x06024520                bg_name
+                0x06024118                font_width
+                0x060240c4                guy_height
+                0x0602411c                font_num
+                0x060240cc                font_pal
+                0x060240c8                guy_size
+                0x0602411a                font_size
+ .data          0x06024530       0x10 player.o
+                0x06024530                lives
+ .data          0x06024540       0x30 sprite.o
+ .data          0x06024570       0x20 scroll.o
+                0x06024570                CycleTb
+                0x06024580                vram
+ .data          0x06024590      0x400 ../sbl6/segalib/lib/sega_int.a(int.o)
+ .data          0x06024990       0x1c ../sbl6/segalib/lib/sega_spr.a(spr_slv.o)
+                0x06024998                SPR_SlaveParam
+                0x060249a8                SPR_SMPC_SF
+                0x060249a0                SPR_SMPC_COM
+                0x0602499c                SPR_SlaveSHEntry
+                0x06024994                SPR_SlaveState
+                0x06024990                SPR_SlaveCommand
+                0x060249a4                SPR_SMPC_RET
+ *fill*         0x060249ac        0x4 00
+ .data          0x060249b0       0x34 ../sbl6/segalib/lib/sega_spr.a(spr_1c.o)
+                0x060249b0                SpInitialFlag
+ *fill*         0x060249e4        0xc 00
+ .data          0x060249f0       0x1c ../sbl6/segalib/lib/sega_scl.a(scl_vblv.o)
+                0x060249f8                VBInterval
+                0x06024a00                ReqDisplayFlag
+                0x060249f0                SpFrameChgMode
+                0x060249fc                VBIntervalCounter
+                0x060249f4                SpFrameEraseMode
+ *fill*         0x06024a0c        0x4 00
+ .data          0x06024a10       0x36 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
+                0x06024a20                SclRotregBuff
+                0x06024a1c                SclDisplayY
+                0x06024a24                SclRotateTableMode
+                0x06024a18                SclProcess
+                0x06024a14                SclCurSclNum
+                0x06024a10                SclLengthLsTbl
+                0x06024a1a                SclDisplayX
+                0x06024a12                SclLengthCsTbl
+ *fill*         0x06024a46        0xa 00
+ .data          0x06024a50       0x18 ../sbl6/segalib/lib/sega_scl.a(scl_pri.o)
+                0x06024a54                SclRealSpPriNum
+                0x06024a64                SclRealColOffset
+                0x06024a60                SclRealBgColMix
+                0x06024a5c                SclRealSpColMix
+                0x06024a58                SclRealBgPriNum
+                0x06024a50                SclRealOtherPri
+ *fill*         0x06024a68        0x8 00
+ .data          0x06024a70      0x380 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(impure.o)
+                0x06024dec                _impure_ptr
+ .data          0x06024df0      0x410 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
+                0x06024df8                __malloc_av_
+                0x06024df4                __malloc_trim_threshold
+                0x06024df0                __malloc_sbrk_base
+                0x06025200                SIZEOF_R = (. - STARTOF_R)
+                0x06025200                ENDOF_R = .
 
-.bss            0x060251f0     0x8c54
-                0x060251f0                STARTOF_B = .
+.bss            0x06025200     0x8c54
+                0x06025200                STARTOF_B = .
  *(.bss)
- .bss           0x060251f0       0x10 vblank.o
-                0x060251f4                PadData2E
-                0x060251fa                PadData1
-                0x060251f6                PadData2
-                0x060251f8                PadData1E
-                0x060251f0                __port
- .bss           0x06025200       0xd0 ../sbl6/segasmp/per/smpclib/per_x2.o
- .bss           0x060252d0       0x10 player.o
-                0x060252d1                boost
-                0x060252d0                jumps
- .bss           0x060252e0     0x3800 sprite.o
-                0x060252e0                num_sprites
- .bss           0x06028ae0       0x50 scroll.o
-                0x06028afc                map_tiles_x
-                0x06028b04                scrolls_y
-                0x06028ae0                scroll_transition_state
-                0x06028ae4                scroll_ysize
-                0x06028af4                map_tiles_y
-                0x06028aec                copy_modes
-                0x06028b14                scrolls_x
-                0x06028ae8                scroll_xsize
- .bss           0x06028b30       0x10 main.o
-                0x06028b30                frame
- .bss           0x06028b40       0x6e ../sbl6/segalib/lib/sega_spr.a(spr_2c.o)
- *fill*         0x06028bae        0x2 00
- .bss           0x06028bb0        0x4 ../sbl6/segalib/lib/sega_scl.a(scl_vblv.o)
- *fill*         0x06028bb4        0xc 00
- .bss           0x06028bc0        0x4 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
+ .bss           0x06025200       0x10 vblank.o
+                0x06025204                PadData2E
+                0x0602520a                PadData1
+                0x06025206                PadData2
+                0x06025208                PadData1E
+                0x06025200                __port
+ .bss           0x06025210       0xd0 ../sbl6/segasmp/per/smpclib/per_x2.o
+ .bss           0x060252e0       0x10 player.o
+                0x060252e1                boost
+                0x060252e0                jumps
+ .bss           0x060252f0     0x3800 sprite.o
+                0x060252f0                num_sprites
+ .bss           0x06028af0       0x50 scroll.o
+                0x06028b0c                map_tiles_x
+                0x06028b14                scrolls_y
+                0x06028af0                scroll_transition_state
+                0x06028af4                scroll_ysize
+                0x06028b04                map_tiles_y
+                0x06028afc                copy_modes
+                0x06028b24                scrolls_x
+                0x06028af8                scroll_xsize
+ .bss           0x06028b40       0x10 main.o
+                0x06028b40                frame
+ .bss           0x06028b50       0x6e ../sbl6/segalib/lib/sega_spr.a(spr_2c.o)
+ *fill*         0x06028bbe        0x2 00
+ .bss           0x06028bc0        0x4 ../sbl6/segalib/lib/sega_scl.a(scl_vblv.o)
  *fill*         0x06028bc4        0xc 00
- .bss           0x06028bd0       0x48 ../sbl6/segalib/lib/sega_scl.a(scl_ro00.o)
- *fill*         0x06028c18        0x8 00
- .bss           0x06028c20       0x9c ../sbl6/segalib/lib/sega_per.a(per_prt.o)
- *fill*         0x06028cbc        0x4 00
- .bss           0x06028cc0        0xc ../sbl6/segalib/lib/sega_sat.a(DMA_SCU1.o)
+ .bss           0x06028bd0        0x4 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
+ *fill*         0x06028bd4        0xc 00
+ .bss           0x06028be0       0x48 ../sbl6/segalib/lib/sega_scl.a(scl_ro00.o)
+ *fill*         0x06028c28        0x8 00
+ .bss           0x06028c30       0x9c ../sbl6/segalib/lib/sega_per.a(per_prt.o)
  *fill*         0x06028ccc        0x4 00
- .bss           0x06028cd0        0xc ../sbl6/segalib/lib/sega_sat.a(gfs_trn.o)
+ .bss           0x06028cd0        0xc ../sbl6/segalib/lib/sega_sat.a(DMA_SCU1.o)
  *fill*         0x06028cdc        0x4 00
- .bss           0x06028ce0       0x20 ../sbl6/segalib/lib/sega_sat.a(DMA_SCU0.o)
- .bss           0x06028d00        0x2 ../sbl6/segalib/lib/sega_sat.a(cdc_reg.o)
- *fill*         0x06028d02        0xe 00
- .bss           0x06028d10        0xc ../sbl6/segalib/lib/sega_sat.a(cdc_sub.o)
- *fill*         0x06028d1c        0x4 00
- .bss           0x06028d20       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(__main.o)
- .bss           0x06028d30       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(atexit.o)
- .bss           0x06028d40       0x40 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
-                0x06028d70                __malloc_top_pad
-                0x06028d40                __malloc_current_mallinfo
-                0x06028d6c                __malloc_max_sbrked_mem
-                0x06028d68                __malloc_max_total_mem
- .bss           0x06028d80       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
+ .bss           0x06028ce0        0xc ../sbl6/segalib/lib/sega_sat.a(gfs_trn.o)
+ *fill*         0x06028cec        0x4 00
+ .bss           0x06028cf0       0x20 ../sbl6/segalib/lib/sega_sat.a(DMA_SCU0.o)
+ .bss           0x06028d10        0x2 ../sbl6/segalib/lib/sega_sat.a(cdc_reg.o)
+ *fill*         0x06028d12        0xe 00
+ .bss           0x06028d20        0xc ../sbl6/segalib/lib/sega_sat.a(cdc_sub.o)
+ *fill*         0x06028d2c        0x4 00
+ .bss           0x06028d30       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(__main.o)
+ .bss           0x06028d40       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(atexit.o)
+ .bss           0x06028d50       0x40 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
+                0x06028d80                __malloc_top_pad
+                0x06028d50                __malloc_current_mallinfo
+                0x06028d7c                __malloc_max_sbrked_mem
+                0x06028d78                __malloc_max_total_mem
+ .bss           0x06028d90       0x10 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
  *(COMMON)
- COMMON         0x06028d90     0x1674 cd.o
+ COMMON         0x06028da0     0x1674 cd.o
                                   0x0 (size before relaxing)
-                0x06028d90                dirname
-                0x060296f0                lib_work
-                0x0602a3f8                directory_table
- *fill*         0x0602a404        0xc 00
- COMMON         0x0602a410       0x48 player.o
+                0x06028da0                dirname
+                0x06029700                lib_work
+                0x0602a408                directory_table
+ *fill*         0x0602a414        0xc 00
+ COMMON         0x0602a420       0x48 player.o
                                   0x0 (size before relaxing)
-                0x0602a410                curr_level
-                0x0602a420                player
- *fill*         0x0602a458        0x8 00
- COMMON         0x0602a460      0x8c0 print.o
+                0x0602a420                curr_level
+                0x0602a430                player
+ *fill*         0x0602a468        0x8 00
+ COMMON         0x0602a470      0x8c0 print.o
                                   0x0 (size before relaxing)
-                0x0602a460                text
- COMMON         0x0602ad20     0x1460 sprite.o
+                0x0602a470                text
+ COMMON         0x0602ad30     0x1460 sprite.o
                                   0x0 (size before relaxing)
-                0x0602ad20                sprites
-                0x0602b180                image_buf
- COMMON         0x0602c180      0x24c scroll.o
+                0x0602ad30                sprites
+                0x0602b190                image_buf
+ COMMON         0x0602c190      0x24c scroll.o
                                   0x0 (size before relaxing)
-                0x0602c180                scfg3
-                0x0602c210                scfg0
-                0x0602c2a0                maps
-                0x0602c2b0                scfg2
-                0x0602c340                scfg1
- *fill*         0x0602c3cc        0x4 00
- COMMON         0x0602c3d0      0x400 ../sbl6/segalib/lib/sega_int.a(int.o)
+                0x0602c190                scfg3
+                0x0602c220                scfg0
+                0x0602c2b0                maps
+                0x0602c2c0                scfg2
+                0x0602c350                scfg1
+ *fill*         0x0602c3dc        0x4 00
+ COMMON         0x0602c3e0      0x400 ../sbl6/segalib/lib/sega_int.a(int.o)
                                   0x0 (size before relaxing)
-                0x0602c3d0                __interrupt_vector
- COMMON         0x0602c7d0       0x50 ../sbl6/segalib/lib/sega_spr.a(spr_2c.o)
+                0x0602c3e0                __interrupt_vector
+ COMMON         0x0602c7e0       0x50 ../sbl6/segalib/lib/sega_spr.a(spr_2c.o)
                                   0x0 (size before relaxing)
-                0x0602c7d0                SpMstCmd
-                0x0602c7d4                Sp2OpenFlag
-                0x0602c7d8                SpGourTblMax
-                0x0602c7dc                SpDrawPrtyBlk
-                0x0602c7e0                SpLCoordX
-                0x0602c7e4                SpMstDrawPrtyBlk
-                0x0602c7e8                SpGourTbl
-                0x0602c7ec                SpLookupTblR
-                0x0602c7f0                SpCmdTbl
-                0x0602c7f4                SpCharMax
-                0x0602c7f8                SpDrawPrtyProcFlag
-                0x0602c7fc                SpCmdNo
-                0x0602c800                SpDrawPrtyBlkMax
-                0x0602c804                SpSlvCmdPos
-                0x0602c808                SpSlvDrawPrtyBlk
-                0x0602c80c                SpCharTbl
-                0x0602c810                SpCmdTblR
-                0x0602c814                SpMstCmdPos
-                0x0602c818                SpSlvCmd
-                0x0602c81c                SpLCoordY
- COMMON         0x0602c820       0x10 ../sbl6/segalib/lib/sega_spr.a(spr_1c.o)
+                0x0602c7e0                SpMstCmd
+                0x0602c7e4                Sp2OpenFlag
+                0x0602c7e8                SpGourTblMax
+                0x0602c7ec                SpDrawPrtyBlk
+                0x0602c7f0                SpLCoordX
+                0x0602c7f4                SpMstDrawPrtyBlk
+                0x0602c7f8                SpGourTbl
+                0x0602c7fc                SpLookupTblR
+                0x0602c800                SpCmdTbl
+                0x0602c804                SpCharMax
+                0x0602c808                SpDrawPrtyProcFlag
+                0x0602c80c                SpCmdNo
+                0x0602c810                SpDrawPrtyBlkMax
+                0x0602c814                SpSlvCmdPos
+                0x0602c818                SpSlvDrawPrtyBlk
+                0x0602c81c                SpCharTbl
+                0x0602c820                SpCmdTblR
+                0x0602c824                SpMstCmdPos
+                0x0602c828                SpSlvCmd
+                0x0602c82c                SpLCoordY
+ COMMON         0x0602c830       0x10 ../sbl6/segalib/lib/sega_spr.a(spr_1c.o)
                                   0x0 (size before relaxing)
-                0x0602c820                SpScreenY
-                0x0602c824                SpFbcrMode
-                0x0602c826                SpDil
-                0x0602c828                SpDie
-                0x0602c82a                SpTvMode
-                0x0602c82c                SpScreenX
- COMMON         0x0602c830      0xf00 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
+                0x0602c830                SpScreenY
+                0x0602c834                SpFbcrMode
+                0x0602c836                SpDil
+                0x0602c838                SpDie
+                0x0602c83a                SpTvMode
+                0x0602c83c                SpScreenX
+ COMMON         0x0602c840      0xf00 ../sbl6/segalib/lib/sega_scl.a(scl_func.o)
                                   0x0 (size before relaxing)
-                0x0602c830                SclRbgKtbAddr
-                0x0602c838                SclRb
-                0x0602c83a                Scl_flag
-                0x0602c840                SclK_TableBuff
-                0x0602d510                SclAddrCsTbl
-                0x0602d520                Scl_s_reg
-                0x0602d548                SclRotateXy
-                0x0602d550                Scl_d_reg
-                0x0602d598                SclRotateDisp
-                0x0602d5a0                SclRotateMoveZ
-                0x0602d5a8                SclRotXySw
-                0x0602d5b0                Scl_r_reg
-                0x0602d5c0                SclRPMD
-                0x0602d5c8                SclRbgKtbOffset
-                0x0602d5d0                _SclRotregBuff
-                0x0602d6a0                SclRa
-                0x0602d6a8                SclRotateZ
-                0x0602d6b0                SclAddrLsTbl
-                0x0602d6b8                SclK_TableNum
-                0x0602d6c0                SclRotateTableAddress
-                0x0602d6c4                SclK_TableFlag
-                0x0602d6d0                Scl_w_reg
-                0x0602d6f0                Scl_n_reg
- COMMON         0x0602d730      0x6b0 ../sbl6/segalib/lib/sega_scl.a(scl_pri.o)
+                0x0602c840                SclRbgKtbAddr
+                0x0602c848                SclRb
+                0x0602c84a                Scl_flag
+                0x0602c850                SclK_TableBuff
+                0x0602d520                SclAddrCsTbl
+                0x0602d530                Scl_s_reg
+                0x0602d558                SclRotateXy
+                0x0602d560                Scl_d_reg
+                0x0602d5a8                SclRotateDisp
+                0x0602d5b0                SclRotateMoveZ
+                0x0602d5b8                SclRotXySw
+                0x0602d5c0                Scl_r_reg
+                0x0602d5d0                SclRPMD
+                0x0602d5d8                SclRbgKtbOffset
+                0x0602d5e0                _SclRotregBuff
+                0x0602d6b0                SclRa
+                0x0602d6b8                SclRotateZ
+                0x0602d6c0                SclAddrLsTbl
+                0x0602d6c8                SclK_TableNum
+                0x0602d6d0                SclRotateTableAddress
+                0x0602d6d4                SclK_TableFlag
+                0x0602d6e0                Scl_w_reg
+                0x0602d700                Scl_n_reg
+ COMMON         0x0602d740      0x6b0 ../sbl6/segalib/lib/sega_scl.a(scl_pri.o)
                                   0x0 (size before relaxing)
-                0x0602d730                SclAutoEndBlue2
-                0x0602d740                SclColOffset
-                0x0602d750                SclPriBuffDirty
-                0x0602d752                SclAutoEndRed
-                0x0602d754                SclAutoSurface
-                0x0602d758                SclAutoGreen
-                0x0602d75a                SclAutoEndGreen
-                0x0602d75c                SclAutoCount
-                0x0602d760                SclColRamAlloc256
-                0x0602d780                SclAutoCurRate
-                0x0602d781                SclAutoPlusFlag
-                0x0602d788                SclSpColMix
-                0x0602d790                SclAutoMax
-                0x0602d794                SclLineColRamOffset
-                0x0602d798                SclColRamAlloc2048
-                0x0602d79c                SclBgPriNum
-                0x0602d7a2                SclAutoEndBlue
-                0x0602d7a4                SclAutoEndGreen2
-                0x0602d7a6                SclAutoVeFlag
-                0x0602d7a8                SclBgColMix
-                0x0602d7b0                SclAutoIndex
-                0x0602d7b4                SclAutoEndRate
-                0x0602d7b6                SclAutoBlue
-                0x0602d7b8                SclAutoRed
-                0x0602d7bc                SclAutoInterval
-                0x0602d7c0                SclOtherPri
-                0x0602d7d0                SclAutoRGB
-                0x0602ddd0                SclAutoEndRed2
-                0x0602ddd8                SclSpPriNum
- COMMON         0x0602dde0       0x10 ../sbl6/segalib/lib/sega_scl.a(scl_ro00.o)
+                0x0602d740                SclAutoEndBlue2
+                0x0602d750                SclColOffset
+                0x0602d760                SclPriBuffDirty
+                0x0602d762                SclAutoEndRed
+                0x0602d764                SclAutoSurface
+                0x0602d768                SclAutoGreen
+                0x0602d76a                SclAutoEndGreen
+                0x0602d76c                SclAutoCount
+                0x0602d770                SclColRamAlloc256
+                0x0602d790                SclAutoCurRate
+                0x0602d791                SclAutoPlusFlag
+                0x0602d798                SclSpColMix
+                0x0602d7a0                SclAutoMax
+                0x0602d7a4                SclLineColRamOffset
+                0x0602d7a8                SclColRamAlloc2048
+                0x0602d7ac                SclBgPriNum
+                0x0602d7b2                SclAutoEndBlue
+                0x0602d7b4                SclAutoEndGreen2
+                0x0602d7b6                SclAutoVeFlag
+                0x0602d7b8                SclBgColMix
+                0x0602d7c0                SclAutoIndex
+                0x0602d7c4                SclAutoEndRate
+                0x0602d7c6                SclAutoBlue
+                0x0602d7c8                SclAutoRed
+                0x0602d7cc                SclAutoInterval
+                0x0602d7d0                SclOtherPri
+                0x0602d7e0                SclAutoRGB
+                0x0602dde0                SclAutoEndRed2
+                0x0602dde8                SclSpPriNum
+ COMMON         0x0602ddf0       0x10 ../sbl6/segalib/lib/sega_scl.a(scl_ro00.o)
                                   0x0 (size before relaxing)
-                0x0602dde0                SclCsx
-                0x0602dde8                SclCsy
- COMMON         0x0602ddf0       0x15 ../sbl6/segalib/lib/sega_per.a(per_prt.o)
+                0x0602ddf0                SclCsx
+                0x0602ddf8                SclCsy
+ COMMON         0x0602de00       0x15 ../sbl6/segalib/lib/sega_per.a(per_prt.o)
                                   0x0 (size before relaxing)
-                0x0602ddf0                per_get_time_flg
-                0x0602ddf1                per_hot_res
-                0x0602ddf2                per_set_sys_flg
-                0x0602ddf4                per_get_time_adr
-                0x0602ddf8                per_get_sys_data
-                0x0602de04                per_time_out_flg
- *fill*         0x0602de05        0xb 00
- COMMON         0x0602de10        0xc ../sbl6/segalib/lib/sega_sat.a(gfs.o)
+                0x0602de00                per_get_time_flg
+                0x0602de01                per_hot_res
+                0x0602de02                per_set_sys_flg
+                0x0602de04                per_get_time_adr
+                0x0602de08                per_get_sys_data
+                0x0602de14                per_time_out_flg
+ *fill*         0x0602de15        0xb 00
+ COMMON         0x0602de20        0xc ../sbl6/segalib/lib/sega_sat.a(gfs.o)
                                   0x0 (size before relaxing)
-                0x0602de10                GFMC_base
-                0x0602de14                gfs_mng_ptr
-                0x0602de18                gfs_use_scudma
- *fill*         0x0602de1c        0x4 00
- COMMON         0x0602de20        0x8 ../sbl6/segalib/lib/sega_sat.a(gfs_cdf.o)
+                0x0602de20                GFMC_base
+                0x0602de24                gfs_mng_ptr
+                0x0602de28                gfs_use_scudma
+ *fill*         0x0602de2c        0x4 00
+ COMMON         0x0602de30        0x8 ../sbl6/segalib/lib/sega_sat.a(gfs_cdf.o)
                                   0x0 (size before relaxing)
-                0x0602de20                gfcf_fad
-                0x0602de24                gfcf_stat
- *fill*         0x0602de28        0x8 00
- COMMON         0x0602de30        0xc ../sbl6/segalib/lib/sega_sat.a(gfs_cdc.o)
+                0x0602de30                gfcf_fad
+                0x0602de34                gfcf_stat
+ *fill*         0x0602de38        0x8 00
+ COMMON         0x0602de40        0xc ../sbl6/segalib/lib/sega_sat.a(gfs_cdc.o)
                                   0x0 (size before relaxing)
-                0x0602de30                gfcd_fatal_err
-                0x0602de34                gfcd_work
-                0x0602de38                gfcd_playflag
- *fill*         0x0602de3c        0x4 00
- COMMON         0x0602de40        0x4 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
+                0x0602de40                gfcd_fatal_err
+                0x0602de44                gfcd_work
+                0x0602de48                gfcd_playflag
+ *fill*         0x0602de4c        0x4 00
+ COMMON         0x0602de50        0x4 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
                                   0x0 (size before relaxing)
-                0x0602de40                errno
-                0x0602de44                SIZEOF_B = (. - STARTOF_B)
-                0x0602de44                ENDOF_B = .
-                0x0602de44                _end = .
+                0x0602de50                errno
+                0x0602de54                SIZEOF_B = (. - STARTOF_B)
+                0x0602de54                ENDOF_B = .
+                0x0602de54                _end = .
 OUTPUT(main.cof coff-sh)
 
-.comment        0x0602de50      0x4a0
- .comment       0x0602de50       0x20 ../sbl6/segasmp/lib/strt2_g.o
- .comment       0x0602de70       0x20 vblank.o
- .comment       0x0602de90       0x20 ../sbl6/segasmp/per/smpclib/per_x1.o
- .comment       0x0602deb0       0x20 ../sbl6/segasmp/per/smpclib/per_x2.o
- .comment       0x0602ded0       0x20 blocks.o
- .comment       0x0602def0       0x20 cd.o
- .comment       0x0602df10       0x20 collision.o
- .comment       0x0602df30       0x20 graphics.o
- .comment       0x0602df50       0x20 player.o
- .comment       0x0602df70       0x20 print.o
- .comment       0x0602df90       0x20 sprite.o
- .comment       0x0602dfb0       0x20 scroll.o
- .comment       0x0602dfd0       0x20 main.o
- .comment       0x0602dff0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(__main.o)
- .comment       0x0602e010       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_si_to_df.o)
- .comment       0x0602e030       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_mul_df.o)
- .comment       0x0602e050       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_df_to_si.o)
- .comment       0x0602e070       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_pack_df.o)
- .comment       0x0602e090       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_unpack_df.o)
- .comment       0x0602e0b0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_thenan_df.o)
- .comment       0x0602e0d0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_muldi3.o)
- .comment       0x0602e0f0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_lshrdi3.o)
- .comment       0x0602e110       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_ashldi3.o)
- .comment       0x0602e130       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(memcmp.o)
- .comment       0x0602e150       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(strncmp.o)
- .comment       0x0602e170       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(strncpy.o)
- .comment       0x0602e190       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(atexit.o)
- .comment       0x0602e1b0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(impure.o)
- .comment       0x0602e1d0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(malloc.o)
- .comment       0x0602e1f0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
- .comment       0x0602e210       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(freer.o)
- .comment       0x0602e230       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mlock.o)
- .comment       0x0602e250       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(sbrkr.o)
- .comment       0x0602e270       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
- .comment       0x0602e290       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(abort.o)
- .comment       0x0602e2b0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(signal.o)
- .comment       0x0602e2d0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(signalr.o)
+.comment        0x0602de60      0x4a0
+ .comment       0x0602de60       0x20 ../sbl6/segasmp/lib/strt2_g.o
+ .comment       0x0602de80       0x20 vblank.o
+ .comment       0x0602dea0       0x20 ../sbl6/segasmp/per/smpclib/per_x1.o
+ .comment       0x0602dec0       0x20 ../sbl6/segasmp/per/smpclib/per_x2.o
+ .comment       0x0602dee0       0x20 blocks.o
+ .comment       0x0602df00       0x20 cd.o
+ .comment       0x0602df20       0x20 collision.o
+ .comment       0x0602df40       0x20 graphics.o
+ .comment       0x0602df60       0x20 player.o
+ .comment       0x0602df80       0x20 print.o
+ .comment       0x0602dfa0       0x20 sprite.o
+ .comment       0x0602dfc0       0x20 scroll.o
+ .comment       0x0602dfe0       0x20 main.o
+ .comment       0x0602e000       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(__main.o)
+ .comment       0x0602e020       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_si_to_df.o)
+ .comment       0x0602e040       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_mul_df.o)
+ .comment       0x0602e060       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_df_to_si.o)
+ .comment       0x0602e080       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_pack_df.o)
+ .comment       0x0602e0a0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_unpack_df.o)
+ .comment       0x0602e0c0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_thenan_df.o)
+ .comment       0x0602e0e0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_muldi3.o)
+ .comment       0x0602e100       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_lshrdi3.o)
+ .comment       0x0602e120       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501\libgcc.a(_ashldi3.o)
+ .comment       0x0602e140       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(memcmp.o)
+ .comment       0x0602e160       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(strncmp.o)
+ .comment       0x0602e180       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(strncpy.o)
+ .comment       0x0602e1a0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(atexit.o)
+ .comment       0x0602e1c0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(impure.o)
+ .comment       0x0602e1e0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(malloc.o)
+ .comment       0x0602e200       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mallocr.o)
+ .comment       0x0602e220       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(freer.o)
+ .comment       0x0602e240       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(mlock.o)
+ .comment       0x0602e260       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(sbrkr.o)
+ .comment       0x0602e280       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(syscalls.o)
+ .comment       0x0602e2a0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(abort.o)
+ .comment       0x0602e2c0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(signal.o)
+ .comment       0x0602e2e0       0x20 C:/saturn/SH_COFF/sh-coff/bin/../lib/gcc/sh-coff/3.4-GNUSH_v0501/../../../../sh-coff/lib\libc.a(signalr.o)
