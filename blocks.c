@@ -9,7 +9,7 @@ Uint8 *block_slopes[] = {NULL, NULL, tile2_slope, tile3_slope, tile4_slope, NULL
 
 Uint8 block_get(int tile, int offset) {
     Uint8 *slope_ptr = block_slopes[(tile & 0x1ff) >> 1];
-    if (((tile & 0x1ff) >> 1) >= sizeof(block_slopes) || slope_ptr == NULL) {
+    if (((tile & 0x1ff) >> 1) >= sizeof(block_slopes)/sizeof(Uint8*) || slope_ptr == NULL) {
         return 0;
     }
     if (tile & SCROLL_HMIRROR) {
@@ -21,7 +21,7 @@ Uint8 block_get(int tile, int offset) {
 }
 
 inline int block_check(int tile) {
-    if (((tile & 0x1ff) >> 1) < sizeof(block_slopes) && block_slopes[(tile & 0x1ff) >> 1] != NULL) {
+    if (((tile & 0x1ff) >> 1) < sizeof(block_slopes)/sizeof(Uint8*) && block_slopes[(tile & 0x1ff) >> 1] != NULL) {
         return 1;
     }
     return 0;

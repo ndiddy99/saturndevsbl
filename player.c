@@ -94,6 +94,7 @@ void player_input() {
 	collision_eject_horiz(&player);
 
 	//jump button
+	//if we're falling and on a solid surface or a slope
 	if ((player.dy > 0) && ((player.options & OPTION_SLOPE) || collision_check_below(&player))) {
 		jumps = 0;
 	}
