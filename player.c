@@ -33,11 +33,24 @@ Uint8 boost = 0;
 Uint8 jumps = 0;
 Uint8 lives = 3;
 
+SclLineparam lp;
+
 void player_init(LEVEL *level) {
 	sprite_make(FRAME_STAND, level->player_startx, level->player_starty, &player);
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
 	curr_level = level;
+	SCL_InitLineParamTb(&lp);
+	lp.h_enbl = ON;
+	lp.line_addr = SCL_VDP2_VRAM_A1 + 61440; //60kb into A1
+	lp.interval = SCL_1_LINE;
+	
+	// int i;
+	// for (i = 0; i < 224; i++) {
+	// 	if (i > 128) {
+	// 		lp.line_tbl[i].h = MTH_FIXED(i);
+	// 	}
+	// }
 }
 
 void player_input() {
@@ -153,19 +166,44 @@ void player_animate() {
 		player.animTimer = 10;
 	}
 }
+
+static inline void set_linescroll(Fixed32 scroll_val) {
+	for (int i = 0; i < 224; i++) {
+		if (i < 45) {
+			lp.line_tbl[i].h = (scroll_val >> 3);
+		}
+		else if (i < 78) {
+			lp.line_tbl[i].h = (scroll_val >> 2);
+		}
+		else if (i < 114) {
+			lp.line_tbl[i].h = (scroll_val >> 1);
+		}
+		else {
+			lp.line_tbl[i].h = scroll_val;
+		}
+	}
+	SCL_Open(SCL_NBG0);
+	SCL_SetLineParam(&lp);
+	SCL_Close();
+}
+
 //allows me to treat the player sprite like any other sprite while only moving the screen
-//around it
+//around him
 void player_draw() {
 	SPRITE_INFO temp;
+	Fixed32 bg_scroll_val;
 	memcpy(&temp, &player, sizeof(temp));
 	if (temp.xPos > PLAYER_MAXXPOS) {
-		scroll_set(SCROLL_PLAYFIELD, temp.xPos - PLAYER_MAXXPOS, 0);
+		Fixed32 newXPos = temp.xPos - PLAYER_MAXXPOS;
+		scroll_set(SCROLL_PLAYFIELD, newXPos, 0);
+		bg_scroll_val = newXPos >> 1;
 		temp.xPos = PLAYER_MAXXPOS;
 	}
 	else {
 		scroll_set(SCROLL_PLAYFIELD, 0, 0);
+		bg_scroll_val = 0;
 	}
+	set_linescroll(bg_scroll_val);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
-
 	sprite_draw(&temp);
 }
