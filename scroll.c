@@ -61,6 +61,9 @@ SclConfig scfg1;
 SclConfig scfg2;
 SclConfig scfg3;
 
+SclLineparam line_param0;
+SclLineparam line_param1;
+
 
 void scroll_init(LEVEL *level) {
 	int i, j, count;
@@ -86,7 +89,11 @@ void scroll_init(LEVEL *level) {
 	cd_load(hill_map_name, (void *)LWRAM, hill_map_width * hill_map_height * 2);
 	TilemapVram = VRAM_PTR(0);
 	memcpy(TilemapVram, (void *)LWRAM, hill_map_width * hill_map_height * 2);
-	
+
+	SCL_InitLineParamTb(&line_param0);
+	line_param0.h_enbl = ON;
+	line_param0.line_addr = SCL_VDP2_VRAM_A1 + 61440; //60kb into A1
+	line_param0.interval = SCL_1_LINE;
 
 	//---nbg2: playfield---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
@@ -307,5 +314,32 @@ void scroll_reset(void) {
 			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
 		}
 	}
+}
+
+void scroll_linescroll4(int num, Fixed32 scroll_val, int boundary1, int boundary2, int boundary3) {
+	SclLineparam *lp = (num == SCROLL_BACKGROUND1 ? &line_param0 : &line_param1);
+
+	for (int i = 0; i < 224; i++) {
+		if (i < boundary1) {
+			lp->line_tbl[i].h = (scroll_val >> 3);
+		}
+		else if (i < boundary2) {
+			lp->line_tbl[i].h = (scroll_val >> 2);
+		}
+		else if (i < boundary3) {
+			lp->line_tbl[i].h = (scroll_val >> 1);
+		}
+		else {
+			lp->line_tbl[i].h = scroll_val;
+		}
+	}
+	if (num == SCROLL_BACKGROUND1) {
+		SCL_Open(SCL_NBG0);
+	}
+	else {
+		SCL_Open(SCL_NBG1);
+	}
+	SCL_SetLineParam(lp);
+	SCL_Close();
 }
 

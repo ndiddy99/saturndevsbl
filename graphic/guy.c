@@ -1,4 +1,4 @@
-Uint16 guy_num = 4;
+Uint16 guy_num = 5;
 Uint16 guy_size = 256;
 Uint16 guy_width = 16;
 Uint16 guy_height = 32;

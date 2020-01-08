@@ -62,4 +62,8 @@ Uint16 scroll_get(int map, int x, int y);
 void scroll_copy(int num);
 //sets all backgrounds to how they were on initl
 void scroll_reset(void);
+//sets up a linescroll screen with 4 splits.
+//num: bg to use, scroll_val: value to scroll.
+//boundaryN: where the screen splits are
+void scroll_linescroll4(int num, Fixed32 scroll_val, int boundary1, int boundary2, int boundary3);
 #endif

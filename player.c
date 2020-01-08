@@ -24,7 +24,8 @@
 #define FRAME_STAND (96)
 #define FRAME_WALK1 (FRAME_STAND + 1)
 #define FRAME_WALK2 (FRAME_STAND + 2)
-#define FRAME_JUMP (FRAME_STAND + 3)
+#define FRAME_JUMP1 (FRAME_STAND + 3)
+#define FRAME_JUMP2 (FRAME_STAND + 4)
 const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
 
 SPRITE_INFO player;
@@ -40,10 +41,6 @@ void player_init(LEVEL *level) {
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
 	curr_level = level;
-	SCL_InitLineParamTb(&lp);
-	lp.h_enbl = ON;
-	lp.line_addr = SCL_VDP2_VRAM_A1 + 61440; //60kb into A1
-	lp.interval = SCL_1_LINE;
 	
 	// int i;
 	// for (i = 0; i < 224; i++) {
@@ -148,9 +145,13 @@ void player_input() {
 }
 
 void player_animate() {
-	if (jumps) {
-		player.char_num = FRAME_JUMP;
+	if (jumps == 1) {
+		player.char_num = FRAME_JUMP1;
 		player.animTimer = 10;
+	}
+	else if (jumps == 2) {
+		player.char_num = FRAME_JUMP2;
+		player.animTimer = 10;		
 	}
 	else if (player.dx) {
 		player.animTimer++;
@@ -165,26 +166,6 @@ void player_animate() {
 		player.char_num = FRAME_STAND;
 		player.animTimer = 10;
 	}
-}
-
-static inline void set_linescroll(Fixed32 scroll_val) {
-	for (int i = 0; i < 224; i++) {
-		if (i < 45) {
-			lp.line_tbl[i].h = (scroll_val >> 3);
-		}
-		else if (i < 78) {
-			lp.line_tbl[i].h = (scroll_val >> 2);
-		}
-		else if (i < 114) {
-			lp.line_tbl[i].h = (scroll_val >> 1);
-		}
-		else {
-			lp.line_tbl[i].h = scroll_val;
-		}
-	}
-	SCL_Open(SCL_NBG0);
-	SCL_SetLineParam(&lp);
-	SCL_Close();
 }
 
 //allows me to treat the player sprite like any other sprite while only moving the screen
@@ -203,7 +184,7 @@ void player_draw() {
 		scroll_set(SCROLL_PLAYFIELD, 0, 0);
 		bg_scroll_val = 0;
 	}
-	set_linescroll(bg_scroll_val);
+	scroll_linescroll4(SCROLL_BACKGROUND1, bg_scroll_val, 45, 78, 114);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
 	sprite_draw(&temp);
 }
