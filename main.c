@@ -33,8 +33,7 @@ int main() {
 		frame++;
 		player_input();
 		print_num(frame, 0, 0);
-		// scroll_move(2, FIXED(-1.2), FIXED(-1.2));
-		// scroll_move(3, FIXED(-0.8), FIXED(-0.8));
+		
 
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();

@@ -2,6 +2,7 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+
 #include "cd.h"
 #include "graphicrefs.h"
 #include "player.h"
@@ -80,8 +81,12 @@ void scroll_init(LEVEL *level) {
 		SCL_AllocColRam(SCL_NBG0, 16, OFF);
 		SCL_SetColRam(SCL_NBG0, 0, 16, hills_pal);
 
+		SCL_AllocColRam(SCL_NBG1, 16, OFF);
+		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)cloud_pal);
+
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
+
 	//---nbg0: hills in bg---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1;
 	cd_load(hills_name, (void *)LWRAM, 128 * hills_num);
@@ -94,6 +99,17 @@ void scroll_init(LEVEL *level) {
 	line_param0.h_enbl = ON;
 	line_param0.line_addr = SCL_VDP2_VRAM_A1 + 61440; //60kb into A1
 	line_param0.interval = SCL_1_LINE;
+
+	//nbg1: clouds in bg
+	VramWorkP = (Uint8 *)(SCL_VDP2_VRAM_A1 + 65536); //64kb into A1
+	cd_load(cloud_name, (void *)LWRAM, 128 * cloud_num);
+	memcpy(VramWorkP, (void *)LWRAM, 128 * cloud_num);
+	cd_load(cloudmap_name, (void *)LWRAM, cloudmap_width * cloudmap_height * 2);
+	TilemapVram = VRAM_PTR(1);
+	//copy tiles to vram, OR'ing with 512 to make the tilemap line up with the tiles referenced
+	for (i = 0; i < cloudmap_width * cloudmap_height; i++) {
+		TilemapVram[i] = lwram_ptr[i] | 512;
+	}
 
 	//---nbg2: playfield---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
@@ -133,7 +149,8 @@ void scroll_init(LEVEL *level) {
 	SCL_SetConfig(SCL_NBG0, &scfg0);
 
 	memcpy((void *)&scfg1, (void *)&scfg0, sizeof(SclConfig));
-	scfg1.dispenbl = OFF;
+	scfg1.patnamecontrl = 0x0004;
+	scfg1.dispenbl = ON;
 	for(i=0;i<4;i++)   scfg1.plate_addr[i] = vram[1];
 	SCL_SetConfig(SCL_NBG1, &scfg1);
 
@@ -175,8 +192,8 @@ void scroll_init(LEVEL *level) {
 	SCL_SetPriority(SCL_NBG3, 7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,  6);
 	SCL_SetPriority(SCL_NBG2, 6);
-	SCL_SetPriority(SCL_NBG0, 5);
-	SCL_SetPriority(SCL_NBG1, 4);
+	SCL_SetPriority(SCL_NBG1, 5);
+	SCL_SetPriority(SCL_NBG0, 4);
 	// maps[0] = (Uint16 *)data->levels[0];
 	// maps[1] = (Uint16 *)data->levels[1];
 	// tilemaps = data->levels;
