@@ -185,7 +185,7 @@ void player_draw() {
 		bg_scroll_val = 0;
 	}
 	scroll_linescroll4(SCROLL_BACKGROUND1, bg_scroll_val, 45, 78, 114);
-	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1), 0);
+	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1) + (temp.dx >> 3), 0);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
 	sprite_draw(&temp);
 }
