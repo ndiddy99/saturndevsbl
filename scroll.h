@@ -30,15 +30,20 @@ extern Fixed32 scrolls_y[];
 
 
 typedef struct {
+    Uint8 *tile_name; //filename of .TLE file
+    Uint16 tile_num; //number of tiles
+    Uint32 *palette; //pointer to palette
+    Uint8 *map_name; //filename of .MAP file
+    Uint16 map_width; //width of map
+    Uint16 map_height; //height of map
+} LAYER;
+
+typedef struct {
     Fixed32 player_startx; //where the player starts in the level
     Fixed32 player_starty;
-
-    Uint8 *playfield_tile_filename;
-    Uint16 playfield_tile_num; //number of tiles in the playfield
-    Uint32 *playfield_palette; //256 color playfield palette
-    Uint8 *playfield_map_filename;
-    Uint16 playfield_map_width;
-    Uint16 playfield_map_height;
+    LAYER playfield; //map the player does stuff on
+    LAYER bg_near; //near bg
+    LAYER bg_far; //far bg
 } LEVEL;
 
 enum transition_states {

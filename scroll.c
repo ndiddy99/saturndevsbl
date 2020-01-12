@@ -76,50 +76,49 @@ void scroll_init(LEVEL *level) {
 
 	SCL_SetColRamMode(SCL_CRM24_1024);
 		SCL_AllocColRam(SCL_NBG2, 256, OFF);
-		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)(level->playfield_palette));
+		SCL_SetColRam(SCL_NBG2, 0, 256, (void *)(level->playfield.palette));
 
 		SCL_AllocColRam(SCL_NBG0, 16, OFF);
-		SCL_SetColRam(SCL_NBG0, 0, 16, hills_pal);
+		SCL_SetColRam(SCL_NBG0, 0, 16, (void *)(level->bg_far.palette));		
 
 		SCL_AllocColRam(SCL_NBG1, 16, OFF);
-		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)cloud_pal);
+		SCL_SetColRam(SCL_NBG1, 0, 16, (void *)(level->bg_near.palette));
 
 		BackCol = 0x0000; //set the background color to black
 	SCL_SetBack(SCL_VDP2_VRAM+0x80000-2,1,&BackCol);
 
-	//---nbg0: hills in bg---
+	//---nbg0: far bg---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_A1;
-	cd_load(hills_name, (void *)LWRAM, 128 * hills_num);
-	memcpy(VramWorkP, (void *)LWRAM, 128 * hills_num);
-	cd_load(hill_map_name, (void *)LWRAM, hill_map_width * hill_map_height * 2);
+	cd_load(level->bg_far.tile_name, (void *)LWRAM, 128 * level->bg_far.tile_num);
+	memcpy(VramWorkP, (void *)LWRAM, 128 * level->bg_far.tile_num);
+	cd_load(level->bg_far.map_name, (void *)LWRAM, level->bg_far.map_width * level->bg_far.map_height * 2);
 	TilemapVram = VRAM_PTR(0);
-	memcpy(TilemapVram, (void *)LWRAM, hill_map_width * hill_map_height * 2);
+	memcpy(TilemapVram, (void *)LWRAM, level->bg_far.map_width * level->bg_far.map_height * 2);
 
 	SCL_InitLineParamTb(&line_param0);
 	line_param0.h_enbl = ON;
 	line_param0.line_addr = SCL_VDP2_VRAM_A1 + 61440; //60kb into A1
 	line_param0.interval = SCL_1_LINE;
 
-	//nbg1: clouds in bg
+	//nbg1: near bg
 	VramWorkP = (Uint8 *)(SCL_VDP2_VRAM_A1 + 65536); //64kb into A1
-	cd_load(cloud_name, (void *)LWRAM, 128 * cloud_num);
-	memcpy(VramWorkP, (void *)LWRAM, 128 * cloud_num);
-	cd_load(cloudmap_name, (void *)LWRAM, cloudmap_width * cloudmap_height * 2);
+	cd_load(level->bg_near.tile_name, (void *)LWRAM, 128 * level->bg_near.tile_num);
+	memcpy(VramWorkP, (void *)LWRAM, 128 * level->bg_near.tile_num);
+	cd_load(level->bg_near.map_name, (void *)LWRAM, level->bg_near.map_width * level->bg_near.map_height * 2);
 	TilemapVram = VRAM_PTR(1);
 	//copy tiles to vram, OR'ing with 512 to make the tilemap line up with the tiles referenced
-	for (i = 0; i < cloudmap_width * cloudmap_height; i++) {
+	for (i = 0; i < level->bg_near.map_width * level->bg_near.map_height; i++) {
 		TilemapVram[i] = lwram_ptr[i] | 512;
 	}
 
 	//---nbg2: playfield---
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
-	cd_load(level->playfield_tile_filename, (void *)LWRAM, 256 * level->playfield_tile_num);
-	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield_tile_num);
-	scroll_xsize = level->playfield_map_width;
-	scroll_ysize = level->playfield_map_height;
-
-	//load map data to LWRAM
-	cd_load(level->playfield_map_filename, (void *)LWRAM, scroll_xsize * scroll_ysize * 2);
+	cd_load(level->playfield.tile_name, (void *)LWRAM, 256 * level->playfield.tile_num);
+	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield.tile_num);
+	scroll_xsize = level->playfield.map_width;
+	scroll_ysize = level->playfield.map_height;	
+	//load playfield map data to LWRAM
+	cd_load(level->playfield.map_name, (void *)LWRAM, scroll_xsize * scroll_ysize * 2);
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
 	for (i = 0; i < 32; i++) {
