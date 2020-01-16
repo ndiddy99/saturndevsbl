@@ -1,6 +1,8 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
+#define		_SPR2_
+#include <SEGA_SPR.H>
 #include <sega_sys.h>
 #include <string.h>
 #include "collision.h"
@@ -50,6 +52,18 @@ void player_init(LEVEL *level) {
 	// }
 }
 
+//run when the player dies
+static void player_kill() {
+	player.xPos = curr_level->player_startx;
+	player.yPos = curr_level->player_starty;
+	player.dx = 0;
+	player.dy = 0;
+	jumps = 0;
+	boost = 0;
+	lives--;
+	scroll_reset();
+}
+
 void player_input() {
 	//this is cargo culting from sega's code, maybe there's some reason why i can't read PadData1E more than once?
 	Uint16 PadData1EW = PadData1E;
@@ -86,7 +100,6 @@ void player_input() {
 			player.dx += PLAYER_ACCEL;
 		}		
 	}
-	player.xPos += player.dx;
 	//boost button
 	if ((PadData1EW & PAD_A) && boost == 0) {
 		boost = BOOST_TIMER;
@@ -100,6 +113,12 @@ void player_input() {
 	if (boost) { 
 		boost--;
 	}
+	player.xPos += player.dx;
+
+	if (PadData1EW & PAD_C) {
+		player.xPos += MTH_FIXED(1);
+	}
+
 	player_animate();
 	collision_eject_horiz(&player);
 
@@ -124,24 +143,22 @@ void player_input() {
 		
 	}
 	player.yPos += player.dy;
-	collision_eject_vert(&player);
-	//if the player hits spikes or falls into a pit, kill him
-	if (collision_spikes(&player) || player.yPos > MTH_FIXED(224)) {
-		player.xPos = curr_level->player_startx;
-		player.yPos = curr_level->player_starty;
-		player.dx = 0;
-		player.dy = 0;
-		jumps = 0;
-		boost = 0;
-		lives--;
-		scroll_reset();
+	//if the player lands on/jumps into spikes, kill him
+	if (collision_spikes(&player)) {
+		player_kill();
 	}
-	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4);
-	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4);
+	collision_eject_vert(&player);
+	//if the player falls into a pit, kill him
+	if (player.yPos > MTH_FIXED(224)) {
+		player_kill();
+	}
+	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4); print_num(player.xPos & 0xffff, 2, 14);
+	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4); print_num(player.yPos & 0xffff, 3, 14);
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);
 	print_string("dy: ", 5, 0); print_num(player.dy, 5, 4);
 	print_string("boost: ", 6, 0); print_num(boost, 6, 7);
 	print_string("lives: ", 7, 0); print_num(lives, 7, 7);
+	print_num(PadData1, 8, 0);
 }
 
 void player_animate() {

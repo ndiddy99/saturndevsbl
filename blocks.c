@@ -28,7 +28,7 @@ inline int block_check(int tile) {
 }
 
 inline int block_spike(Fixed32 x, Fixed32 y) {
-    if ((scroll_get(SCROLL_PLAYFIELD, MTH_FixedToInt(x) >> 4, MTH_FixedToInt(y) >> 4) & 0x1ff) >> 1 == BLOCK_SPIKE) {
+    if ((scroll_get(SCROLL_PLAYFIELD, x >> 20, y >> 20) & 0x1ff) >> 1 == BLOCK_SPIKE) {
         return 1;
     }
     return 0;

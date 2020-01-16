@@ -11,18 +11,6 @@
 #include    "player.h"
 #include    "print.h"
 
-#define LEVEL_TILES(level, layer, name) { \
-	##level##.##layer##_tile_filename = ##name##_name; \
-	##level##.##layer##_tile_num = ##name##_num; \
-	##level##.##layer##_palette = ##name##_pal; \
-}
-
-#define LEVEL_MAP(level, layer, name) { \
-	##level##.##layer##_map_filename = ##name##_name; \
-	##level##.##layer##_map_width = ##name##_width; \
-	##level##.##layer##_map_height = ##name##_height; \
-}
-
 static inline void layer_init(LAYER *layer, char *tiles_name, Uint16 tiles_num, Uint32 *palette, char *map_name, Uint16 map_width, Uint16 map_height) {
 	layer->tile_name = tiles_name;
 	layer->tile_num = tiles_num;

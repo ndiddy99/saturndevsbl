@@ -5,7 +5,7 @@
 #include "sprite.h"
 #include "scroll.h"
 
-#define TO_TILE(fixed) ((MTH_FixedToInt(fixed)) >> 4)
+#define TO_TILE(fixed) ((fixed) >> 20)
 
 inline int collision_check_up(SPRITE_INFO *sprite) {
     //top: top left or top right pixel hits something
@@ -41,7 +41,7 @@ inline int collision_check_below(SPRITE_INFO *sprite) {
     // if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1)))) ||
     //     scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))))) {
     //     return 1;
-    // }
+    // } b
     // return 0; 
     Uint16 bottom_left = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))));
     Uint16 bottom_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + (sprite->ySize + MTH_FIXED(1))));
@@ -86,6 +86,7 @@ inline int collision_check_right(SPRITE_INFO *sprite) {
     Uint16 top_right, bottom_right;
     
     top_right = scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos + sprite->xSize - MTH_FIXED(1)), TO_TILE(sprite->yPos + MTH_FIXED(4)));
+    bottom_right = 0;
     if (sprite->options & OPTION_SLOPE) {
         bottom_right = 0;
     }
@@ -120,15 +121,19 @@ void collision_check(SPRITE_INFO *sprite) {
 }
 
 int collision_spikes(SPRITE_INFO *sprite) {
-    if (block_spike(sprite->xPos, sprite->yPos - MTH_FIXED(1)) ||
-        block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos - MTH_FIXED(1)) ||
-        block_spike(sprite->xPos, sprite->yPos + sprite->ySize) ||
-        block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos + sprite->ySize)) {
-
-        print_string("spike", 8, 0);
-        return 1;
+    if (sprite->dy > 0) { //if sprite is falling
+        if (block_spike(sprite->xPos, sprite->yPos + sprite->ySize) || //bottom left
+            block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos + sprite->ySize)) { //bottom right
+            return 1;
+        }
     }
-    print_string("nospi", 8, 0);
+    else if (sprite->dy < 0) { //if sprite is rising
+        if (block_spike(sprite->xPos, sprite->yPos) || //top left
+            block_spike(sprite->xPos + sprite->xSize - MTH_FIXED(1), sprite->yPos)) { //top right
+            return 1;
+        }
+    }
+    // print_string("nospi", 8, 0);
     return 0;
 }
 
@@ -172,14 +177,14 @@ void collision_eject_horiz(SPRITE_INFO *sprite) {
     if (sprite->dx < 0) {
         while (collision_check_left(sprite)) {
             sprite->dx = 0;
-            // sprite->xPos &= 0xffff0000;
+            sprite->xPos &= 0xffff0000;
             sprite->xPos += MTH_FIXED(1);
         }
     }
     if (sprite->dx > 0) {
         while (collision_check_right(sprite)) {
             sprite->dx = 0;
-            // sprite->xPos &= 0xffff0000;
+            sprite->xPos &= 0xffff0000;
             sprite->xPos -= MTH_FIXED(1);
         }
     }
