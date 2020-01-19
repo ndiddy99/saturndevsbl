@@ -31,6 +31,7 @@
 const Uint16 player_frames[] = {FRAME_WALK1, FRAME_STAND, FRAME_WALK2, FRAME_STAND};
 
 SPRITE_INFO player;
+
 LEVEL *curr_level;
 Uint8 boost = 0;
 Uint8 jumps = 0;
@@ -43,6 +44,9 @@ void player_init(LEVEL *level) {
 	player.xSize = MTH_FIXED(16);
 	player.ySize = MTH_FIXED(32);
 	curr_level = level;
+
+	// SPRITE_INFO *test = sprite_next();
+	// sprite_make(FRAME_JUMP2+1, MTH_FIXED(80), MTH_FIXED(90), test);
 	
 	// int i;
 	// for (i = 0; i < 224; i++) {
@@ -202,7 +206,7 @@ void player_draw() {
 		bg_scroll_val = 0;
 	}
 	scroll_linescroll4(SCROLL_BACKGROUND1, bg_scroll_val, 45, 78, 114);
-	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1) + (temp.dx >> 3), 0);
+	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1) + (player.dx >> 3), 0);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
 	sprite_draw(&temp);
 }

@@ -29,7 +29,7 @@ Uint32 image_buf[1024];
 
 
 void sprite_init() {
-	int count, i;
+	int count, i, char_base;
 
 	SCL_Vdp2Init();
 	SPR_2Initial(&work2D);
@@ -46,15 +46,22 @@ void sprite_init() {
 	for (i = 0; i < font_num; i++) {
 		SPR_2SetChar(i, COLOR_0, 0, font_width, font_height, (Uint8 *)(image_buf) + (i * font_size));
 	}
-
+	char_base = font_num;
 	cd_load(guy_name, image_buf, guy_size * guy_num);
 	for (i = 0; i < guy_num; i++) {
-		SPR_2SetChar(i + font_num, COLOR_0, 16, guy_width, guy_height, (Uint8 *)(image_buf) + (i * guy_size));
+		SPR_2SetChar(i + char_base, COLOR_0, 16, guy_width, guy_height, (Uint8 *)(image_buf) + (i * guy_size));
 	}
+	char_base += guy_num;
+	cd_load(float_name, image_buf, float_size * float_num);
+	for (i = 0; i < float_num; i++) {
+		SPR_2SetChar(i + char_base, COLOR_0, 32, float_width, float_height, (Uint8 *)(image_buf) + (i * float_size));
+	}
+	char_base += float_num;
 	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
-	SCL_AllocColRam(SCL_SPR, 16, OFF);
+	SCL_AllocColRam(SCL_SPR, 48, OFF);
 	SCL_SetColRam(SCL_SPR, 0, 16, &font_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
+	SCL_SetColRam(SCL_SPR, 32, 16, &float_pal);
 	sprite_deleteall();
 	SCL_DisplayFrame();
 }
@@ -106,6 +113,7 @@ void sprite_draw(SPRITE_INFO *info) {
 void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->char_num = tile_num;
 	ptr->options = 0;
+	ptr->state = 0;
 	ptr->xPos = x;
 	ptr->yPos = y;
 	ptr->mirror = 0;
@@ -129,8 +137,8 @@ void sprite_draw_all() {
 	for (i = 0; i < num_sprites; i++) {
 		if (!(sprites[i].options & OPTION_NODISP)) {
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
-			tmp.xPos -=scrolls_x[0];
-			tmp.yPos -=scrolls_y[0];
+			tmp.xPos -=scrolls_x[SCROLL_PLAYFIELD];
+			tmp.yPos -=scrolls_y[SCROLL_PLAYFIELD];
 			sprite_draw(&tmp);
 		}
 	}

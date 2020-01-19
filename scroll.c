@@ -149,7 +149,7 @@ void scroll_init(LEVEL *level) {
 
 	memcpy((void *)&scfg1, (void *)&scfg0, sizeof(SclConfig));
 	scfg1.patnamecontrl = 0x0004;
-	scfg1.dispenbl = OFF;
+	scfg1.dispenbl = ON;
 	for(i=0;i<4;i++)   scfg1.plate_addr[i] = vram[1];
 	SCL_SetConfig(SCL_NBG1, &scfg1);
 

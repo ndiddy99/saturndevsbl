@@ -9,6 +9,7 @@ typedef unsigned long Uint32;
 //sprites
 #include "graphic/font.c"
 #include "graphic/guy.c"
+#include "graphic/float.c"
 //tilemaps
 #include "graphic/map.c"
 #include "graphic/hill_map.c"

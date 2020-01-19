@@ -2,6 +2,7 @@ s bomb
 s explosion
 s font
 s guy
+s float
 t8 bg.bmp
 l8 map.tmx
 t4 hills.bmp

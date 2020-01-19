@@ -34,6 +34,7 @@ extern char cloudmap_name[];
 
 //---sprite graphics---
 //font.c
+#define GRAPHIC_FONT (0)
 extern Uint16 font_num;
 extern Uint16 font_size;
 extern Uint16 font_width;
@@ -41,11 +42,20 @@ extern Uint16 font_height;
 extern char font_name[];
 extern Uint32 font_pal[];
 //guy.c
+#define GRAPHIC_GUY (font_num)
 extern Uint16 guy_num;
 extern Uint16 guy_size;
 extern Uint16 guy_width;
 extern Uint16 guy_height;
 extern char guy_name[];
 extern Uint32 guy_pal[];
+//float.c
+#define GRAPHIC_FLOAT (GRAPHIC_GUY + guy_num)
+extern Uint16 float_num;
+extern Uint16 float_size;
+extern Uint16 float_width;
+extern Uint16 float_height;
+extern char float_name[];
+extern Uint32 float_pal[];
 
 #endif

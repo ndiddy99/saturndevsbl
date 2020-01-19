@@ -1,15 +1,16 @@
-#include	<string.h> //memcpy
-#define		_SPR2_
-#include	<sega_spr.h>
-#include	<sega_scl.h> 
-#include	<sega_mth.h>
+#include <string.h> //memcpy
+#define	_SPR2_
+#include <sega_spr.h>
+#include <sega_scl.h> 
+#include <sega_mth.h>
 
-#include    "cd.h"
-#include	"graphicrefs.h"
-#include	"sprite.h"
-#include	"scroll.h"
-#include    "player.h"
-#include    "print.h"
+#include "cd.h"
+#include "enemylist.h"
+#include "graphicrefs.h"
+#include "sprite.h"
+#include "scroll.h"
+#include "player.h"
+#include "print.h"
 
 static inline void layer_init(LAYER *layer, char *tiles_name, Uint16 tiles_num, Uint32 *palette, char *map_name, Uint16 map_width, Uint16 map_height) {
 	layer->tile_name = tiles_name;
@@ -37,6 +38,7 @@ int main() {
 	print_init();
 	player_init(&level1);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
+	enemylist_spawn(0);
 	while(1) {
 		frame++;
 		player_input();
@@ -45,7 +47,7 @@ int main() {
 
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
-		// 	sprite_draw_all();
+			sprite_draw_all();
 			print_display();
 		SPR_2CloseCommand();
 		

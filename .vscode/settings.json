@@ -20,6 +20,7 @@
         "DMA_SCU0.C": "cpp",
         "SEGA_MTH.H": "cpp",
         "PER_X2.C": "cpp",
-        "PER_X1.C": "cpp"
+        "PER_X1.C": "cpp",
+        "!template.h": "c"
     }
 }
