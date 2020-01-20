@@ -26,7 +26,7 @@ public class SatConv {
                         spriteConverter.addImage(fileList[i]);
                     }
                     spriteConverter.writeInfo(fileList[0], line.substring(2) + ".c");
-                    spriteConverter.writeImages(line.substring(2) + ".spr");
+                    spriteConverter.writeImages(line.substring(2, Math.min(line.length(), 10)) + ".spr");
                 }
                 //4bpp tiles
                 if (line.charAt(0) == 't') {
@@ -34,26 +34,26 @@ public class SatConv {
                         File tiles = new File(line.substring(3));
                         TileConverter tileConverter = new TileConverter(tiles, 4);
                         tileConverter.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
-                        tileConverter.writeTiles(line.substring(3, line.indexOf('.')) + ".tle");
+                        tileConverter.writeTiles(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".tle");
                     }
                     //8bpp tiles
                     else if (line.charAt(1) == '8') {
                         File tiles = new File(line.substring(3));
                         TileConverter tileConverter = new TileConverter(tiles, 8);
                         tileConverter.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
-                        tileConverter.writeTiles(line.substring(3, line.indexOf('.')) + ".tle");
+                        tileConverter.writeTiles(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".tle");
                     }
                 }
                 //tiled level (scrolls horizontally, so format is a bunch of columns)
                 else if (line.charAt(0) == 'l') {
                     if (line.charAt(1) == '4') {
                         MapReader mapReader = new MapReader(line.substring(3), 4);
-                        mapReader.outputLevel(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.outputLevel(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }
                     else if (line.charAt(1) == '8') {
                         MapReader mapReader = new MapReader(line.substring(3), 8);
-                        mapReader.outputLevel(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.outputLevel(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }
                 }
@@ -61,12 +61,12 @@ public class SatConv {
                 else if (line.charAt(0) == 'm') {
                     if (line.charAt(1) == '4') {
                         MapReader mapReader = new MapReader(line.substring(3), 4);
-                        mapReader.outputMap(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.outputMap(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }
                     else if (line.charAt(1) == '8') {
                         MapReader mapReader = new MapReader(line.substring(3), 8);
-                        mapReader.outputMap(line.substring(3, line.indexOf('.')) + ".map");
+                        mapReader.outputMap(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
                         mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
                     }
                 }

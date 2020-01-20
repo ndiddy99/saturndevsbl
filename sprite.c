@@ -57,11 +57,17 @@ void sprite_init() {
 		SPR_2SetChar(i + char_base, COLOR_0, 32, float_width, float_height, (Uint8 *)(image_buf) + (i * float_size));
 	}
 	char_base += float_num;
+	cd_load(explosion_name, image_buf, explosion_size * explosion_num);
+	for (i = 0; i < explosion_num; i++) {
+		SPR_2SetChar(i + char_base, COLOR_0, 48, explosion_width, explosion_height, (Uint8 *)(image_buf) + (i * explosion_size));
+	}
+	char_base += explosion_num;
 	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
-	SCL_AllocColRam(SCL_SPR, 48, OFF);
+	SCL_AllocColRam(SCL_SPR, 64, OFF);
 	SCL_SetColRam(SCL_SPR, 0, 16, &font_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
 	SCL_SetColRam(SCL_SPR, 32, 16, &float_pal);
+	SCL_SetColRam(SCL_SPR, 48, 16, &explosion_pal);
 	sprite_deleteall();
 	SCL_DisplayFrame();
 }
@@ -129,12 +135,12 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 void sprite_draw_all() {
 	int i;
 	SPRITE_INFO tmp;
-	for (i = 0; i < num_sprites; i++) {
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (!(sprites[i].options & OPTION_NODISP) && sprites[i].iterate != NULL) {
 			sprites[i].iterate(&sprites[i]);
 		}
 	}
-	for (i = 0; i < num_sprites; i++) {
+	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
 		if (!(sprites[i].options & OPTION_NODISP)) {
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
 			tmp.xPos -=scrolls_x[SCROLL_PLAYFIELD];

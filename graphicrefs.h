@@ -57,5 +57,12 @@ extern Uint16 float_width;
 extern Uint16 float_height;
 extern char float_name[];
 extern Uint32 float_pal[];
-
+//explosion.c
+#define GRAPHIC_EXPLOSION (GRAPHIC_FLOAT + float_num)
+extern Uint16 explosion_num;
+extern Uint16 explosion_size;
+extern Uint16 explosion_width;
+extern Uint16 explosion_height;
+extern char explosion_name[];
+extern Uint32 explosion_pal[];
 #endif

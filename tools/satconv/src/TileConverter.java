@@ -133,7 +133,7 @@ public class TileConverter {
             PrintWriter writer = new PrintWriter(outFile, "UTF-8");
             String substring = outFile.substring(outFile.lastIndexOf('/') + 1, outFile.indexOf('.'));
             writer.println("Uint16 " + substring + "_num = " + (width / 16) * (height / 16) + ";");
-            writer.println("char " + substring + "_name[] = \"" + (substring + ".tle\";").toUpperCase());
+            writer.println("char " + substring + "_name[] = \"" + substring.toUpperCase().substring(0, Math.min(substring.length(), 8)) + ".TLE\";");
             writer.print("Uint32 " + substring + "_pal[] = {");
             for (int i = 0; i < palettes.size(); i += 8) {
                 //            //if a row is entirely zeroes, assume we've reached the end of a palette definition

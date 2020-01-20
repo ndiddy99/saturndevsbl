@@ -1,6 +1,7 @@
 #include <sega_mth.h>
 
 #include "float.h"
+#include "explosion.h"
 #include "../sprite.h"
 #include "../player.h"
 #include "../graphicrefs.h"
@@ -10,6 +11,7 @@
 #define FLOAT_ACCEL (MTH_FIXED(0.1))
 #define FLOAT_STATE_DOWN (0)
 #define FLOAT_STATE_UP (1)
+#define FLOAT_SIZE (MTH_FIXED(32))
 
 void float_make(Fixed32 x, Fixed32 y) {
     SPRITE_INFO *float_spr = sprite_next();
@@ -38,5 +40,10 @@ void float_move(SPRITE_INFO *float_spr) {
             float_spr->state = FLOAT_STATE_DOWN;
         }
     }
-    float_spr->yPos += float_spr->dy;    
+    float_spr->yPos += float_spr->dy;
+
+    if (player.xPos > float_spr->xPos) {
+            explosion_make(float_spr->xPos, float_spr->yPos);
+            sprite_delete(float_spr);
+        }    
 }

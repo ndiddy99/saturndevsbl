@@ -1,8 +1,6 @@
 #include <sega_def.h>
 #include <sega_mth.h>
 #include <sega_scl.h>
-#define		_SPR2_
-#include <SEGA_SPR.H>
 #include <sega_sys.h>
 #include <string.h>
 #include "collision.h"
