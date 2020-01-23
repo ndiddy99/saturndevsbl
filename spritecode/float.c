@@ -46,7 +46,13 @@ void float_move(SPRITE_INFO *float_spr) {
     float_spr->yPos += float_spr->dy;
 
     if (collision_player(float_spr)) {
-            explosion_make(float_spr->xPos, float_spr->yPos);
-            sprite_delete(float_spr);
+            if (player_cankill()) {
+                explosion_make(float_spr->xPos, float_spr->yPos);
+                sprite_delete(float_spr);
+                player_killenemy();
+            }
+            else {
+                player_die();
+            }
         }    
 }

@@ -11,11 +11,12 @@
 #include "vblank.h"
 
 #define PLAYER_ACCEL (MTH_FIXED(0.5))
-#define PLAYER_JUMPSPEED (-MTH_FIXED(8))
 #define PLAYER_MAXSPEED (MTH_FIXED(4))
+//furthest right the player sprite can go
 #define PLAYER_MAXXPOS (MTH_FIXED(152))
-//double jump
+//jump stuff
 #define PLAYER_MAXJUMPS (2)
+#define PLAYER_JUMPSPEED (-MTH_FIXED(7))
 
 //boost stuff
 #define BOOST_TIMER (60)
@@ -54,8 +55,18 @@ void player_init(LEVEL *level) {
 	// }
 }
 
+
+inline int player_cankill() {
+	return boost || player.dy > 0;
+}
+
+//run when the player kills an enemy
+inline void player_killenemy() {
+	player.dy = PLAYER_JUMPSPEED;
+}
+
 //run when the player dies
-static void player_kill() {
+void player_die() {
 	player.xPos = curr_level->player_startx;
 	player.yPos = curr_level->player_starty;
 	player.dx = 0;
@@ -130,7 +141,7 @@ void player_input() {
 		jumps = 0;
 	}
 	if ((PadData1EW & PAD_B) && jumps < PLAYER_MAXJUMPS) {
-		player.dy = -MTH_FIXED(8);
+		player.dy = PLAYER_JUMPSPEED;
 		jumps++;
 	}
 	//if you hold the jump button longer, jump higher
@@ -147,12 +158,12 @@ void player_input() {
 	player.yPos += player.dy;
 	//if the player lands on/jumps into spikes, kill him
 	if (collision_spikes(&player)) {
-		player_kill();
+		player_die();
 	}
 	collision_eject_vert(&player);
 	//if the player falls into a pit, kill him
 	if (player.yPos > MTH_FIXED(224)) {
-		player_kill();
+		player_die();
 	}
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4); print_num(player.xPos & 0xffff, 2, 14);
 	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4); print_num(player.yPos & 0xffff, 3, 14);
@@ -204,7 +215,7 @@ void player_draw() {
 		bg_scroll_val = 0;
 	}
 	scroll_linescroll4(SCROLL_BACKGROUND1, bg_scroll_val, 45, 78, 114);
-	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1) + (player.dx >> 3), 0);
+	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1), 0);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));
 	sprite_draw(&temp);
 }
