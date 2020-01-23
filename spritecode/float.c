@@ -25,6 +25,14 @@ void float_make(Fixed32 x, Fixed32 y) {
 }
 
 void float_move(SPRITE_INFO *float_spr) {
+    //make flickery flame
+    if (float_spr->char_num == GRAPHIC_FLOAT) {
+        float_spr->char_num++;
+    }
+    else {
+        float_spr->char_num--;
+    }
+
     if (float_spr->state == FLOAT_STATE_DOWN) {
         if (float_spr->dy > -FLOAT_MAXSPEED) {
             float_spr->dy -= FLOAT_ACCEL;
