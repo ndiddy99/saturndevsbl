@@ -1,6 +1,7 @@
 #include <SEGA_MTH.H>
 #include "collision.h"
 #include "blocks.h"
+#include "player.h"
 #include "print.h"
 #include "sprite.h"
 #include "scroll.h"
@@ -188,4 +189,11 @@ void collision_eject_horiz(SPRITE_INFO *sprite) {
             sprite->xPos -= MTH_FIXED(1);
         }
     }
+}
+
+int collision_player(SPRITE_INFO *sprite) {
+    return ((player.xPos <= sprite->xPos + sprite->xSize) &&
+        (player.xPos + player.xSize >= sprite->xPos) &&
+        (player.yPos <= sprite->yPos + sprite->ySize) && 
+        (player.yPos + player.ySize >= sprite->yPos));
 }

@@ -16,7 +16,6 @@ void explosion_make(Fixed32 x, Fixed32 y) {
     sprite_make(EXPLOSION_MINCHARNUM, x, y, explosion);
     explosion->animTimer = FRAME_DELAY;
     explosion->iterate = &explosion_move;
-    print_num(explosion->char_num, 15, 0);
 }
 
 void explosion_move(SPRITE_INFO *explosion) {
@@ -31,5 +30,4 @@ void explosion_move(SPRITE_INFO *explosion) {
     else {
         explosion->animTimer--;
     }
-    print_num(explosion->char_num, 15, 0);
 }

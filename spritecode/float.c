@@ -2,9 +2,10 @@
 
 #include "float.h"
 #include "explosion.h"
+#include "../collision.h"
+#include "../graphicrefs.h"
 #include "../sprite.h"
 #include "../player.h"
-#include "../graphicrefs.h"
 
 #define FLOAT_CHARNUM (GRAPHIC_FLOAT)
 #define FLOAT_MAXSPEED (MTH_FIXED(3))
@@ -16,6 +17,8 @@
 void float_make(Fixed32 x, Fixed32 y) {
     SPRITE_INFO *float_spr = sprite_next();
     sprite_make(FLOAT_CHARNUM, x, y, float_spr);
+    float_spr->xSize = FLOAT_SIZE;
+    float_spr->ySize = FLOAT_SIZE;    
     float_spr->animTimer = 0;
     float_spr->iterate = &float_move;
     float_spr->state = FLOAT_STATE_DOWN;
@@ -42,7 +45,7 @@ void float_move(SPRITE_INFO *float_spr) {
     }
     float_spr->yPos += float_spr->dy;
 
-    if (player.xPos > float_spr->xPos) {
+    if (collision_player(float_spr)) {
             explosion_make(float_spr->xPos, float_spr->yPos);
             sprite_delete(float_spr);
         }    
