@@ -4,7 +4,7 @@ s font
 s guy
 s float
 t8 bg.bmp
-l8 map.tmx
+l8 map
 t4 hills.bmp
 m4 hill_map.tmx
 t4 cloud.bmp

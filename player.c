@@ -4,6 +4,7 @@
 #include <sega_sys.h>
 #include <string.h>
 #include "collision.h"
+#include "enemylist.h"
 #include "player.h"
 #include "print.h"
 #include "scroll.h"
@@ -56,8 +57,8 @@ void player_init(LEVEL *level) {
 }
 
 
-inline int player_cankill() {
-	return boost || player.dy > 0;
+inline int player_cankill(SPRITE_INFO *sprite) {
+	return (boost || player.dy > 0) && player.yPos < sprite->yPos;
 }
 
 //run when the player kills an enemy
@@ -75,6 +76,8 @@ void player_die() {
 	boost = 0;
 	lives--;
 	scroll_reset();
+	sprite_deleteall();
+	enemylist_spawn(0);
 }
 
 void player_input() {

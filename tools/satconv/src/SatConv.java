@@ -46,16 +46,22 @@ public class SatConv {
                 }
                 //tiled level (scrolls horizontally, so format is a bunch of columns)
                 else if (line.charAt(0) == 'l') {
+                    LevelReader levelReader = null;
+                    String levelFilename = line.substring(3, Math.min(line.length(), 11)) + ".map";
+                    String infoFilename = line.substring(3) + ".c";
                     if (line.charAt(1) == '4') {
-                        MapReader mapReader = new MapReader(line.substring(3), 4);
-                        mapReader.outputLevel(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
-                        mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
+                        levelReader = new LevelReader(4);
                     }
                     else if (line.charAt(1) == '8') {
-                        MapReader mapReader = new MapReader(line.substring(3), 8);
-                        mapReader.outputLevel(line.substring(3, Math.min(line.indexOf('.'), 11)) + ".map");
-                        mapReader.writeInfo(line.substring(3, line.indexOf('.')) + ".c");
+                        levelReader = new LevelReader(8);
                     }
+                    File folder = new File(line.substring(3));
+                    File[] files = folder.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        levelReader.addLevel(files[i]);
+                    }
+                    levelReader.outputLevel(levelFilename);
+                    levelReader.writeInfo(infoFilename);
                 }
                 //tiled map (standard saturn tilemap format)
                 else if (line.charAt(0) == 'm') {

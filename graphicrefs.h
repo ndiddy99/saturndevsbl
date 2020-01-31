@@ -15,13 +15,12 @@ extern Uint32 hills_pal[];
 extern Uint16 cloud_num;
 extern char cloud_name[];
 extern Uint32 cloud_pal[];
-
-//---background tilemaps---
+//---level tilemaps---
 //map.c
-extern Uint16 map_width;
-extern Uint16 map_height;
+extern Uint16 map_widths[];
+extern Uint16 map_heights[];
 extern char map_name[];
-
+//---background tilemaps---
 //hill_map.c
 extern Uint16 hill_map_width;
 extern Uint16 hill_map_height;

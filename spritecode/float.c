@@ -8,8 +8,8 @@
 #include "../player.h"
 
 #define FLOAT_CHARNUM (GRAPHIC_FLOAT)
-#define FLOAT_MAXSPEED (MTH_FIXED(3))
-#define FLOAT_ACCEL (MTH_FIXED(0.1))
+#define FLOAT_MAXSPEED (MTH_FIXED(1))
+#define FLOAT_ACCEL (MTH_FIXED(0.05))
 #define FLOAT_STATE_DOWN (0)
 #define FLOAT_STATE_UP (1)
 #define FLOAT_SIZE (MTH_FIXED(32))
