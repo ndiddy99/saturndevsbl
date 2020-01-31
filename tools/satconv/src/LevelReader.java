@@ -65,18 +65,18 @@ public class LevelReader {
                 break;
             }
         }
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(level.get(i, j) + " ");
-            }
-            System.out.println();
-        }
+//        for (int i = 0; i < height; i++) {
+//            for (int j = 0; j < width; j++) {
+//                System.out.print(level.get(i, j) + " ");
+//            }
+//            System.out.println();
+//        }
         scanner.close();
         levels.add(level);
     }
 
     public void outputLevel(String filename) {
-        System.out.println("---output---");
+//        System.out.println("---output---");
         try {
             Path path = Paths.get(filename);
             int fileSize = 0;
@@ -88,7 +88,7 @@ public class LevelReader {
             byte[] byteArr = new byte[fileSize];
             for (int i = 0; i < levels.size(); i++) {
                 Level level = levels.get(i);
-                System.out.println();
+//                System.out.println();
                 for (int j = 0; j < level.getNumCols(); j++) {
                     for (int k = 0; k < level.getNumRows(); k++) {
                         short mapVal = 0;
@@ -105,11 +105,11 @@ public class LevelReader {
                         if ((level.get(k, j) & 0x40000000) == 0x40000000) {
                             mapVal |= 0x800;
                         }
-                        System.out.print(mapVal + " ");
+//                        System.out.print(mapVal + " ");
                         byteArr[counter++] = (byte) (((mapVal & 0xFF00) >> 8) & 0xff);
                         byteArr[counter++] = (byte) (mapVal & 0xff);
                     }
-                    System.out.println();
+//                    System.out.println();
                 }
                 Files.write(path, byteArr);
             }
@@ -134,13 +134,23 @@ public class LevelReader {
         String heightArr = "Uint16 " + varName + "_heights[] = {";
         for (int i = 0; i < levels.size(); i++) {
             Level level = levels.get(i);
-            widthArr += " " + level.getNumCols() + ",";
-            heightArr += " " + level.getNumRows() + ",";
+            widthArr += level.getNumCols() + ",";
+            heightArr += level.getNumRows() + ",";
         }
         widthArr += "};";
         heightArr += "};";
         writer.println(widthArr);
         writer.println(heightArr);
+        int fileSize = 0;
+        String offsetArr = "Uint16 " + varName + "_offsets[] = {";
+        for (int i = 0; i < levels.size(); i++) {
+            Level level = levels.get(i);
+            offsetArr += fileSize + ",";
+            fileSize += (level.getNumRows() * level.getNumCols() * 2);
+        }
+        offsetArr += "};";
+        writer.println("Uint16 " + varName + "_size = " + fileSize + ";");
+        writer.println(offsetArr);
         writer.println("char " + varName + "_name[] = \"" + varName.toUpperCase().substring(0, Math.min(varName.length(), 8)) + ".MAP\";");
         writer.close();
     }

@@ -21,6 +21,18 @@ static inline void layer_init(LAYER *layer, char *tiles_name, Uint16 tiles_num, 
 	layer->map_height = map_height;
 }
 
+static inline void playfield_init(PLAYFIELD *playfield, char *tiles_name, Uint16 tiles_num, Uint32 *palette, char *map_name,
+ Uint16 map_size, Uint16 *map_offsets, Uint16 *map_widths, Uint16 *map_heights) {
+	playfield->tile_name = tiles_name;
+	playfield->tile_num = tiles_num;
+	playfield->palette = palette;
+	playfield->map_name = map_name;
+	playfield->map_size = map_size;
+	playfield->map_offsets = map_offsets;
+	playfield->map_widths = map_widths;
+	playfield->map_heights = map_heights;
+}
+
 Uint32 frame = 0;
 
 int main() {
@@ -30,7 +42,7 @@ int main() {
 	level1.player_startx = MTH_FIXED(64);
 	level1.player_starty = MTH_FIXED(176);
 
-	layer_init(&(level1.playfield), bg_name, bg_num, bg_pal, map_name, map_widths[0], map_heights[0]);
+	playfield_init(&(level1.playfield), bg_name, bg_num, bg_pal, map_name, map_size, map_offsets, map_widths, map_heights);
 	layer_init(&(level1.bg_near), cloud_name, cloud_num, cloud_pal, cloudmap_name, cloudmap_width, cloudmap_height);
 	layer_init(&(level1.bg_far), hills_name, hills_num, hills_pal, hill_map_name, hill_map_width, hill_map_height);
 

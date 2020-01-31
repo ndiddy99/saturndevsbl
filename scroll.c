@@ -65,6 +65,7 @@ SclConfig scfg3;
 SclLineparam line_param0;
 SclLineparam line_param1;
 
+LEVEL *curr_level;
 
 void scroll_init(LEVEL *level) {
 	int i, j, count;
@@ -115,10 +116,10 @@ void scroll_init(LEVEL *level) {
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
 	cd_load(level->playfield.tile_name, (void *)LWRAM, 256 * level->playfield.tile_num);
 	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield.tile_num);
-	scroll_xsize = level->playfield.map_width;
-	scroll_ysize = level->playfield.map_height;	
+	scroll_xsize = level->playfield.map_widths[0];
+	scroll_ysize = level->playfield.map_heights[0];	
 	//load playfield map data to LWRAM
-	cd_load(level->playfield.map_name, (void *)LWRAM, scroll_xsize * scroll_ysize * 2);
+	cd_load(level->playfield.map_name, (void *)LWRAM, level->playfield.map_size);
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
 	for (i = 0; i < 32; i++) {
@@ -193,9 +194,8 @@ void scroll_init(LEVEL *level) {
 	SCL_SetPriority(SCL_NBG2, 6);
 	SCL_SetPriority(SCL_NBG1, 5);
 	SCL_SetPriority(SCL_NBG0, 4);
-	// maps[0] = (Uint16 *)data->levels[0];
-	// maps[1] = (Uint16 *)data->levels[1];
-	// tilemaps = data->levels;
+	
+	curr_level = level;
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {
@@ -320,11 +320,12 @@ void scroll_copy(int num) {
 
 void scroll_reset(void) {
 	int i, j, count;
-	Uint16 *lwram_ptr = (Uint16 *)LWRAM;
+	Uint16 *lwram_ptr;
 	Uint16 *tilemap_vram;
 	scroll_set(SCROLL_PLAYFIELD, 0, 0);
 	count = 0;
 	tilemap_vram = VRAM_PTR(2);
+	lwram_ptr = maps[SCROLL_PLAYFIELD];
 	for (i = 0; i < 32; i++) {
 		for (j = 0; j < 16; j++) {
 			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
@@ -359,3 +360,21 @@ void scroll_linescroll4(int num, Fixed32 scroll_val, int boundary1, int boundary
 	SCL_Close();
 }
 
+void scroll_loadplayfield(int num) {
+	int count, i, j;
+	Uint16 *lwram_ptr;
+	Uint16 *tilemap_vram;
+
+	scroll_xsize = curr_level->playfield.map_widths[num];
+	scroll_ysize = curr_level->playfield.map_heights[num];	
+	count = 0;
+	tilemap_vram = VRAM_PTR(2);
+	maps[SCROLL_PLAYFIELD] = (Uint16 *)(LWRAM + curr_level->playfield.map_offsets[num]);
+	lwram_ptr = maps[SCROLL_PLAYFIELD];
+
+	for (i = 0; i < 32; i++) {
+		for (j = 0; j < 16; j++) {
+			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
+		}
+	}	
+}

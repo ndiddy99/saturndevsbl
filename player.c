@@ -132,7 +132,10 @@ void player_input() {
 	player.xPos += player.dx;
 
 	if (PadData1EW & PAD_C) {
-		player.xPos += MTH_FIXED(1);
+		scroll_loadplayfield(1);
+	}
+	else if (PadData1EW & PAD_Z) {
+		scroll_loadplayfield(0);
 	}
 
 	player_animate();
