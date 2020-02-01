@@ -167,10 +167,17 @@ void player_input() {
 		player_die();
 	}
 	collision_eject_vert(&player);
-	//if the player falls into a pit, kill him
+	
 	if (player.yPos > MTH_FIXED(224)) {
-		player_die();
+		scroll_loadplayfield(0);
+		player.yPos -= MTH_FIXED(224);
 	}
+
+	if (player.yPos < MTH_FIXED(0)) {
+		scroll_loadplayfield(1);
+		player.yPos += MTH_FIXED(224);
+	}
+
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4); print_num(player.xPos & 0xffff, 2, 14);
 	print_string("y: ", 3, 0); print_num(player.yPos >> 16, 3, 4); print_num(player.yPos & 0xffff, 3, 14);
 	print_string("dx: ", 4, 0); print_num(player.dx, 4, 4);

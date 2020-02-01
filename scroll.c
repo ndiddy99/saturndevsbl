@@ -51,10 +51,10 @@ int scroll_transition_state = TSTATE_NULL;
 // There's also numerous read restrictions, see SOA technical bulletin #6 for more information
 
 Uint16	CycleTb[]={
-	0x0011,0xffff,
+	0x0011,0xeeee,
 	0x5555,0x4444,
 	0x6677,0xffff,
-	0x23ff,0xffff
+	0x23ff,0xeeee
 };
 
 SclConfig scfg0;
@@ -367,14 +367,14 @@ void scroll_loadplayfield(int num) {
 
 	scroll_xsize = curr_level->playfield.map_widths[num];
 	scroll_ysize = curr_level->playfield.map_heights[num];	
-	count = 0;
 	tilemap_vram = VRAM_PTR(2);
 	maps[SCROLL_PLAYFIELD] = (Uint16 *)(LWRAM + curr_level->playfield.map_offsets[num]);
 	lwram_ptr = maps[SCROLL_PLAYFIELD];
+	count = map_tiles_x[SCROLL_PLAYFIELD] * scroll_ysize;
 
-	for (i = 0; i < 32; i++) {
+	for (i = map_tiles_x[SCROLL_PLAYFIELD]; i < map_tiles_x[SCROLL_PLAYFIELD] + 32; i++) {
 		for (j = 0; j < 16; j++) {
-			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
+			tilemap_vram[j * 32 + (i % 32)] = lwram_ptr[count++];
 		}
 	}	
 }
