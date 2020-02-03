@@ -386,7 +386,7 @@ void scroll_changescreen(int direction) {
 	lwram_ptr = (Uint16 *)LWRAM;
 
 	for (i = 0; i < 14; i++) {
-		for (j = 0; j < 32; j++) {
+		for (j = -1; j < 31; j++) {
 			pos = (i * 32) + ((j + map_tiles_x[SCROLL_PLAYFIELD]) % 32);
 			if (pos >= 0) {
 				tilemap_vram[pos] = scroll_get(SCROLL_PLAYFIELD, j + map_tiles_x[SCROLL_PLAYFIELD], i + map_tiles_y[SCROLL_PLAYFIELD]);
