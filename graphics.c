@@ -12,6 +12,6 @@ typedef unsigned long Uint32;
 #include "graphic/float.c"
 #include "graphic/explosion.c"
 //tilemaps
-#include "graphic/map.c"
+#include "graphic/map0.c"
 #include "graphic/hill_map.c"
 #include "graphic/cloudmap.c"

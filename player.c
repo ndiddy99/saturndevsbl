@@ -131,13 +131,6 @@ void player_input() {
 	}
 	player.xPos += player.dx;
 
-	if (PadData1EW & PAD_C) {
-		scroll_loadplayfield(1);
-	}
-	else if (PadData1EW & PAD_Z) {
-		scroll_loadplayfield(0);
-	}
-
 	player_animate();
 	collision_eject_horiz(&player);
 
@@ -168,14 +161,16 @@ void player_input() {
 	}
 	collision_eject_vert(&player);
 	
-	if (player.yPos > MTH_FIXED(224)) {
-		scroll_loadplayfield(0);
-		player.yPos -= MTH_FIXED(224);
+	//if player is on top of screen, scroll up
+	if (player.yPos < scrolls_y[SCROLL_PLAYFIELD]) {
+		scroll_changescreen(SCROLL_UP);
+		print_string("up  ", 9, 0);
 	}
 
-	if (player.yPos < MTH_FIXED(0)) {
-		scroll_loadplayfield(1);
-		player.yPos += MTH_FIXED(224);
+	//if player falls offscreen, scroll down
+	if (player.yPos > scrolls_y[SCROLL_PLAYFIELD] + MTH_FIXED(224)) {
+		scroll_changescreen(SCROLL_DOWN);
+		print_string("down", 9, 0);
 	}
 
 	print_string("x: ", 2, 0); print_num(player.xPos >> 16, 2, 4); print_num(player.xPos & 0xffff, 2, 14);
@@ -185,6 +180,7 @@ void player_input() {
 	print_string("boost: ", 6, 0); print_num(boost, 6, 7);
 	print_string("lives: ", 7, 0); print_num(lives, 7, 7);
 	print_num(PadData1, 8, 0);
+	print_num(scrolls_y[SCROLL_PLAYFIELD] >> 16, 10, 0);
 }
 
 void player_animate() {
@@ -227,6 +223,7 @@ void player_draw() {
 		scroll_set(SCROLL_PLAYFIELD, 0, 0);
 		bg_scroll_val = 0;
 	}
+	temp.yPos %= MTH_FIXED(224);
 	scroll_linescroll4(SCROLL_BACKGROUND1, bg_scroll_val, 45, 78, 114);
 	scroll_move(SCROLL_BACKGROUND2, MTH_FIXED(1), 0);
 	// scroll_move(SCROLL_PLAYFIELD, MTH_FIXED(1), MTH_FIXED(0));

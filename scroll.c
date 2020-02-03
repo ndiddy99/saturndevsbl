@@ -4,6 +4,7 @@
 #include <sega_scl.h>
 
 #include "cd.h"
+#include "enemylist.h"
 #include "graphicrefs.h"
 #include "player.h"
 #include "print.h"
@@ -116,15 +117,15 @@ void scroll_init(LEVEL *level) {
 	VramWorkP = (Uint8 *)SCL_VDP2_VRAM_B0; //bg character pattern to vram b0
 	cd_load(level->playfield.tile_name, (void *)LWRAM, 256 * level->playfield.tile_num);
 	memcpy(VramWorkP, (void *)LWRAM, 256 * level->playfield.tile_num);
-	scroll_xsize = level->playfield.map_widths[0];
-	scroll_ysize = level->playfield.map_heights[0];	
+	scroll_xsize = level->playfield.map_width;
+	scroll_ysize = level->playfield.map_height;	
 	//load playfield map data to LWRAM
-	cd_load(level->playfield.map_name, (void *)LWRAM, level->playfield.map_size);
+	cd_load(level->playfield.map_name, (void *)LWRAM, scroll_xsize * scroll_ysize * 2);
 	count = 0;
 	TilemapVram = VRAM_PTR(2);
-	for (i = 0; i < 32; i++) {
-		for (j = 0; j < 16; j++) {
-			TilemapVram[j * 32 + i] = lwram_ptr[count++];
+	for (i = 0; i < 16; i++) {
+		for (j = 0; j < 32; j++) {
+			TilemapVram[count++] = lwram_ptr[i * scroll_xsize + j];
 		}
 	}
 	maps[SCROLL_PLAYFIELD] = (Uint16 *)LWRAM;
@@ -199,12 +200,16 @@ void scroll_init(LEVEL *level) {
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {
-	Sint32 curr_tile_x, curr_tile_y;
+	Sint32 curr_tile_x;
 	scrolls_x[num] += x;
-	scrolls_y[num] += y;
-	if (num < 2) { //only NBG0 and NBG1 have 4 way scrolling
+	//playfield and foreground use flip-style scrolling, so don't change
+	//y position here for them
+	if (num > 2) {
+		scrolls_y[num] += y;
+	}
+	if (num < 2) {
 		curr_tile_x = MTH_FixedToInt(scrolls_x[num]) >> 4; //tile size is 16x16
-		curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
+		// curr_tile_y = MTH_FixedToInt(scrolls_y[num]) >> 4;
 		// copy_modes[num] = 0;
 		if (curr_tile_x - map_tiles_x[num] > 0) { //if x value increasing
 			copy_modes[num] |= COPY_MODE_RCOL;
@@ -212,14 +217,14 @@ void scroll_move(int num, Fixed32 x, Fixed32 y) {
 		else if (curr_tile_x - map_tiles_x[num] < 0) { //if x value decreasing
 			copy_modes[num] |= COPY_MODE_LCOL;
 		}
-		if (curr_tile_y - map_tiles_y[num] > 0) { //if y value increasing
-			copy_modes[num] |= COPY_MODE_BROW;
-		}
-		else if (curr_tile_y - map_tiles_y[num] < 0) { //if y value decreasing
-			copy_modes[num] |= COPY_MODE_TROW;
-		}
+		// if (curr_tile_y - map_tiles_y[num] > 0) { //if y value increasing
+		// 	copy_modes[num] |= COPY_MODE_BROW;
+		// }
+		// else if (curr_tile_y - map_tiles_y[num] < 0) { //if y value decreasing
+		// 	copy_modes[num] |= COPY_MODE_TROW;
+		// }
 		map_tiles_x[num] = curr_tile_x;
-		map_tiles_y[num] = curr_tile_y;
+		// map_tiles_y[num] = curr_tile_y;
 	}
 	switch (num) {
 		case SCROLL_PLAYFIELD:
@@ -235,7 +240,12 @@ void scroll_move(int num, Fixed32 x, Fixed32 y) {
 			SCL_Open(SCL_NBG1);
 			break;
 	}
-		SCL_MoveTo(scrolls_x[num], scrolls_y[num], 0);
+		if (num < 2) {
+			SCL_MoveTo(scrolls_x[num], 0, 0);
+		}
+		else {
+			SCL_MoveTo(scrolls_x[num], scrolls_y[num], 0);
+		}
 	SCL_Close();
 }
 
@@ -276,7 +286,7 @@ Uint16 scroll_get(int map, int x, int y) {
 	if (map_ptr == NULL || x >= scroll_xsize || x < 0 || y >= scroll_ysize || y < 0) {
 		return 0;
 	}
-	return map_ptr[(x * scroll_ysize) + y];
+	return map_ptr[(y * scroll_xsize) + x];
 }
 
 void scroll_copy(int num) {
@@ -287,7 +297,7 @@ void scroll_copy(int num) {
 		for (i = 0; i < 16; i++) {
 			pos = (i * 32) + ((map_tiles_x[num] + SCREEN_TILES_X) % 32);
 			if (pos >= 0) {
-				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, i);
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] + SCREEN_TILES_X, i + map_tiles_y[num]);
 			}
 		}
 	}
@@ -295,7 +305,7 @@ void scroll_copy(int num) {
 		for (i = 0; i < 16; i++) {
 			pos = (i * 32) + ((map_tiles_x[num] - 1) % 32);
 			if (pos >= 0) {
-				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] - 1, i);
+				vram_ptr[pos] = scroll_get(num, map_tiles_x[num] - 1, i + map_tiles_y[num]);
 			}
 		}		
 	}
@@ -315,7 +325,7 @@ void scroll_copy(int num) {
 	// 				scroll_get(num, map_tiles_x[num] + i, map_tiles_y[num] - 1);
 	// 		}
 	// 	}
-	// }
+	// 
 }
 
 void scroll_reset(void) {
@@ -326,9 +336,9 @@ void scroll_reset(void) {
 	count = 0;
 	tilemap_vram = VRAM_PTR(2);
 	lwram_ptr = maps[SCROLL_PLAYFIELD];
-	for (i = 0; i < 32; i++) {
-		for (j = 0; j < 16; j++) {
-			tilemap_vram[j * 32 + i] = lwram_ptr[count++];
+	for (i = 0; i < 16; i++) {
+		for (j = 0; j < 32; j++) {
+			tilemap_vram[count++] = lwram_ptr[i * scroll_xsize + j];
 		}
 	}
 }
@@ -360,21 +370,27 @@ void scroll_linescroll4(int num, Fixed32 scroll_val, int boundary1, int boundary
 	SCL_Close();
 }
 
-void scroll_loadplayfield(int num) {
-	int count, i, j;
+void scroll_changescreen(int direction) {
+	int i, j, pos;
 	Uint16 *lwram_ptr;
 	Uint16 *tilemap_vram;
 
-	scroll_xsize = curr_level->playfield.map_widths[num];
-	scroll_ysize = curr_level->playfield.map_heights[num];	
+	if (direction == SCROLL_UP) {
+		scrolls_y[SCROLL_PLAYFIELD] -= MTH_FIXED(224);
+	}
+	else {
+		scrolls_y[SCROLL_PLAYFIELD] += MTH_FIXED(224);
+	}
+	map_tiles_y[SCROLL_PLAYFIELD] = scrolls_y[SCROLL_PLAYFIELD] >> 20;
 	tilemap_vram = VRAM_PTR(2);
-	maps[SCROLL_PLAYFIELD] = (Uint16 *)(LWRAM + curr_level->playfield.map_offsets[num]);
-	lwram_ptr = maps[SCROLL_PLAYFIELD];
-	count = map_tiles_x[SCROLL_PLAYFIELD] * scroll_ysize;
+	lwram_ptr = (Uint16 *)LWRAM;
 
-	for (i = map_tiles_x[SCROLL_PLAYFIELD]; i < map_tiles_x[SCROLL_PLAYFIELD] + 32; i++) {
-		for (j = 0; j < 16; j++) {
-			tilemap_vram[j * 32 + (i % 32)] = lwram_ptr[count++];
+	for (i = 0; i < 14; i++) {
+		for (j = 0; j < 32; j++) {
+			pos = (i * 32) + ((j + map_tiles_x[SCROLL_PLAYFIELD]) % 32);
+			if (pos >= 0) {
+				tilemap_vram[pos] = scroll_get(SCROLL_PLAYFIELD, j + map_tiles_x[SCROLL_PLAYFIELD], i + map_tiles_y[SCROLL_PLAYFIELD]);
+			}
 		}
-	}	
+	}
 }

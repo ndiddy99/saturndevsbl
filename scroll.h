@@ -39,20 +39,9 @@ typedef struct {
 } LAYER;
 
 typedef struct {
-    Uint8 *tile_name; //filename of .TLE file
-    Uint16 tile_num; //number of tiles
-    Uint32 *palette; //pointer to palette
-    Uint8 *map_name; //filename of .MAP file
-    Uint16 map_size; //size of .MAP file
-    Uint16 *map_offsets; //offsets of each map within the file
-    Uint16 *map_widths; //map width array
-    Uint16 *map_heights; //map height array
-} PLAYFIELD;
-
-typedef struct {
     Fixed32 player_startx; //where the player starts in the level
     Fixed32 player_starty;
-    PLAYFIELD playfield; //map the player does stuff on
+    LAYER playfield; //map the player does stuff on
     LAYER bg_near; //near bg
     LAYER bg_far; //far bg
 } LEVEL;
@@ -82,7 +71,10 @@ void scroll_reset(void);
 //num: bg to use, scroll_val: value to scroll.
 //boundaryN: where the screen splits are
 void scroll_linescroll4(int num, Fixed32 scroll_val, int boundary1, int boundary2, int boundary3);
-//loads a map into the playfield bg layer.
-//num: map # within loaded playfield map file
-void scroll_loadplayfield(int num);
+
+#define SCROLL_UP (0)
+#define SCROLL_DOWN (1)
+//flip-scroll up/down by one-screen increments
+//direction: the direction to move the screen (0 = up, 1 = down)
+void scroll_changescreen(int direction);
 #endif
