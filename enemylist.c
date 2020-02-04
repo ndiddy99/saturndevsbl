@@ -7,7 +7,7 @@
 
 //list format: type, x position (tiles), y position (tiles)
 void (*enemy_arr[])(Fixed32, Fixed32) = {NULL, float_make};
-Uint16 level0_enemies[] = {TYPE_FLOAT, 10, 8, TYPE_FLOAT, 15, 8, TYPE_FLOAT, 52, 9, END_LIST};
+Uint16 level0_enemies[] = {TYPE_FLOAT, 10, 22, TYPE_FLOAT, 15, 22, TYPE_FLOAT, 52, 23, END_LIST};
 Uint16 *enemy_lists[] = {level0_enemies};
 
 void enemylist_spawn(int floor) {

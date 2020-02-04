@@ -122,6 +122,8 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 	ptr->state = 0;
 	ptr->xPos = x;
 	ptr->yPos = y;
+	ptr->xSize = 0;
+	ptr->ySize = 0;
 	ptr->mirror = 0;
 	ptr->dx = 0;
 	ptr->dy = 0;
@@ -134,17 +136,25 @@ void sprite_make(int tile_num, Fixed32 x, Fixed32 y, SPRITE_INFO *ptr) {
 
 void sprite_draw_all() {
 	int i;
+	Sint32 rel_x, rel_y;
 	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		if (!(sprites[i].options & OPTION_NODISP) && sprites[i].iterate != NULL) {
+		rel_x = sprites[i].xPos - scrolls_x[SCROLL_PLAYFIELD];
+		rel_y = sprites[i].yPos - scrolls_y[SCROLL_PLAYFIELD];
+		//if sprite is more than 1/2 screen offscreen, don't render it
+		if (sprites[i].options & OPTION_NODISP || rel_x + sprites[i].xSize < MTH_FIXED(-160) || rel_x > MTH_FIXED(480) ||
+			 rel_y + sprites[i].ySize < MTH_FIXED(-112) || rel_y > MTH_FIXED(336)) {
+			continue;
+		}
+
+		if (sprites[i].iterate != NULL) {
 			sprites[i].iterate(&sprites[i]);
 		}
-	}
-	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
+		//check again because iterate function may have deleted sprite
 		if (!(sprites[i].options & OPTION_NODISP)) {
 			memcpy((void *)&tmp, (void *)&sprites[i], sizeof(SPRITE_INFO));
-			tmp.xPos -=scrolls_x[SCROLL_PLAYFIELD];
-			tmp.yPos -=scrolls_y[SCROLL_PLAYFIELD];
+			tmp.xPos = rel_x;
+			tmp.yPos = rel_y;
 			sprite_draw(&tmp);
 		}
 	}

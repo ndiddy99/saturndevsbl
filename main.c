@@ -27,8 +27,8 @@ int main() {
 	cd_init();
 	sprite_init();
 	LEVEL level1;
-	level1.player_startx = MTH_FIXED(64);
-	level1.player_starty = MTH_FIXED(176);
+	level1.player_startx = MTH_FIXED(60);
+	level1.player_starty = MTH_FIXED(400);
 
 	layer_init(&(level1.playfield), bg_name, bg_num, bg_pal, map0_name, map0_width, map0_height);
 	layer_init(&(level1.bg_near), cloud_name, cloud_num, cloud_pal, cloudmap_name, cloudmap_width, cloudmap_height);
