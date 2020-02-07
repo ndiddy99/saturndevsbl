@@ -163,13 +163,13 @@ void player_input() {
 	
 	//if player is on top of screen, scroll up
 	if (player.yPos < scrolls_y[SCROLL_PLAYFIELD]) {
-		scroll_changescreen(SCROLL_UP);
+		scroll_changescreen(map_tiles_y[SCROLL_PLAYFIELD] - 14);
 		print_string("up  ", 9, 0);
 	}
 
 	//if player falls offscreen, scroll down
 	if (player.yPos > scrolls_y[SCROLL_PLAYFIELD] + MTH_FIXED(224)) {
-		scroll_changescreen(SCROLL_DOWN);
+		scroll_changescreen(map_tiles_y[SCROLL_PLAYFIELD] + 14);
 		print_string("down", 9, 0);
 	}
 
