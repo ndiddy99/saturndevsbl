@@ -7,8 +7,9 @@
 #include "cd.h"
 #include "enemylist.h"
 #include "graphicrefs.h"
-#include "sprite.h"
 #include "scroll.h"
+#include "sound.h"
+#include "sprite.h"
 #include "player.h"
 #include "print.h"
 
@@ -39,6 +40,9 @@ int main() {
 	player_init(&level1);
 	SCL_SetSpriteMode(SCL_TYPE5,SCL_MIX,SCL_SP_WINDOW);
 	enemylist_spawn(0);
+	sound_init();
+	sound_cdda(2);
+
 	while(1) {
 		frame++;
 		player_input();
