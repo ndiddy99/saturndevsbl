@@ -9,6 +9,7 @@
 #include "print.h"
 #include "scroll.h"
 #include "sprite.h"
+#include "sound.h"
 #include "vblank.h"
 
 #define PLAYER_ACCEL (MTH_FIXED(0.5))
@@ -142,6 +143,7 @@ void player_input() {
 	if ((PadData1EW & PAD_B) && jumps < PLAYER_MAXJUMPS) {
 		player.dy = PLAYER_JUMPSPEED;
 		jumps++;
+		sound_play(SOUND_JUMP);
 	}
 	//if you hold the jump button longer, jump higher
 	else if ((PadData1 & PAD_B) && player.dy < 0) {

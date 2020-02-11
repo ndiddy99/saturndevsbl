@@ -36,9 +36,12 @@ void cd_load(char *filename, void *dataBuf, int read_size) {
 }
 
 
-
-
-
-
-
-
+Sint32 cd_load_nosize(char *filename, void *dataBuf) {
+    Sint32 filesize;
+    GfsHn gfs = GFS_Open(GFS_NameToId(filename));
+    GFS_GetFileInfo(gfs, NULL, NULL, &filesize, NULL);
+    //make sure we read at least one sector
+    GFS_Fread(gfs, filesize < SECT_SIZE ? 1 : (filesize >> 11) + 1, dataBuf, filesize);
+    GFS_Close(gfs);
+    return filesize;
+}

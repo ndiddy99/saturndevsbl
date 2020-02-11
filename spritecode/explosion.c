@@ -3,6 +3,7 @@
 #include "explosion.h"
 #include "../graphicrefs.h"
 #include "../sprite.h"
+#include "../sound.h"
 #include "../player.h"
 #include "../print.h"
 
@@ -16,6 +17,7 @@ void explosion_make(Fixed32 x, Fixed32 y) {
     sprite_make(EXPLOSION_MINCHARNUM, x, y, explosion);
     explosion->animTimer = FRAME_DELAY;
     explosion->iterate = &explosion_move;
+    sound_play(SOUND_EXPLOSION);
 }
 
 void explosion_move(SPRITE_INFO *explosion) {

@@ -12,10 +12,12 @@
 
 #include	<machine.h>
 #include	<sega_mth.h>
+#include	<SEGA_PCM.H>
 #include	<sega_spr.h>
 #include	<sega_scl.h>
 #include	<sega_xpt.h>
 #include 	<sega_int.h>
+#include    "pcmsys.h"
 #include	"per_x.h"
 #include	"scroll.h"
 
@@ -40,6 +42,7 @@ void SetVblank(void) {
 
 
 void UsrVblankIn(void) {
+	m68k_com->start = 1;
 	scroll_copy(SCROLL_PLAYFIELD);
 	// scroll_copy(1);
 	

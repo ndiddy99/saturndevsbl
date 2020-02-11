@@ -1,0 +1,10 @@
+Sega's code (vblank.c/h) falls under its original license (example use only,
+may not pass Sega QA, shouldn't be assumed to be bug free). My code (everything
+else in the repo), graphics, music, sound effects, and other assets may not be
+used for commercial purposes or bundled with anything that costs money
+(example: selling a CD with the game on it, even if you sell it at what the CD
+costs to you). You may redistribute any or all of the files in this repo
+(https://github.com/shicky256/saturndevsbl), as long as you include this text
+file with your redistributed file(s).
+
+-Nathan

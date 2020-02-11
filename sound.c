@@ -1,51 +1,87 @@
 #include <SEGA_CDC.H>
 #include <SEGA_INT.H>
-#include <SEGA_SND.H>
 
 #include "cd.h"
+#include "sound.h"
+#include "pcmsys.h"
+#include "print.h"
 
-#define	SDDRV_NAME	"SDDRVS.TSK"
-#define	SDMAP_NAME	"SMPSND5.MP"
-#define	SDDRV_ADDR	0x6080000
-#define	SDDRV_SIZE	0x6000
-#define	SDMAP_ADDR	0x6086000
-#define	SDMAP_SIZE	0x14
+#define SOUND_NAME "JUMP.AIF"
 
-SndIniDt snd_init;
+static short jump_num;
 
-static void sound_interrupt() {
-    SND_RESET_INT();
+static void sound_external_audio_enable(Uint8 vol_l, Uint8 vol_r) {
+    volatile Uint16 *slot_ptr;
+
+    //max sound volume is 7
+    if (vol_l > 7) {
+        vol_l = 7;
+    }
+    if (vol_r > 7) {
+        vol_r = 7;
+    }
+
+    // Setup SCSP Slot 16 and Slot 17 for playing
+    slot_ptr = (volatile Uint16 *)(0x25B00000 + (0x20 * 16));
+    slot_ptr[0] = 0x1000;
+    slot_ptr[1] = 0x0000; 
+    slot_ptr[2] = 0x0000; 
+    slot_ptr[3] = 0x0000; 
+    slot_ptr[4] = 0x0000; 
+    slot_ptr[5] = 0x0000; 
+    slot_ptr[6] = 0x00FF; 
+    slot_ptr[7] = 0x0000; 
+    slot_ptr[8] = 0x0000; 
+    slot_ptr[9] = 0x0000; 
+    slot_ptr[10] = 0x0000; 
+    slot_ptr[11] = 0x001F | (vol_l << 5);
+    slot_ptr[12] = 0x0000; 
+    slot_ptr[13] = 0x0000; 
+    slot_ptr[14] = 0x0000; 
+    slot_ptr[15] = 0x0000; 
+
+    slot_ptr = (volatile Uint16 *)(0x25B00000 + (0x20 * 17));
+    slot_ptr[0] = 0x1000;
+    slot_ptr[1] = 0x0000; 
+    slot_ptr[2] = 0x0000; 
+    slot_ptr[3] = 0x0000; 
+    slot_ptr[4] = 0x0000; 
+    slot_ptr[5] = 0x0000; 
+    slot_ptr[6] = 0x00FF; 
+    slot_ptr[7] = 0x0000; 
+    slot_ptr[8] = 0x0000; 
+    slot_ptr[9] = 0x0000; 
+    slot_ptr[10] = 0x0000; 
+    slot_ptr[11] = 0x000F | (vol_r << 5);
+    slot_ptr[12] = 0x0000; 
+    slot_ptr[13] = 0x0000; 
+    slot_ptr[14] = 0x0000; 
+    slot_ptr[15] = 0x0000;
+
+    *((volatile Uint16 *)(0x25B00400)) = 0x020F;
 }
 
 //must be called after cd_init
 void sound_init() {
-    cd_load(SDDRV_NAME, (void *)SDDRV_ADDR, SDDRV_SIZE);
-    cd_load(SDMAP_NAME, (void *)SDMAP_ADDR, SDMAP_SIZE);
-    set_imask(0);
-    INT_ChgMsk(INT_MSK_NULL, INT_MSK_SND);
-    INT_SetScuFunc(INT_SCU_SND, sound_interrupt);
-    INT_ChgMsk(INT_MSK_SND,INT_MSK_NULL);
-
-    SND_INI_PRG_ADR(snd_init) = (Uint16 *)SDDRV_ADDR;
-    SND_INI_PRG_SZ(snd_init)  = (Uint16)  SDDRV_SIZE;
-    SND_INI_ARA_ADR(snd_init) = (Uint16 *)SDMAP_ADDR;
-    SND_INI_ARA_SZ(snd_init)  = (Uint16)  SDMAP_SIZE;
-    SND_Init(&snd_init);
-    SND_ChgMap(0);
-    SND_SetCdDaLev(7, 7);
-    SND_SetCdDaPan(0, 0);
-    SND_SetTlVl(15);
-    SND_RESET_INT();
+    sound_external_audio_enable(4, 4);
+    load_drv();
+    load_8bit_pcm("EXPLOSIO.PCM", 8000);
+    load_8bit_pcm("JUMP.PCM", 8000);
 }
 
 void sound_cdda(int track) {
     CdcPly ply;
-    CDC_PLY_STYPE(&ply) = CDC_PTYPE_TNO ;       /* CDC_CdPlay‚Ìƒpƒ‰ƒ[ƒ^Ý’è*/
-	CDC_PLY_STNO(&ply)  = track ;
-	CDC_PLY_SIDX(&ply) = 1 ;
-	CDC_PLY_ETYPE(&ply) = CDC_PTYPE_TNO ;
-	CDC_PLY_ETNO(&ply)  = track + 1 ;
-	CDC_PLY_EIDX(&ply) = 99 ;
-	CDC_PLY_PMODE(&ply) = CDC_PM_DFL + 1;
-    CDC_CdPlay(&ply) ;
+    CDC_PLY_STYPE(&ply) = CDC_PTYPE_TNO; //track number
+	CDC_PLY_STNO(&ply)  = track;
+	CDC_PLY_SIDX(&ply) = 1;
+	CDC_PLY_ETYPE(&ply) = CDC_PTYPE_TNO;
+	CDC_PLY_ETNO(&ply)  = track + 1;
+	CDC_PLY_EIDX(&ply) = 99;
+	CDC_PLY_PMODE(&ply) = CDC_PM_DFL | 0xf; //0xf = infinite repetitions
+    CDC_CdPlay(&ply);
 }
+
+void sound_play(short num) {
+    pcm_play(num, PCM_SEMI, 7);
+}
+
