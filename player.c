@@ -122,9 +122,11 @@ void player_input() {
 		boost = BOOST_TIMER;
 		if (PadData1 & PAD_L) {
 			player.dx -= BOOST_SPEED;
+			sound_play(SOUND_DASH);
 		}
 		if (PadData1 & PAD_R) {
 			player.dx += BOOST_SPEED;
+			sound_play(SOUND_DASH);
 		}
 	}
 	if (boost) { 

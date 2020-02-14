@@ -6,10 +6,6 @@
 #include "pcmsys.h"
 #include "print.h"
 
-#define SOUND_NAME "JUMP.AIF"
-
-static short jump_num;
-
 static void sound_external_audio_enable(Uint8 vol_l, Uint8 vol_r) {
     volatile Uint16 *slot_ptr;
 
@@ -67,6 +63,7 @@ void sound_init() {
     load_drv();
     load_8bit_pcm("EXPLOSIO.PCM", 8000);
     load_8bit_pcm("JUMP.PCM", 8000);
+    load_8bit_pcm("DASH.PCM", 8000);
 }
 
 void sound_cdda(int track) {
