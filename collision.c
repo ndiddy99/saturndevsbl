@@ -8,6 +8,10 @@
 
 #define TO_TILE(fixed) ((fixed) >> 20)
 
+inline int collision_check_point(Fixed32 x, Fixed32 y) {
+    return scroll_get(SCROLL_PLAYFIELD, TO_TILE(x), TO_TILE(y));
+}
+
 inline int collision_check_up(SPRITE_INFO *sprite) {
     //top: top left or top right pixel hits something
     if (scroll_get(SCROLL_PLAYFIELD, TO_TILE(sprite->xPos), TO_TILE(sprite->yPos)) ||

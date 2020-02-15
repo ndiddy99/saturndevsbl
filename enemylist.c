@@ -1,13 +1,15 @@
 #include <sega_mth.h>
 #include "enemylist.h"
 #include "spritecode/float.h"
+#include "spritecode/missile.h"
 
 #define TYPE_FLOAT (1)
+#define TYPE_MISSILE (2)
 #define END_LIST (0)
 
 //list format: type, x position (tiles), y position (tiles)
-void (*enemy_arr[])(Fixed32, Fixed32) = {NULL, float_make};
-Uint16 level0_enemies[] = {TYPE_FLOAT, 8, 10, TYPE_FLOAT, 10, 22, TYPE_FLOAT, 15, 22, TYPE_FLOAT, 52, 23, END_LIST};
+void (*enemy_arr[])(Fixed32, Fixed32) = {NULL, float_make, missile_make};
+Uint16 level0_enemies[] = {TYPE_FLOAT, 8, 10, TYPE_FLOAT, 10, 22, TYPE_FLOAT, 15, 22, TYPE_FLOAT, 52, 23, TYPE_MISSILE, 23, 21, END_LIST};
 Uint16 *enemy_lists[] = {level0_enemies};
 
 void enemylist_spawn(int floor) {

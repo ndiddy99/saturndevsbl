@@ -278,9 +278,14 @@ void scroll_scale(int num, Fixed32 scale) {
 //gets the value at the given coordinates for a map
 Uint16 scroll_get(int map, int x, int y) {
 	Uint16 *map_ptr = maps[map];
-	if (map_ptr == NULL || x >= scroll_xsize || x < 0 || y >= scroll_ysize || y < 0) {
+	if (map_ptr == NULL || x >= scroll_xsize || y >= scroll_ysize || y < 0) {
 		return 0;
 	}
+
+	if (x < 0) {
+		return 1;
+	}
+
 	return map_ptr[(y * scroll_xsize) + x];
 }
 

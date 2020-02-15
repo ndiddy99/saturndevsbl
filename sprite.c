@@ -62,12 +62,18 @@ void sprite_init() {
 		SPR_2SetChar(i + char_base, COLOR_0, 48, explosion_width, explosion_height, (Uint8 *)(image_buf) + (i * explosion_size));
 	}
 	char_base += explosion_num;
+	cd_load(missile_name, image_buf, missile_size * missile_num);
+	for (i = 0; i < missile_num; i++) {
+		SPR_2SetChar(i + char_base, COLOR_0, 64, missile_width, missile_height, (Uint8 *)(image_buf) + (i * missile_size));
+	}
+	char_base += missile_num;	
 	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
-	SCL_AllocColRam(SCL_SPR, 64, OFF);
+	SCL_AllocColRam(SCL_SPR, 80, OFF);
 	SCL_SetColRam(SCL_SPR, 0, 16, &font_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
 	SCL_SetColRam(SCL_SPR, 32, 16, &float_pal);
 	SCL_SetColRam(SCL_SPR, 48, 16, &explosion_pal);
+	SCL_SetColRam(SCL_SPR, 64, 16, &missile_pal);
 	sprite_deleteall();
 	SCL_DisplayFrame();
 }

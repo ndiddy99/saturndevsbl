@@ -9,6 +9,9 @@
 #define COLLISION_RIGHT (1 << 3)
 
 void collision_check(SPRITE_INFO *sprite);
+//returns 1 if the given point is a wall tile
+inline int collision_check_point(Fixed32 x, Fixed32 y);
+
 inline int collision_check_up(SPRITE_INFO *sprite);
 inline int collision_check_down(SPRITE_INFO *sprite);
 inline int collision_check_below(SPRITE_INFO *sprite);

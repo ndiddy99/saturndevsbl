@@ -1,0 +1,9 @@
+Uint16 missile_num = 1;
+Uint16 missile_size = 128;
+Uint16 missile_width = 16;
+Uint16 missile_height = 16;
+char missile_name[] = "MISSILE.SPR";
+Uint32 missile_pal[] = {
+	0x0000,0xCE6363,0xFF6363,0xFF9C9C,0x00FF,0x319CFF,0xFFFFFF,0xFFFFFF,
+	0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,0xFFFFFF,
+};

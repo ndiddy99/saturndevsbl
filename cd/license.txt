@@ -5,9 +5,10 @@ with his source code can be found at https://github.com/ponut64/68k/. My code
 (everything else in the repo), graphics, music, sound effects, and other assets
 may not be used for commercial purposes or bundled with anything that costs 
 money (example: selling a CD with the game on it, even if you sell it at what
-the CD costs to buy) without my permission. You may redistribute any or all of
-my files in this repo (https://github.com/shicky256/saturndevsbl), as long as
-you include this text file with your redistributed file(s).
+the CD costs to buy) without my permission. You may use, copy, modify, merge, 
+or distribute any or all of my files in this repo
+(https://github.com/shicky256/saturndevsbl), as long as you include this text
+file with your redistributed file(s).
 
 No warranty, no implied warranty, don't sue me if your Saturn dies etc.
 

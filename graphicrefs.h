@@ -64,4 +64,12 @@ extern Uint16 explosion_width;
 extern Uint16 explosion_height;
 extern char explosion_name[];
 extern Uint32 explosion_pal[];
+//missile
+#define GRAPHIC_MISSILE (GRAPHIC_EXPLOSION + explosion_num)
+extern Uint16 missile_num;
+extern Uint16 missile_size;
+extern Uint16 missile_width;
+extern Uint16 missile_height;
+extern char missile_name[];
+extern Uint32 missile_pal[];
 #endif
