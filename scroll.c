@@ -187,11 +187,15 @@ void scroll_init(LEVEL *level) {
 	scroll_scale(1, FIXED(1));
 	SCL_SetPriority(SCL_NBG3, 7); //set layer priorities
 	SCL_SetPriority(SCL_SPR,  6);
+	SCL_SetPriority(SCL_SP1,  6);
 	SCL_SetPriority(SCL_NBG2, 6);
 	SCL_SetPriority(SCL_NBG1, 5);
 	SCL_SetPriority(SCL_NBG0, 4);
 	
 	curr_level = level;
+
+	SCL_SetColMixMode(1, SCL_IF_FRONT);
+	SCL_SetColMixRate(SCL_SP1, 4);
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {

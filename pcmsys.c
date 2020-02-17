@@ -2,6 +2,7 @@
 //this file is compiled separately
 //hopefully somewhat portable
 //
+#include <SEGA_DMA.H>
 #include <SEGA_MTH.H>
 #include <string.h>
 
@@ -88,8 +89,9 @@ void load_driver_binary(char *filename, void *buffer) {
 	//
 	*master_volume = 0x20F; //Set max master volume + 4mbit memory // Very important, douglath
 	//TODO figure out how SBL dma works
-	memcpy((void *)SNDRAM, buffer, file_size);
-
+	// memcpy((void *)SNDRAM, buffer, file_size);
+	DMA_CpuMemCopy1((void *)SNDRAM, buffer, file_size);
+	while (DMA_CpuResult() != DMA_CPU_END);
 	// Turn on Sound CPU again
 	smpc_wait_till_ready();
 	smpc_issue_command(SMPC_CMD_SNDON);

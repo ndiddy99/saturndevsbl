@@ -59,7 +59,7 @@ static void sound_external_audio_enable(Uint8 vol_l, Uint8 vol_r) {
 
 //must be called after cd_init
 void sound_init() {
-    sound_external_audio_enable(4, 4);
+    sound_external_audio_enable(5, 5);
     load_drv();
     load_8bit_pcm("EXPLOSIO.PCM", 8000);
     load_8bit_pcm("JUMP.PCM", 8000);
@@ -79,6 +79,6 @@ void sound_cdda(int track) {
 }
 
 void sound_play(short num) {
-    pcm_play(num, PCM_SEMI, 7);
+    pcm_play(num, PCM_SEMI, 6);
 }
 

@@ -59,7 +59,9 @@ void sprite_init() {
 	char_base += float_num;
 	cd_load(explosion_name, image_buf, explosion_size * explosion_num);
 	for (i = 0; i < explosion_num; i++) {
-		SPR_2SetChar(i + char_base, COLOR_0, 48, explosion_width, explosion_height, (Uint8 *)(image_buf) + (i * explosion_size));
+		//1 << 11: color calculation on
+		//1 << 12: sprite priority 1 (about 20% transparent)
+		SPR_2SetChar(i + char_base, COLOR_0, 48 | (1 << 12) | (1 << 11), explosion_width, explosion_height, (Uint8 *)(image_buf) + (i * explosion_size));
 	}
 	char_base += explosion_num;
 	cd_load(missile_name, image_buf, missile_size * missile_num);
@@ -86,7 +88,7 @@ void sprite_draw(SPRITE_INFO *info) {
 	if (info->scale == MTH_FIXED(1) && info->angle == 0) {
 		xy[0].x = (Sint16)MTH_FixedToInt(info->xPos);
 		xy[0].y = (Sint16)MTH_FixedToInt(info->yPos);
-		SPR_2NormSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp normal sprite
+		SPR_2NormSpr(0, info->mirror, 0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp normal sprite
 	}
 	
 	else if (info->angle == 0){
@@ -96,7 +98,7 @@ void sprite_draw(SPRITE_INFO *info) {
 		//bottom right corner of the sprite
 		xy[1].x = (Sint16)(MTH_FixedToInt(MTH_Mul(info->xSize, info->scale) + info->xPos));
 		xy[1].y = (Sint16)(MTH_FixedToInt(MTH_Mul(info->ySize, info->scale) + info->yPos));
-		SPR_2ScaleSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp scaled sprite
+		SPR_2ScaleSpr(0, info->mirror, 0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp scaled sprite
 	}
 	
 	else {
@@ -118,7 +120,7 @@ void sprite_draw(SPRITE_INFO *info) {
 			xy[i].y = (Sint16)MTH_FixedToInt(MTH_Mul(xOffset, sin) +
 				MTH_Mul(yOffset, cos) + scaledY);
 		}
-		SPR_2DistSpr(0, info->mirror, COLOR_0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp distorted sprite
+		SPR_2DistSpr(0, info->mirror, 0, 0xffff, info->char_num, xy, NO_GOUR); //4bpp distorted sprite
 	}
 }
 
