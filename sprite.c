@@ -68,14 +68,20 @@ void sprite_init() {
 	for (i = 0; i < missile_num; i++) {
 		SPR_2SetChar(i + char_base, COLOR_0, 64, missile_width, missile_height, (Uint8 *)(image_buf) + (i * missile_size));
 	}
-	char_base += missile_num;	
+	char_base += missile_num;
+	cd_load(cannon_name, image_buf, cannon_size * cannon_num);
+	for (i = 0; i < cannon_num; i++) {
+		SPR_2SetChar(i + char_base, COLOR_0, 80, cannon_width, cannon_height, (Uint8 *)(image_buf) + (i * cannon_size));
+	}
+	char_base += cannon_num;
 	// SPR_2SetChar(0, COLOR_0, 0, guy_width, guy_height, (Uint8 *)(image_buf) + 256);
-	SCL_AllocColRam(SCL_SPR, 80, OFF);
+	SCL_AllocColRam(SCL_SPR, 96, OFF);
 	SCL_SetColRam(SCL_SPR, 0, 16, &font_pal);
 	SCL_SetColRam(SCL_SPR, 16, 16, &guy_pal);
 	SCL_SetColRam(SCL_SPR, 32, 16, &float_pal);
 	SCL_SetColRam(SCL_SPR, 48, 16, &explosion_pal);
 	SCL_SetColRam(SCL_SPR, 64, 16, &missile_pal);
+	SCL_SetColRam(SCL_SPR, 80, 16, &cannon_pal);
 	sprite_deleteall();
 	SCL_DisplayFrame();
 }
@@ -147,7 +153,7 @@ void sprite_draw_all() {
 	Sint32 rel_x, rel_y;
 	SPRITE_INFO tmp;
 	for (i = 0; i < SPRITE_LIST_SIZE; i++) {
-		rel_x = sprites[i].xPos - scrolls_x[SCROLL_PLAYFIELD];
+		rel_x = sprites[i].xPos - (scrolls_x[SCROLL_PLAYFIELD] & 0xffff0000);
 		rel_y = sprites[i].yPos - scrolls_y[SCROLL_PLAYFIELD];
 		//if sprite is more than 1/2 screen offscreen, don't render it
 		if (sprites[i].options & OPTION_NODISP || rel_x + sprites[i].xSize < MTH_FIXED(-160) || rel_x > MTH_FIXED(480) ||

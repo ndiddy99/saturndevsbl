@@ -4,6 +4,7 @@ s font
 s guy
 s float
 s missile
+s cannon
 t8 bg.bmp
 m8 map0.tmx
 t4 hills.bmp

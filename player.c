@@ -86,7 +86,7 @@ void player_input() {
 	Uint16 PadData1EW = PadData1E;
 	PadData1E = 0;
 	//soft reset
-	if (PadData1 == (PAD_A | PAD_B | PAD_C | PAD_S)) {
+	if ((PadData1 == (PAD_A | PAD_B | PAD_C | PAD_S))) {
 		//go back to the cd player screen if a+b+c+start is pressed
 		SYS_EXECDMP();
 	}

@@ -72,4 +72,12 @@ extern Uint16 missile_width;
 extern Uint16 missile_height;
 extern char missile_name[];
 extern Uint32 missile_pal[];
+//cannon
+#define GRAPHIC_CANNON (GRAPHIC_MISSILE + missile_num)
+extern Uint16 cannon_num;
+extern Uint16 cannon_size;
+extern Uint16 cannon_width;
+extern Uint16 cannon_height;
+extern char cannon_name[];
+extern Uint32 cannon_pal[];
 #endif

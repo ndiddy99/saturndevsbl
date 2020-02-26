@@ -150,7 +150,7 @@ short load_16bit_pcm(char *filename, int sampleRate) {
 	return (numberPCMs-1); //Return the PCM # this sound recieved
 }
 
-short load_8bit_pcm(Sint8 * filename, int sampleRate) {
+short load_8bit_pcm(char *filename, int sampleRate) {
 	if( (int)scsp_load > 0x7F800) return -1; //Illegal PCM data address, exit
 	
 	int octr;

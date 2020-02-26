@@ -195,7 +195,7 @@ void scroll_init(LEVEL *level) {
 	curr_level = level;
 
 	SCL_SetColMixMode(1, SCL_IF_FRONT);
-	SCL_SetColMixRate(SCL_SP1, 4);
+	SCL_SetColMixRate(SCL_SP1, 6);
 }
 
 void scroll_move(int num, Fixed32 x, Fixed32 y) {

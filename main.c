@@ -3,6 +3,8 @@
 #include <sega_spr.h>
 #include <sega_scl.h> 
 #include <sega_mth.h>
+#include <sega_cdc.h>
+#include <sega_sys.h>
 
 #include "cd.h"
 #include "enemylist.h"
@@ -25,10 +27,12 @@ static inline void layer_init(LAYER *layer, char *tiles_name, Uint16 tiles_num, 
 Uint32 frame = 0;
 
 int main() {
+	CdcStat cd_status;
+
 	cd_init();
 	sprite_init();
 	LEVEL level1;
-	level1.player_startx = MTH_FIXED(60);
+	level1.player_startx = MTH_FIXED(120);
 	level1.player_starty = MTH_FIXED(400);
 
 	layer_init(&(level1.playfield), bg_name, bg_num, bg_pal, map0_name, map0_width, map0_height);
@@ -47,14 +51,18 @@ int main() {
 		frame++;
 		player_input();
 		print_num(frame, 0, 0);
-		
+		//if the cd drive is opened, return to menu
+		CDC_GetPeriStat(&cd_status);
+		if ((cd_status.status & 0xF) == CDC_ST_OPEN) {
+			SYS_EXECDMP();
+		}
 
 		SPR_2OpenCommand(SPR_2DRAW_PRTY_OFF);
 			player_draw();
 			sprite_draw_all();
 			print_display();
 		SPR_2CloseCommand();
-		
+
 		SCL_DisplayFrame();
 	}
 	return 0;
